@@ -1,6 +1,5 @@
 import {
   Edit3,
-  Handshake,
   ImagePlus,
   LayoutGrid,
   ListChecks,
@@ -40,30 +39,27 @@ const statusClasses = {
   warning: 'admin-message',
 }
 
-const quickVisualAreas = [
-  {
-    usageArea: 'why_orion_card',
-    title: 'Neden Orion ikonları',
-    description: 'NEDEN ORION? bölümündeki kart görsellerini değiştirir.',
-    icon: Star,
-  },
+const managedPhotoSections = [
   {
     usageArea: 'summary_card',
-    title: 'Kamp Özeti ikonları',
-    description: 'Kamp Özeti bölümündeki kart ikonlarını değiştirir.',
+    title: 'Kamp Özeti fotoğrafları',
+    eyebrow: 'Kamp Özeti',
+    description: 'Kamp Özeti bölümündeki ikonların yerine gösterilecek fotoğrafları ayrı ayrı yönetin.',
     icon: LayoutGrid,
   },
   {
-    usageArea: 'partner_logo',
-    title: 'Hero kurum logoları',
-    description: 'Anlaşmalı uzman eğitim kurumları logolarını değiştirir.',
-    icon: Handshake,
+    usageArea: 'program_card',
+    title: 'Program İçerikleri fotoğrafları',
+    eyebrow: 'Program İçerikleri',
+    description: 'Program kartlarındaki ikonların yerine gösterilecek aktivite fotoğraflarını yönetin.',
+    icon: ListChecks,
   },
   {
-    usageArea: 'program_card',
-    title: 'Program ikonları',
-    description: 'Program bölümündeki aktivite görsellerini değiştirir.',
-    icon: ListChecks,
+    usageArea: 'why_orion_card',
+    title: 'Neden Orion fotoğrafları',
+    eyebrow: 'NEDEN ORION?',
+    description: 'NEDEN ORION? bölümündeki kart ikonlarının yerine gösterilecek fotoğrafları yönetin.',
+    icon: Star,
   },
 ]
 
@@ -168,6 +164,11 @@ function ImageManager() {
 
   const relatedKeyOptions = relatedKeyOptionsByUsageArea[draft.usage_area] || []
   const requiresRelatedKey = relatedKeyOptions.length > 0
+  const selectedRelatedOption = relatedKeyOptions.find((option) => option.value === draft.related_key)
+  const selectedUsageAreaLabel = getUsageAreaLabel(draft.usage_area)
+  const formTitle = editingImage
+    ? `${selectedRelatedOption?.label || draft.title || selectedUsageAreaLabel} fotoğrafını düzenle`
+    : `${selectedRelatedOption?.label || selectedUsageAreaLabel} fotoğrafı yükle`
 
   const sortedImages = useMemo(
     () =>
@@ -180,6 +181,31 @@ function ImageManager() {
 
         return Number(a.sort_order || 0) - Number(b.sort_order || 0)
       }),
+    [images],
+  )
+
+  const managedImagesBySlot = useMemo(
+    () =>
+      images.reduce((mappedImages, image) => {
+        const usageArea = image.usage_area
+        const relatedKey = slugifyKey(image.related_key)
+
+        if (!usageArea || !relatedKey) {
+          return mappedImages
+        }
+
+        if (!mappedImages[usageArea]) {
+          mappedImages[usageArea] = {}
+        }
+
+        const currentImage = mappedImages[usageArea][relatedKey]
+
+        if (!currentImage || (image.is_active && !currentImage.is_active)) {
+          mappedImages[usageArea][relatedKey] = image
+        }
+
+        return mappedImages
+      }, {}),
     [images],
   )
 
@@ -257,15 +283,27 @@ function ImageManager() {
     setEditingImage(null)
   }
 
-  const selectVisualArea = (usageArea) => {
-    setDraft({
-      ...emptyDraft,
-      usage_area: usageArea,
-      sort_order: images.length + 1,
-    })
+  const selectManagedPhotoSlot = (section, option, currentImage) => {
+    const options = relatedKeyOptionsByUsageArea[section.usageArea] || []
+    const slotIndex = options.findIndex((item) => item.value === option.value)
+    const sortOrder = slotIndex >= 0 ? slotIndex + 1 : images.length + 1
+
+    setEditingImage(currentImage || null)
     setFile(null)
-    setEditingImage(null)
+    setDraft({
+      title: currentImage?.title || option.label,
+      description: currentImage?.description || section.description,
+      alt_text: currentImage?.alt_text || `${option.label} fotoğrafı`,
+      usage_area: section.usageArea,
+      related_key: option.value,
+      sort_order: currentImage?.sort_order ?? sortOrder,
+      is_active: currentImage?.is_active !== false,
+    })
     setStatus({ type: 'idle', message: '' })
+
+    window.requestAnimationFrame(() => {
+      document.getElementById('image-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
   }
 
   const editImage = (image) => {
@@ -523,64 +561,117 @@ function ImageManager() {
         </div>
       )}
 
-      <section className="admin-card mb-6 p-4 sm:p-5">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="text-lg font-black text-[#0B1026]">İkon ve logo alanları</h2>
-            <p className="mt-1 text-sm font-semibold leading-6 text-[#0B1026]/58">
-              Değiştirmek istediğiniz bölümü seçin, ardından kart veya logo seçimini yapıp görsel yükleyin.
-            </p>
-          </div>
-          <span className="admin-pill w-fit">Aktif seçim: {getUsageAreaLabel(draft.usage_area)}</span>
-        </div>
+      <section className="mb-6 grid gap-4">
+        {managedPhotoSections.map((section) => {
+          const Icon = section.icon
+          const options = relatedKeyOptionsByUsageArea[section.usageArea] || []
+          const isSelectedSection = draft.usage_area === section.usageArea
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {quickVisualAreas.map((area) => {
-            const Icon = area.icon
-            const isSelected = draft.usage_area === area.usageArea
+          return (
+            <article
+              key={section.usageArea}
+              className={`admin-card p-4 sm:p-5 ${
+                isSelectedSection ? 'border-[#FFB088] shadow-[0_22px_60px_rgba(255,106,42,0.12)]' : ''
+              }`}
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex min-w-0 gap-3">
+                  <span className="orion-gradient grid size-12 shrink-0 place-items-center rounded-2xl text-white shadow-[0_14px_30px_rgba(255,106,42,0.18)]">
+                    <Icon size={22} aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="admin-eyebrow">{section.eyebrow}</p>
+                    <h2 className="mt-1 text-xl font-black leading-tight text-[#0B1026]">
+                      {section.title}
+                    </h2>
+                    <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#0B1026]/58">
+                      {section.description}
+                    </p>
+                  </div>
+                </div>
+                <span className="admin-pill w-fit shrink-0">
+                  {options.length} kart
+                </span>
+              </div>
 
-            return (
-              <button
-                key={area.usageArea}
-                type="button"
-                onClick={() => selectVisualArea(area.usageArea)}
-                className={`group flex min-h-28 items-start gap-3 rounded-2xl border p-4 text-left transition ${
-                  isSelected
-                    ? 'border-[#FF6A2A] bg-[#FFF1E8] shadow-[0_14px_30px_rgba(255,106,42,0.14)]'
-                    : 'border-[#FFE0CC] bg-white hover:-translate-y-0.5 hover:border-[#FFB088] hover:bg-[#FFFBF5]'
-                }`}
-                aria-pressed={isSelected}
-              >
-                <span
-                  className={`grid size-11 shrink-0 place-items-center rounded-2xl ${
-                    isSelected
-                      ? 'orion-gradient text-white'
-                      : 'bg-[#FFF1E8] text-[#FF6A2A] group-hover:bg-[#FFE0CC]'
-                  }`}
-                >
-                  <Icon size={20} aria-hidden="true" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-sm font-black leading-5 text-[#0B1026]">
-                    {area.title}
-                  </span>
-                  <span className="mt-1 block text-xs font-semibold leading-5 text-[#0B1026]/58">
-                    {area.description}
-                  </span>
-                </span>
-              </button>
-            )
-          })}
-        </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {options.map((option) => {
+                  const currentImage = managedImagesBySlot[section.usageArea]?.[option.value]
+                  const isSelectedSlot =
+                    draft.usage_area === section.usageArea && draft.related_key === option.value
+
+                  return (
+                    <div
+                      key={option.value}
+                      className={`rounded-2xl border p-3 transition ${
+                        isSelectedSlot
+                          ? 'border-[#FF6A2A] bg-[#FFF1E8]'
+                          : 'border-[#FFE0CC] bg-[#FFFBF5]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[#FFE0CC] bg-white">
+                          {currentImage?.image_url ? (
+                            <img
+                              src={currentImage.image_url}
+                              alt={currentImage.alt_text || currentImage.title || option.label}
+                              className="h-full w-full object-contain p-1.5"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <Icon size={24} className="text-[#FF6A2A]" aria-hidden="true" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="break-words text-sm font-black leading-5 text-[#0B1026]">
+                            {option.label}
+                          </h3>
+                          <span
+                            className={`mt-1 inline-flex rounded-full px-2.5 py-1 text-[0.68rem] font-black ${
+                              currentImage?.is_active
+                                ? 'bg-[#ECFDF5] text-[#047857]'
+                                : currentImage
+                                  ? 'bg-[#F8FAFC] text-[#0B1026]/54'
+                                  : 'bg-white text-[#0B1026]/48'
+                            }`}
+                          >
+                            {currentImage?.is_active
+                              ? 'Fotoğraf yayında'
+                              : currentImage
+                                ? 'Pasif fotoğraf'
+                                : 'Varsayılan ikon'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => selectManagedPhotoSlot(section, option, currentImage)}
+                        className="admin-secondary-button mt-3 w-full rounded-full text-xs"
+                      >
+                        {currentImage ? <Edit3 size={15} aria-hidden="true" /> : <ImagePlus size={15} aria-hidden="true" />}
+                        {currentImage ? 'Fotoğrafı değiştir' : 'Fotoğraf yükle'}
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            </article>
+          )
+        })}
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-        <form onSubmit={saveImage} className="admin-card h-fit p-5">
+        <form id="image-form" onSubmit={saveImage} className="admin-card h-fit scroll-mt-24 p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-xl font-black">{editingImage ? 'Görseli Düzenle' : 'Yeni Görsel'}</h2>
+              <h2 className="text-xl font-black">{formTitle}</h2>
               <p className="mt-1 text-sm font-semibold text-[#0B1026]/54">
-                {editingImage ? 'Dosya seçmeden sadece bilgileri güncelleyebilirsiniz.' : 'Dosya Storage alanına yüklenir.'}
+                {selectedRelatedOption
+                  ? `${selectedUsageAreaLabel} içinde ${selectedRelatedOption.label} için fotoğraf seçin.`
+                  : editingImage
+                    ? 'Dosya seçmeden sadece bilgileri güncelleyebilirsiniz.'
+                    : 'Dosya Storage alanına yüklenir.'}
               </p>
             </div>
             {editingImage && (
@@ -760,7 +851,7 @@ function ImageManager() {
                       </h2>
                       <dl className="mt-2 grid gap-1 text-sm font-semibold text-[#0B1026]/58 sm:grid-cols-2">
                         <div className="min-w-0">
-                          <dt className="font-black text-[#0B1026]/42">Related key</dt>
+                          <dt className="font-black text-[#0B1026]/42">Kart / logo seçimi</dt>
                           <dd className="break-words">{image.related_key || '-'}</dd>
                         </div>
                         <div>
