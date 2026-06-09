@@ -9,110 +9,156 @@ npm install
 npm run dev
 ```
 
-## Production Build
+Yerel Supabase bağlantısı için proje kökünde `.env` dosyası gerekir. `.env` dosyası GitHub'a gönderilmez; `.gitignore` içinde `.env` satırı bulunur.
 
 ```bash
-npm run build
-npm run preview
-```
-
-## Rotalar
-
-GitHub Pages uyumluluğu için uygulama `HashRouter` kullanır.
-
-- `#/` landing page
-- `#/admin/login` kullanıcı adı ve şifre ile admin girişi
-- `#/admin` admin dashboard
-- `#/admin/images` görsel yönetimi
-- `#/kvkk`, `#/gizlilik-politikasi`, `#/kullanim-sartlari` yasal sayfalar
-
-## Supabase Ayarları
-
-1. `.env.example` dosyasını `.env` olarak kopyalayın.
-2. Supabase Project Settings > API ekranından değerleri doldurun:
-
-```bash
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
-```
-
-3. Yeni kurulum için `supabase-schema.sql` dosyasını Supabase SQL Editor içinde çalıştırın.
-4. Görsel yönetimi için ayrıca `supabase/migrations/002_site_images.sql` migration dosyasını çalıştırın.
-5. Supabase CLI kullanıyorsanız ana şema `supabase/migrations/20260606143000_production_schema.sql` içindedir.
-6. Authentication bölümünden tek admin kullanıcısını oluşturun. Varsayılan kullanıcı adı `admin` ise Supabase Auth e-postası `admin@orionkamp.local` olmalıdır.
-7. Storage için `gallery` ve `orion-assets` bucket'ları public olmalıdır. Migration dosyaları bucket kayıtlarını ve RLS policy'lerini oluşturur.
-
-Supabase değişkenleri yoksa landing page fallback verilerle çalışır. Admin panel demo modunda `/admin/login` üzerinden açılır; demo kullanıcı adı/şifre `.env.example` içindeki `VITE_DEMO_ADMIN_USERNAME` ve `VITE_DEMO_ADMIN_PASSWORD` değerleridir.
-
-## GitHub Pages Yayınlama
-
-Bu proje şu repository için hazırlanmıştır:
-
-- Repository: `https://github.com/donguoriontanitim/oriontanitim`
-- Canlı adres: `https://donguoriontanitim.github.io/oriontanitim/`
-- Base path: `VITE_PUBLIC_BASE_PATH=/oriontanitim/`
-
-1. GitHub'da repository oluşturun.
-2. Kodu GitHub'a gönderin.
-3. Repository içinde Settings > Pages ekranına gidin.
-4. Source olarak `GitHub Actions` seçin.
-5. Settings > Secrets and variables > Actions ekranından gerekli secret ve variable değerlerini ekleyin.
-6. `main` branch'e push yapın.
-7. Actions sekmesinden deploy sonucunu kontrol edin.
-
-## Base Path Ayarı
-
-GitHub Pages için `VITE_PUBLIC_BASE_PATH` repository tipine göre ayarlanmalıdır.
-
-- User/organization site ise: `VITE_PUBLIC_BASE_PATH=/`
-- Project site ise: `VITE_PUBLIC_BASE_PATH=/repo-adi/`
-
-Bu project repository için:
-
-```bash
+VITE_SUPABASE_URL=https://vigbyqymmxsofjusjlss.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_UzXpltbZBcyfuTDLTeH5DA_4ehqTxus
 VITE_PUBLIC_BASE_PATH=/oriontanitim/
+VITE_WHATSAPP_PHONE=905327236648
 ```
 
-Örnek user site repository:
+## Supabase Bilgileri
+
+Supabase Project URL:
+
+1. Supabase panelinde projeyi açın.
+2. Project Settings > API ekranına gidin.
+3. Project URL alanındaki değeri `VITE_SUPABASE_URL` olarak kullanın.
+
+Anon public key:
+
+1. Aynı API ekranında Project API keys bölümünü açın.
+2. `anon` veya `publishable` public key değerini `VITE_SUPABASE_ANON_KEY` olarak kullanın.
+3. Frontend içinde sadece anon/publishable key kullanılmalıdır. `service_role` key kullanılmaz.
+
+## SQL Kurulumu
+
+SQL dosyalarını Supabase > SQL Editor içinde şu sırayla çalıştırın:
+
+1. `supabase-schema.sql`
+2. `supabase/migrations/002_site_images.sql`
+
+Bu dosyalar şu tabloları ve policy'leri hazırlar:
+
+- `site_contents`
+- `program_items`
+- `gallery_images`
+- `faq_items`
+- `contact_requests`
+- `site_images`
+
+Kurallar:
+
+- RLS aktif olur.
+- Public kullanıcı sadece aktif landing page verilerini okuyabilir.
+- Public kullanıcı `contact_requests` tablosuna kayıt bırakabilir.
+- Authenticated kullanıcı admin kabul edilir ve CRUD yapabilir.
+- `updated_at` trigger'ları kurulur.
+
+## Storage
+
+Görsel Yönetimi için gerekli bucket:
 
 ```bash
-VITE_PUBLIC_BASE_PATH=/
+orion-assets
 ```
 
-Bu değer Vite `base` ayarını belirler. Değer verilmezse varsayılan `/` kullanılır.
+`supabase/migrations/002_site_images.sql` dosyası bu bucket'ı public olarak oluşturur ve şu policy'leri ekler:
+
+- Public kullanıcı görselleri okuyabilir.
+- Authenticated kullanıcı upload/update/delete yapabilir.
+
+Manuel kontrol için:
+
+1. Supabase > Storage ekranına gidin.
+2. `orion-assets` bucket var mı kontrol edin.
+3. Yoksa New bucket seçin.
+4. Bucket name: `orion-assets`
+5. Public bucket: aktif
+
+Not: Eski galeri yönetimi için `supabase-schema.sql` ayrıca `gallery` bucket'ını hazırlar.
+
+## Admin Kullanıcısı
+
+Admin kullanıcı Supabase Auth üzerinden manuel oluşturulur:
+
+1. Supabase > Authentication > Users ekranına gidin.
+2. Add user seçin.
+3. Email ve şifre belirleyin.
+4. Admin panelde bu email + şifre ile giriş yapın.
+
+Şimdilik tek admin mantığı kullanılır: `auth.role() = 'authenticated'`.
+
+## GitHub Pages Yayını
+
+Repository:
+
+```bash
+https://github.com/donguoriontanitim/oriontanitim
+```
+
+Canlı site:
+
+```bash
+https://donguoriontanitim.github.io/oriontanitim/
+```
+
+GitHub Pages için uygulama `HashRouter` kullanır.
+
+Test URL'leri:
+
+- `https://donguoriontanitim.github.io/oriontanitim/`
+- `https://donguoriontanitim.github.io/oriontanitim/#/admin`
+- `https://donguoriontanitim.github.io/oriontanitim/#/admin/images`
 
 ## GitHub Secrets ve Variables
 
-GitHub repository üzerinde Settings > Secrets and variables > Actions ekranını açın.
+GitHub repository içinde Settings > Secrets and variables > Actions ekranına gidin.
 
 Secrets:
 
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
+```bash
+VITE_SUPABASE_URL=https://vigbyqymmxsofjusjlss.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_UzXpltbZBcyfuTDLTeH5DA_4ehqTxus
+```
 
 Variables:
-
-- `VITE_PUBLIC_BASE_PATH`
-- `VITE_WHATSAPP_PHONE`
-
-Örnek variables:
 
 ```bash
 VITE_PUBLIC_BASE_PATH=/oriontanitim/
 VITE_WHATSAPP_PHONE=905327236648
 ```
 
-## GitHub Actions
+Workflow `.github/workflows/deploy.yml` içinde bu değerleri build env olarak kullanır.
 
-`.github/workflows/deploy.yml` workflow dosyası `main` branch'e push yapılınca otomatik çalışır. Manuel çalıştırma da desteklenir.
+## Veri Akışı
 
-Workflow adımları:
+Landing page Supabase bağlıysa aktif kayıtları okur, veri yoksa fallback içerikle çalışır:
 
-- Node.js 20 kurulumu
-- `npm ci`
-- `npm run lint`
-- `npm run build`
-- `dist` klasörünü GitHub Pages'e deploy
+- `site_contents`: hero, contact, footer ve yönetilebilir metinler
+- `program_items`: program kartları
+- `faq_items`: sık sorulan sorular
+- `gallery_images`: eski galeri kayıtları
+- `site_images`: hero, program kartı, galeri, dekorasyon ve diğer görsel slotları
+- `contact_requests`: iletişim formu kayıtları
+
+Görsel Yönetimi akışı:
+
+1. Dosya seçilir.
+2. Kullanım alanı seçilir.
+3. Gerekirse related key seçilir.
+4. Dosya `orion-assets` bucket içine yüklenir.
+5. Public URL alınır.
+6. `site_images` tablosuna kayıt atılır.
+7. Liste yenilenir.
+
+İletişim formu akışı:
+
+1. KVKK onayı zorunludur.
+2. Form `contact_requests` tablosuna kayıt atar.
+3. Başarı mesajı gösterilir.
+4. Kullanıcı WhatsApp görüşmesine yönlendirilir.
 
 ## Komutlar
 

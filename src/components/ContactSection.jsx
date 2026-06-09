@@ -16,11 +16,21 @@ const initialForm = {
 
 const inputClass = 'contact-input'
 const labelClass = 'contact-label'
+const fallbackContactContent = {
+  eyebrow: 'İletişim',
+  title: 'SİZİ ARAYALIM,',
+  highlight: 'DETAYLARI BİRLİKTE PLANLAYALIM',
+  description: 'Formu doldurun, en kısa sürede size ulaşalım.',
+  quickTitle: 'WhatsApp ile hemen yazın.',
+  quickDescription:
+    'Formu beklemeden sorularınızı iletebilir, kamp detayları için hızlı dönüş alabilirsiniz.',
+}
 
-function ContactSection({ programs, contactInfo, contactImage }) {
+function ContactSection({ programs, contactInfo, contactImage, content }) {
   const [form, setForm] = useState(initialForm)
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const contactContent = { ...fallbackContactContent, ...content }
   const contactImageUrl = contactImage?.image_url || contactVisual
   const contactImageAlt =
     contactImage?.alt_text || contactImage?.title || 'Orion Kamp robotik ve uzay temalı görsel'
@@ -132,9 +142,11 @@ function ContactSection({ programs, contactInfo, contactImage }) {
             <aside className="flex min-w-0 flex-col justify-between gap-5 rounded-[1.25rem] border border-[#FFE0CC] bg-[#FFF8F0] p-4 sm:gap-6 sm:rounded-[1.5rem] sm:p-5">
               <div>
                 <p className="section-eyebrow">Hızlı İletişim</p>
-                <h3 className="mt-3 text-xl font-black leading-tight sm:text-2xl">WhatsApp ile hemen yazın.</h3>
+                <h3 className="mt-3 text-xl font-black leading-tight sm:text-2xl">
+                  {contactContent.quickTitle}
+                </h3>
                 <p className="mt-3 text-sm font-semibold leading-6 text-[#0B1026]/62">
-                  Formu beklemeden sorularınızı iletebilir, kamp detayları için hızlı dönüş alabilirsiniz.
+                  {contactContent.quickDescription}
                 </p>
               </div>
 
@@ -172,13 +184,15 @@ function ContactSection({ programs, contactInfo, contactImage }) {
 
             <div>
               <div className="mb-6">
-                <p className="section-eyebrow">İletişim</p>
+                <p className="section-eyebrow">{contactContent.eyebrow}</p>
                 <h2 className="mt-3 text-2xl font-black leading-tight text-[#0B1026] min-[390px]:text-3xl sm:text-4xl lg:text-5xl">
-                  SİZİ ARAYALIM,
-                  <span className="block text-[#FF6A2A]">DETAYLARI BİRLİKTE PLANLAYALIM</span>
+                  {contactContent.title}
+                  {contactContent.highlight && (
+                    <span className="block text-[#FF6A2A]">{contactContent.highlight}</span>
+                  )}
                 </h2>
                 <p className="mt-4 text-base font-semibold leading-7 text-[#0B1026]/64">
-                  Formu doldurun, en kısa sürede size ulaşalım.
+                  {contactContent.description}
                 </p>
               </div>
 

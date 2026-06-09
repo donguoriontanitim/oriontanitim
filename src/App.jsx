@@ -28,13 +28,28 @@ import {
   getFirstImageByUsageArea,
   mapImagesByRelatedKey,
 } from './lib/siteImages.js'
+import { getLandingData } from './lib/landingData.js'
 
 function LandingPage() {
   const [siteImages, setSiteImages] = useState([])
+  const [landingData, setLandingData] = useState(() => ({
+    contact: null,
+    contactInfo: fallbackContent.contactInfo,
+    faqs: fallbackContent.faqs,
+    hero: fallbackContent.hero,
+    programs: fallbackContent.programs,
+    summary: fallbackContent.summary,
+  }))
   const location = useLocation()
 
   useEffect(() => {
     let isMounted = true
+
+    getLandingData().then((data) => {
+      if (isMounted) {
+        setLandingData(data)
+      }
+    })
 
     getActiveSiteImages().then((images) => {
       if (isMounted) {
@@ -80,26 +95,27 @@ function LandingPage() {
 
   return (
     <div className="orion-page-bg text-[#0B1026]">
-      <Navbar contactInfo={fallbackContent.contactInfo} />
+      <Navbar contactInfo={landingData.contactInfo} />
       <main>
         <HeroSection
-          content={fallbackContent.hero}
+          content={landingData.hero}
           desktopImage={imageSlots.heroDesktop}
           mobileImage={imageSlots.heroMobile}
         />
-        <CampSummary content={fallbackContent.summary} stats={fallbackContent.stats} />
-        <ProgramSection programs={fallbackContent.programs} imagesByRelatedKey={imageSlots.programByKey} />
+        <CampSummary content={landingData.summary} stats={fallbackContent.stats} />
+        <ProgramSection programs={landingData.programs} imagesByRelatedKey={imageSlots.programByKey} />
         <WhyOrionSection items={fallbackContent.whyOrion} imagesByRelatedKey={imageSlots.whyOrionByKey} />
         <DailyFlowSection items={fallbackContent.dailyFlow} imagesByRelatedKey={imageSlots.dailyFlowByKey} />
         <GallerySection images={fallbackContent.gallery} siteImages={imageSlots.gallery} />
-        <FaqSection faqs={fallbackContent.faqs} />
+        <FaqSection faqs={landingData.faqs} />
         <ContactSection
-          programs={fallbackContent.programs}
-          contactInfo={fallbackContent.contactInfo}
+          programs={landingData.programs}
+          contactInfo={landingData.contactInfo}
+          content={landingData.contact}
           contactImage={imageSlots.contactRobot}
         />
       </main>
-      <Footer contactInfo={fallbackContent.contactInfo} decorationImage={imageSlots.footerDecoration} />
+      <Footer contactInfo={landingData.contactInfo} decorationImage={imageSlots.footerDecoration} />
     </div>
   )
 }
