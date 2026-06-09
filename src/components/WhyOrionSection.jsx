@@ -1,0 +1,108 @@
+import { BadgeCheck, Rocket, ShieldCheck, SmilePlus, Sparkles, UsersRound } from 'lucide-react'
+import { getRelatedKeyForItem } from '../lib/siteImages.js'
+import SafeHtml from './SafeHtml.jsx'
+
+const icons = [Rocket, UsersRound, ShieldCheck, SmilePlus, Sparkles, BadgeCheck]
+
+const cardAccents = [
+  {
+    icon: 'bg-[#FF6A2A] text-white shadow-[0_16px_34px_rgba(255,106,42,0.24)]',
+    mark: 'bg-[#FF6A2A]',
+  },
+  {
+    icon: 'bg-[#22B8D6] text-white shadow-[0_16px_34px_rgba(34,184,214,0.2)]',
+    mark: 'bg-[#22B8D6]',
+  },
+  {
+    icon: 'bg-[#FF6A2A] text-white shadow-[0_16px_34px_rgba(255,106,42,0.22)]',
+    mark: 'bg-[#FFD166]',
+  },
+  {
+    icon: 'bg-[#FF6A2A] text-white shadow-[0_16px_34px_rgba(255,106,42,0.22)]',
+    mark: 'bg-[#FF6A2A]',
+  },
+  {
+    icon: 'bg-[#FFD166] text-[#0B1026] shadow-[0_16px_34px_rgba(255,209,102,0.24)]',
+    mark: 'bg-[#FFD166]',
+  },
+  {
+    icon: 'bg-[#22B8D6] text-white shadow-[0_16px_34px_rgba(34,184,214,0.2)]',
+    mark: 'bg-[#FF6A2A]',
+  },
+]
+
+function WhyOrionSection({ items, imagesByRelatedKey = {} }) {
+  const activeItems = items.filter((item) => item.is_active !== false)
+
+  return (
+    <section
+      id="neden-orion"
+      className="relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-16 text-[#0B1026] sm:py-20 lg:py-24"
+    >
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[#FFE0CC]" />
+
+      <div className="section-shell relative z-10">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="section-eyebrow">NEDEN ORION?</p>
+          <h2 className="mt-3 text-2xl font-black leading-tight text-[#0B1026] min-[390px]:text-3xl sm:text-4xl lg:text-5xl">
+            Çocukların yaz tatilini üretim, keşif, spor ve eğlenceyle dolu bir deneyime
+            dönüştürüyoruz.
+          </h2>
+        </div>
+
+        <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
+          {activeItems.map((item, index) => {
+            const Icon = icons[index % icons.length]
+            const accent = cardAccents[index % cardAccents.length]
+            const description = item.html || item.descriptionHtml || item.text || item.description
+            const relatedKey = getRelatedKeyForItem(item, 'why_orion_card')
+            const cardImage = imagesByRelatedKey[relatedKey]
+
+            return (
+              <article
+                key={item.id || item.title}
+                className="soft-card-strong group relative min-h-44 overflow-hidden rounded-[1.5rem] p-5 transition hover:-translate-y-1 sm:min-h-52 sm:rounded-[1.75rem] sm:p-6"
+              >
+                <span
+                  className={`absolute right-5 top-5 size-2.5 rounded-full ${accent.mark} shadow-[0_0_0_7px_rgba(255,224,204,0.55)]`}
+                />
+                {cardImage ? (
+                  <div className="overflow-hidden rounded-[1.15rem] border border-[#FFE0CC] bg-[#FFF8F0]">
+                    <img
+                      src={cardImage.image_url}
+                      alt={cardImage.alt_text || cardImage.title || item.title}
+                      className="aspect-[16/10] w-full object-cover transition duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                ) : (
+                  <div className={`grid size-12 place-items-center rounded-2xl sm:size-14 ${accent.icon}`}>
+                    <Icon size={25} strokeWidth={2.4} aria-hidden="true" />
+                  </div>
+                )}
+
+                <h3 className="mt-4 text-lg font-black leading-snug text-[#0B1026] sm:mt-5 sm:text-xl">
+                  {item.title}
+                </h3>
+                {description && (
+                  item.html || item.descriptionHtml ? (
+                    <SafeHtml
+                      html={description}
+                      className="mt-3 text-sm font-semibold leading-7 text-[#0B1026]/64"
+                    />
+                  ) : (
+                    <p className="mt-3 text-sm font-semibold leading-7 text-[#0B1026]/64">
+                      {description}
+                    </p>
+                  )
+                )}
+              </article>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default WhyOrionSection
