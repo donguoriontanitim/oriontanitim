@@ -153,7 +153,7 @@ Landing page Supabase bağlıysa aktif kayıtları okur, veri yoksa fallback iç
 - `program_items`: program kartları
 - `faq_items`: sık sorulan sorular
 - `gallery_images`: eski galeri kayıtları
-- `site_images`: hero, program kartı, galeri, dekorasyon ve diğer görsel slotları
+- `site_images`: hero, partner logoları, kamp özeti, neden Orion, program kartı, galeri, dekorasyon ve diğer görsel slotları
 - `contact_requests`: iletişim formu kayıtları
 
 Görsel Yönetimi akışı:

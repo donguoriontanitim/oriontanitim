@@ -5,6 +5,8 @@ export const SITE_IMAGE_BUCKET = 'orion-assets'
 export const usageAreaOptions = [
   { value: 'hero_desktop', label: 'Hero Desktop' },
   { value: 'hero_mobile', label: 'Hero Mobile' },
+  { value: 'partner_logo', label: 'Hero Partner Logosu' },
+  { value: 'summary_card', label: 'Kamp Özeti Kartı' },
   { value: 'program_card', label: 'Program Kartı' },
   { value: 'why_orion_card', label: 'Neden Orion Kartı' },
   { value: 'daily_flow', label: 'Günlük Akış' },
@@ -15,6 +17,19 @@ export const usageAreaOptions = [
 ]
 
 export const relatedKeyOptionsByUsageArea = {
+  partner_logo: [
+    { value: 'partner-1', label: 'Partner Logo 1' },
+    { value: 'partner-2', label: 'Partner Logo 2' },
+    { value: 'partner-3', label: 'Partner Logo 3' },
+  ],
+  summary_card: [
+    { value: 'yas-araligi', label: '7-13 Yaş' },
+    { value: 'teknoloji-atolyeleri', label: 'Teknoloji Atölyeleri' },
+    { value: 'spor-etkinlikleri', label: 'Spor Etkinlikleri' },
+    { value: 'ingilizce-aktiviteler', label: 'İngilizce Aktiviteler' },
+    { value: 'yuzme', label: 'Yüzme' },
+    { value: 'guvenli-kamp', label: 'Güvenli Kamp' },
+  ],
   program_card: [
     { value: 'oyun-tasarimi', label: 'Oyun Tasarımı' },
     { value: 'arduino-robotik-kodlama', label: 'Arduino Robotik Kodlama' },
@@ -66,6 +81,21 @@ const turkishCharacterMap = {
 }
 
 const relatedKeyAliases = {
+  partner_logo: {
+    'logo-1': 'partner-1',
+    'logo-2': 'partner-2',
+    'logo-3': 'partner-3',
+  },
+  summary_card: {
+    '7-13': 'yas-araligi',
+    '7-13-yas': 'yas-araligi',
+    age: 'yas-araligi',
+    security: 'guvenli-kamp',
+    sport: 'spor-etkinlikleri',
+    sports: 'spor-etkinlikleri',
+    swimming: 'yuzme',
+    technology: 'teknoloji-atolyeleri',
+  },
   program_card: {
     arduino: 'arduino-robotik-kodlama',
     '3d-design': '3d-tasarim',

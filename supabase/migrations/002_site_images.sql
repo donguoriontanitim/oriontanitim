@@ -17,6 +17,8 @@ create table if not exists public.site_images (
     usage_area in (
       'hero_desktop',
       'hero_mobile',
+      'partner_logo',
+      'summary_card',
       'program_card',
       'why_orion_card',
       'daily_flow',
@@ -25,6 +27,23 @@ create table if not exists public.site_images (
       'decoration',
       'footer_decoration'
     )
+  )
+);
+
+alter table public.site_images drop constraint if exists site_images_usage_area_check;
+alter table public.site_images add constraint site_images_usage_area_check check (
+  usage_area in (
+    'hero_desktop',
+    'hero_mobile',
+    'partner_logo',
+    'summary_card',
+    'program_card',
+    'why_orion_card',
+    'daily_flow',
+    'gallery',
+    'contact_robot',
+    'decoration',
+    'footer_decoration'
   )
 );
 

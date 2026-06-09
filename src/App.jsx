@@ -80,6 +80,8 @@ function LandingPage() {
     const programImages = filterImagesByUsageArea(siteImages, 'program_card')
     const whyOrionImages = filterImagesByUsageArea(siteImages, 'why_orion_card')
     const dailyFlowImages = filterImagesByUsageArea(siteImages, 'daily_flow')
+    const summaryImages = filterImagesByUsageArea(siteImages, 'summary_card')
+    const partnerLogoImages = filterImagesByUsageArea(siteImages, 'partner_logo')
 
     return {
       contactRobot: getFirstImageByUsageArea(siteImages, 'contact_robot'),
@@ -87,9 +89,11 @@ function LandingPage() {
       gallery: filterImagesByUsageArea(siteImages, 'gallery'),
       heroDesktop: getFirstImageByUsageArea(siteImages, 'hero_desktop'),
       heroMobile: getFirstImageByUsageArea(siteImages, 'hero_mobile'),
+      partnerLogosByKey: mapImagesByRelatedKey(partnerLogoImages),
       programByKey: mapImagesByRelatedKey(programImages),
-      whyOrionByKey: mapImagesByRelatedKey(whyOrionImages),
       dailyFlowByKey: mapImagesByRelatedKey(dailyFlowImages),
+      summaryByKey: mapImagesByRelatedKey(summaryImages),
+      whyOrionByKey: mapImagesByRelatedKey(whyOrionImages),
     }
   }, [siteImages])
 
@@ -101,8 +105,13 @@ function LandingPage() {
           content={landingData.hero}
           desktopImage={imageSlots.heroDesktop}
           mobileImage={imageSlots.heroMobile}
+          partnerLogosByKey={imageSlots.partnerLogosByKey}
         />
-        <CampSummary content={landingData.summary} stats={fallbackContent.stats} />
+        <CampSummary
+          content={landingData.summary}
+          stats={fallbackContent.stats}
+          imagesByRelatedKey={imageSlots.summaryByKey}
+        />
         <ProgramSection programs={landingData.programs} imagesByRelatedKey={imageSlots.programByKey} />
         <WhyOrionSection items={fallbackContent.whyOrion} imagesByRelatedKey={imageSlots.whyOrionByKey} />
         <DailyFlowSection items={fallbackContent.dailyFlow} imagesByRelatedKey={imageSlots.dailyFlowByKey} />

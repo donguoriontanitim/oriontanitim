@@ -9,6 +9,7 @@ import {
   Sparkles,
   Star,
 } from 'lucide-react'
+import { getRelatedKeyForItem } from '../lib/siteImages.js'
 import SafeHtml from './SafeHtml.jsx'
 
 const defaultSubtitleHtml =
@@ -21,7 +22,7 @@ const infoCards = [
   { title: 'Teknoloji + Spor', text: 'Üretim ve hareket dengesi', icon: Cpu },
 ]
 
-function HeroSection({ content, desktopImage, mobileImage }) {
+function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {} }) {
   const title = content?.title || 'ORION KAMP 2026'
   const [titleLead, ...titleRest] = title.split(' ')
   const subtitleHtml = content?.subtitleHtml || content?.subtitle || content?.html || defaultSubtitleHtml
@@ -90,25 +91,31 @@ function HeroSection({ content, desktopImage, mobileImage }) {
                   Anlaşmalı uzman eğitim kurumları
                 </p>
                 <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
-                  {content.partners.slice(0, 3).map((partner) => (
-                    <div
-                      key={partner.id || partner.name}
-                      className="flex h-14 items-center justify-center rounded-2xl border border-[#FFE0CC] bg-white px-2 shadow-sm sm:h-16 sm:px-3"
-                      title={partner.name}
-                    >
-                      {partner.logo_url || partner.logo ? (
-                        <img
-                          src={partner.logo_url || partner.logo}
-                          alt={partner.name}
-                          className="max-h-10 max-w-full object-contain"
-                        />
-                      ) : (
-                        <span className="text-center text-xs font-black tracking-[0.12em] text-[#0B1026]/48">
-                          {partner.shortName || 'LOGO'}
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                  {content.partners.slice(0, 3).map((partner) => {
+                    const partnerLogo = partnerLogosByKey[getRelatedKeyForItem(partner, 'partner_logo')]
+                    const logoUrl = partnerLogo?.image_url || partner.logo_url || partner.logo
+                    const logoAlt = partnerLogo?.alt_text || partnerLogo?.title || partner.name
+
+                    return (
+                      <div
+                        key={partner.id || partner.name}
+                        className="flex h-14 items-center justify-center rounded-2xl border border-[#FFE0CC] bg-white px-2 shadow-sm sm:h-16 sm:px-3"
+                        title={partner.name}
+                      >
+                        {logoUrl ? (
+                          <img
+                            src={logoUrl}
+                            alt={logoAlt}
+                            className="max-h-10 max-w-full object-contain"
+                          />
+                        ) : (
+                          <span className="text-center text-xs font-black tracking-[0.12em] text-[#0B1026]/48">
+                            {partner.shortName || 'LOGO'}
+                          </span>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
