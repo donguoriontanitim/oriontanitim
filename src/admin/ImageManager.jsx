@@ -1,4 +1,16 @@
-import { Edit3, ImagePlus, Loader2, RefreshCw, Save, Trash2, X } from 'lucide-react'
+import {
+  Edit3,
+  Handshake,
+  ImagePlus,
+  LayoutGrid,
+  ListChecks,
+  Loader2,
+  RefreshCw,
+  Save,
+  Star,
+  Trash2,
+  X,
+} from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   SITE_IMAGE_BUCKET,
@@ -28,6 +40,33 @@ const statusClasses = {
   warning: 'admin-message',
 }
 
+const quickVisualAreas = [
+  {
+    usageArea: 'why_orion_card',
+    title: 'Neden Orion ikonları',
+    description: 'NEDEN ORION? bölümündeki kart görsellerini değiştirir.',
+    icon: Star,
+  },
+  {
+    usageArea: 'summary_card',
+    title: 'Kamp Özeti ikonları',
+    description: 'Kamp Özeti bölümündeki kart ikonlarını değiştirir.',
+    icon: LayoutGrid,
+  },
+  {
+    usageArea: 'partner_logo',
+    title: 'Hero kurum logoları',
+    description: 'Anlaşmalı uzman eğitim kurumları logolarını değiştirir.',
+    icon: Handshake,
+  },
+  {
+    usageArea: 'program_card',
+    title: 'Program ikonları',
+    description: 'Program bölümündeki aktivite görsellerini değiştirir.',
+    icon: ListChecks,
+  },
+]
+
 const getFriendlyErrorMessage = (error, fallbackMessage) => {
   const detail = error?.message || ''
 
@@ -56,6 +95,18 @@ const getFriendlyErrorMessage = (error, fallbackMessage) => {
 
 const getUsageAreaLabel = (usageArea) =>
   usageAreaOptions.find((option) => option.value === usageArea)?.label || usageArea
+
+const getRelatedKeyLabel = (usageArea) => {
+  if (usageArea === 'partner_logo') {
+    return 'Logo seçimi'
+  }
+
+  if (['program_card', 'summary_card', 'why_orion_card'].includes(usageArea)) {
+    return 'Kart seçimi'
+  }
+
+  return 'Related key'
+}
 
 const getMissingConfigMessage = () => {
   if (supabaseConfigStatus.usesPlaceholderConfig) {
@@ -204,6 +255,17 @@ function ImageManager() {
     setDraft({ ...emptyDraft, sort_order: images.length + 1 })
     setFile(null)
     setEditingImage(null)
+  }
+
+  const selectVisualArea = (usageArea) => {
+    setDraft({
+      ...emptyDraft,
+      usage_area: usageArea,
+      sort_order: images.length + 1,
+    })
+    setFile(null)
+    setEditingImage(null)
+    setStatus({ type: 'idle', message: '' })
   }
 
   const editImage = (image) => {
@@ -461,6 +523,57 @@ function ImageManager() {
         </div>
       )}
 
+      <section className="admin-card mb-6 p-4 sm:p-5">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-lg font-black text-[#0B1026]">İkon ve logo alanları</h2>
+            <p className="mt-1 text-sm font-semibold leading-6 text-[#0B1026]/58">
+              Değiştirmek istediğiniz bölümü seçin, ardından kart veya logo seçimini yapıp görsel yükleyin.
+            </p>
+          </div>
+          <span className="admin-pill w-fit">Aktif seçim: {getUsageAreaLabel(draft.usage_area)}</span>
+        </div>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {quickVisualAreas.map((area) => {
+            const Icon = area.icon
+            const isSelected = draft.usage_area === area.usageArea
+
+            return (
+              <button
+                key={area.usageArea}
+                type="button"
+                onClick={() => selectVisualArea(area.usageArea)}
+                className={`group flex min-h-28 items-start gap-3 rounded-2xl border p-4 text-left transition ${
+                  isSelected
+                    ? 'border-[#FF6A2A] bg-[#FFF1E8] shadow-[0_14px_30px_rgba(255,106,42,0.14)]'
+                    : 'border-[#FFE0CC] bg-white hover:-translate-y-0.5 hover:border-[#FFB088] hover:bg-[#FFFBF5]'
+                }`}
+                aria-pressed={isSelected}
+              >
+                <span
+                  className={`grid size-11 shrink-0 place-items-center rounded-2xl ${
+                    isSelected
+                      ? 'orion-gradient text-white'
+                      : 'bg-[#FFF1E8] text-[#FF6A2A] group-hover:bg-[#FFE0CC]'
+                  }`}
+                >
+                  <Icon size={20} aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-black leading-5 text-[#0B1026]">
+                    {area.title}
+                  </span>
+                  <span className="mt-1 block text-xs font-semibold leading-5 text-[#0B1026]/58">
+                    {area.description}
+                  </span>
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </section>
+
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
         <form onSubmit={saveImage} className="admin-card h-fit p-5">
           <div className="flex items-start justify-between gap-4">
@@ -545,7 +658,7 @@ function ImageManager() {
 
           {relatedKeyOptions.length > 0 ? (
             <label className="admin-label mt-4">
-              Related key
+              {getRelatedKeyLabel(draft.usage_area)}
               <select
                 required
                 value={draft.related_key}
@@ -562,7 +675,7 @@ function ImageManager() {
             </label>
           ) : (
             <label className="admin-label mt-4">
-              Related key
+              {getRelatedKeyLabel(draft.usage_area)}
               <input
                 value={draft.related_key}
                 onChange={(event) => updateDraft('related_key', event.target.value)}
