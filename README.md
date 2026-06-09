@@ -90,6 +90,19 @@ Admin kullanıcı Supabase Auth üzerinden manuel oluşturulur:
 
 Şimdilik tek admin mantığı kullanılır: `auth.role() = 'authenticated'`.
 
+İstenen admin kullanıcı için uygulama kullanıcı adını şu email'e çevirir:
+
+```bash
+orionadmin -> orionadmin@orionkamp.local
+```
+
+SQL Editor ile oluşturmak isterseniz:
+
+- Güvenli örnek dosya: `supabase/create-admin-user.example.sql`
+- Bu bilgisayarda gerçek şifreyle hazırlanan local dosya: `supabase/local-admin-user.sql`
+
+`supabase/local-admin-user.sql` gerçek şifre içerdiği için GitHub'a gönderilmez.
+
 ## GitHub Pages Yayını
 
 Repository:

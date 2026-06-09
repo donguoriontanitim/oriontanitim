@@ -18,6 +18,7 @@ dist-ssr
 
 admin-check
 mobile-check
+supabase/local-admin-user.sql
 
 # Editor directories and files
 .vscode/*
