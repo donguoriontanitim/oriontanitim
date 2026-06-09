@@ -65,16 +65,16 @@ function CampSummary({ content, stats = [] }) {
             return (
               <article
                 key={card.title}
-                className="soft-card-strong group flex min-h-36 flex-col justify-between p-4 transition hover:-translate-y-1 hover:scale-[1.015] sm:min-h-40 sm:p-5"
+                className="soft-card-strong group flex min-h-36 flex-col items-center justify-between p-4 text-center transition hover:-translate-y-1 hover:scale-[1.015] sm:min-h-40 sm:p-5"
               >
                 <span
-                  className={`grid size-12 place-items-center rounded-2xl shadow-[0_14px_30px_rgba(11,16,38,0.08)] ${
+                  className={`grid size-[3.9rem] place-items-center rounded-2xl shadow-[0_14px_30px_rgba(11,16,38,0.08)] ${
                     isBlue
                       ? 'bg-[#E9FAFE] text-[#22B8D6]'
                       : 'bg-[#FFF1E8] text-[#FF6A2A]'
                   }`}
                 >
-                  <Icon size={23} aria-hidden="true" />
+                  <Icon size={30} aria-hidden="true" />
                 </span>
                 <span>
                   <span className="block text-base font-black leading-snug text-[#0B1026] sm:text-lg">
