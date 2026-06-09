@@ -461,6 +461,26 @@ svg {
   border-color: rgba(225, 29, 72, 0.28);
 }
 
+.admin-icon-danger-button {
+  width: 2.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  min-height: 2.5rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  padding: 0;
+}
+
+.admin-icon-danger-button svg {
+  width: 1rem;
+  height: 1rem;
+  display: block;
+  color: currentColor;
+  stroke: currentColor;
+  stroke-width: 2.3;
+}
+
 .admin-status-button {
   border-radius: 999px;
   padding: 0.5rem 1rem;

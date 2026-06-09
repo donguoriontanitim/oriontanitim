@@ -79,7 +79,7 @@ function ProgramSection({ programs, imagesByRelatedKey = {} }) {
                     <img
                       src={cardImage.image_url}
                       alt={cardImage.alt_text || cardImage.title || program.title}
-                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      className="h-full w-full object-contain p-2 transition duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
                   ) : (

@@ -159,10 +159,10 @@ function FaqManager() {
                   <button
                     type="button"
                     onClick={() => deleteFaq(faq.id)}
-                    className="admin-danger-button grid size-9 place-items-center rounded-full p-0"
+                    className="admin-danger-button admin-icon-danger-button"
                     aria-label={`${faq.question} sil`}
                   >
-                    <Trash2 size={16} aria-hidden="true" />
+                    <Trash2 aria-hidden="true" />
                   </button>
                 </div>
               </div>

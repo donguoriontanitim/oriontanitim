@@ -682,13 +682,13 @@ function ImageManager() {
                         type="button"
                         onClick={() => deleteImage(image)}
                         disabled={deletingId === image.id}
-                        className="admin-danger-button grid size-10 place-items-center rounded-full p-0 disabled:opacity-60"
+                        className="admin-danger-button admin-icon-danger-button disabled:opacity-60"
                         aria-label={`${image.title || 'Görsel'} sil`}
                       >
                         {deletingId === image.id ? (
                           <Loader2 className="animate-spin" size={16} aria-hidden="true" />
                         ) : (
-                          <Trash2 size={16} aria-hidden="true" />
+                          <Trash2 aria-hidden="true" />
                         )}
                       </button>
                     </div>
