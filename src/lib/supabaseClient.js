@@ -8,10 +8,20 @@ const fallbackSupabaseUrl = githubPagesFallbackEnabled
 const fallbackSupabaseAnonKey = githubPagesFallbackEnabled
   ? 'sb_publishable_UzXpltbZBcyfuTDLTeH5DA_4ehqTxus'
   : ''
-const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || fallbackSupabaseUrl)?.trim()
-const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || fallbackSupabaseAnonKey)?.trim()
+const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || ''
+const envSupabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || ''
+const isValidSupabaseUrl = (value = '') => /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(value)
+const isValidSupabaseKey = (value = '') =>
+  value.startsWith('sb_') || value.split('.').length === 3
+const supabaseUrl =
+  isValidSupabaseUrl(envSupabaseUrl) ? envSupabaseUrl : fallbackSupabaseUrl
+const supabaseAnonKey =
+  isValidSupabaseKey(envSupabaseAnonKey) ? envSupabaseAnonKey : fallbackSupabaseAnonKey
 const usesPlaceholderConfig =
-  supabaseUrl?.includes('your-project-ref') || supabaseAnonKey === 'your-public-anon-key'
+  !isValidSupabaseUrl(supabaseUrl) ||
+  !isValidSupabaseKey(supabaseAnonKey) ||
+  supabaseUrl?.includes('your-project-ref') ||
+  supabaseAnonKey === 'your-public-anon-key'
 
 export const supabaseConfigStatus = {
   hasAnonKey: Boolean(supabaseAnonKey),
