@@ -58,14 +58,25 @@ function AdminLogin() {
       return
     }
 
+    const adminEmail = getAdminEmailFromUsername(cleanUsername)
     const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: getAdminEmailFromUsername(cleanUsername),
+      email: adminEmail,
       password,
     })
     setIsLoading(false)
 
     if (signInError) {
-      setError('Kullanıcı adı veya şifre hatalı.')
+      console.error('Supabase admin giriş hatası:', {
+        code: signInError.code,
+        email: adminEmail,
+        message: signInError.message,
+        status: signInError.status,
+      })
+      setError(
+        signInError.code === 'invalid_credentials'
+          ? `${adminEmail} kullanıcısı Supabase Auth içinde yok veya şifresi hatalı. SQL kurulumunu ve admin şifresini kontrol edin.`
+          : `Admin girişi yapılamadı: ${signInError.message}`,
+      )
       return
     }
 
@@ -103,7 +114,7 @@ function AdminLogin() {
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
                 className="admin-input pl-11"
-                placeholder="admin"
+                placeholder="orionadmin"
               />
             </span>
           </label>

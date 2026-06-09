@@ -125,6 +125,7 @@ begin
       and provider = 'email';
   else
     insert into auth.identities (
+      id,
       provider_id,
       user_id,
       identity_data,
@@ -134,6 +135,7 @@ begin
       updated_at
     )
     values (
+      gen_random_uuid(),
       admin_user_id::text,
       admin_user_id,
       jsonb_build_object(
