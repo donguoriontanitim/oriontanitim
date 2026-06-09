@@ -20,7 +20,7 @@ function DailyFlowSection({ items, imagesByRelatedKey = {} }) {
         </div>
 
         <div className="relative mt-9 sm:mt-12">
-          <div className="absolute bottom-8 left-6 top-6 w-0.5 bg-[#FF6A2A]/28 sm:left-7 sm:top-7 lg:hidden" />
+          <div className="absolute bottom-8 left-1/2 top-6 w-0.5 -translate-x-1/2 bg-[#FF6A2A]/28 sm:top-7 lg:hidden" />
           <div className="absolute left-8 right-8 top-7 hidden h-0.5 bg-[#FF6A2A]/28 lg:block" />
 
           <div className="relative z-10 grid gap-4 sm:gap-5 lg:grid-cols-7 lg:gap-4">
@@ -32,24 +32,24 @@ function DailyFlowSection({ items, imagesByRelatedKey = {} }) {
               return (
                 <article
                   key={item.id || `${item.time}-${item.title}`}
-                  className="relative flex gap-3 sm:gap-4 lg:block"
+                  className="relative flex flex-col items-center gap-3 text-center sm:gap-4 lg:block"
                 >
                   {flowImage ? (
-                    <div className="grid size-12 shrink-0 place-items-center overflow-hidden rounded-full border border-[#FFE0CC] bg-white shadow-[0_16px_34px_rgba(255,106,42,0.18)] sm:size-14 lg:mx-auto">
+                    <div className="grid size-[3.9rem] shrink-0 place-items-center overflow-hidden rounded-full border border-[#FFE0CC] bg-white shadow-[0_16px_34px_rgba(255,106,42,0.18)] sm:size-[4.55rem] lg:mx-auto">
                       <img
                         src={flowImage.image_url}
                         alt={flowImage.alt_text || flowImage.title || item.title}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain p-1"
                         loading="lazy"
                       />
                     </div>
                   ) : (
-                    <div className="orion-gradient grid size-12 shrink-0 place-items-center rounded-full text-white shadow-[0_16px_34px_rgba(255,106,42,0.24)] sm:size-14 lg:mx-auto">
-                      <Icon size={21} strokeWidth={2.2} aria-hidden="true" />
+                    <div className="orion-gradient grid size-[3.9rem] shrink-0 place-items-center rounded-full text-white shadow-[0_16px_34px_rgba(255,106,42,0.24)] sm:size-[4.55rem] lg:mx-auto">
+                      <Icon size={27} strokeWidth={2.2} aria-hidden="true" />
                     </div>
                   )}
 
-                  <div className="soft-card-strong min-w-0 flex-1 rounded-[1.35rem] p-4 lg:mt-6 lg:min-h-44 lg:rounded-[1.5rem]">
+                  <div className="soft-card-strong min-w-0 w-full flex-1 rounded-[1.35rem] p-4 lg:mt-6 lg:min-h-44 lg:rounded-[1.5rem]">
                     <p className="text-sm font-black text-[#FF6A2A]">{item.time}</p>
                     <h3 className="mt-2 text-base font-black leading-snug text-[#0B1026] sm:text-lg">
                       {item.title}

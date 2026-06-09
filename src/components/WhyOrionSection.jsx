@@ -61,23 +61,23 @@ function WhyOrionSection({ items, imagesByRelatedKey = {} }) {
             return (
               <article
                 key={item.id || item.title}
-                className="soft-card-strong group relative min-h-44 overflow-hidden rounded-[1.5rem] p-5 transition hover:-translate-y-1 sm:min-h-52 sm:rounded-[1.75rem] sm:p-6"
+                className="soft-card-strong group relative flex min-h-44 flex-col items-center overflow-hidden rounded-[1.5rem] p-5 text-center transition hover:-translate-y-1 sm:min-h-52 sm:rounded-[1.75rem] sm:p-6"
               >
                 <span
                   className={`absolute right-5 top-5 size-2.5 rounded-full ${accent.mark} shadow-[0_0_0_7px_rgba(255,224,204,0.55)]`}
                 />
                 {cardImage ? (
-                  <div className="overflow-hidden rounded-[1.15rem] border border-[#FFE0CC] bg-[#FFF8F0]">
+                  <div className="mx-auto w-full overflow-hidden rounded-[1.15rem] border border-[#FFE0CC] bg-[#FFF8F0]">
                     <img
                       src={cardImage.image_url}
                       alt={cardImage.alt_text || cardImage.title || item.title}
-                      className="aspect-[16/10] w-full object-cover transition duration-300 group-hover:scale-105"
+                      className="aspect-[16/10] w-full object-contain p-1 transition duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
                   </div>
                 ) : (
-                  <div className={`grid size-12 place-items-center rounded-2xl sm:size-14 ${accent.icon}`}>
-                    <Icon size={25} strokeWidth={2.4} aria-hidden="true" />
+                  <div className={`grid size-[3.9rem] place-items-center rounded-2xl sm:size-[4.55rem] ${accent.icon}`}>
+                    <Icon size={33} strokeWidth={2.4} aria-hidden="true" />
                   </div>
                 )}
 
@@ -88,10 +88,10 @@ function WhyOrionSection({ items, imagesByRelatedKey = {} }) {
                   item.html || item.descriptionHtml ? (
                     <SafeHtml
                       html={description}
-                      className="mt-3 text-sm font-semibold leading-7 text-[#0B1026]/64"
+                      className="mt-3 text-center text-sm font-semibold leading-7 text-[#0B1026]/64"
                     />
                   ) : (
-                    <p className="mt-3 text-sm font-semibold leading-7 text-[#0B1026]/64">
+                    <p className="mt-3 text-center text-sm font-semibold leading-7 text-[#0B1026]/64">
                       {description}
                     </p>
                   )

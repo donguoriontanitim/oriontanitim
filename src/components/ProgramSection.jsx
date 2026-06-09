@@ -69,24 +69,24 @@ function ProgramSection({ programs, imagesByRelatedKey = {} }) {
             return (
               <article
                 key={program.id}
-                className={`soft-card-strong group relative min-h-[13.75rem] overflow-hidden bg-gradient-to-br ${tone.shell} p-4 transition hover:-translate-y-2 hover:scale-[1.015] sm:min-h-[15.5rem] sm:p-5`}
+                className={`soft-card-strong group relative flex min-h-[13.75rem] flex-col items-center overflow-hidden bg-gradient-to-br ${tone.shell} p-4 text-center transition hover:-translate-y-2 hover:scale-[1.015] sm:min-h-[15.5rem] sm:p-5`}
               >
                 <span
                   className={`absolute right-4 top-4 size-3 rounded-full ${tone.dot} shadow-[0_0_0_7px_rgba(255,224,204,0.55)]`}
                 />
-                <div className="mx-auto mb-4 flex aspect-square max-h-20 items-center justify-center overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-white/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_34px_rgba(11,16,38,0.07)] sm:mb-5 sm:max-h-28 sm:rounded-[1.5rem]">
+                <div className="mx-auto mb-4 flex size-[6.5rem] items-center justify-center overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-white/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_34px_rgba(11,16,38,0.07)] sm:mb-5 sm:size-[9rem] sm:rounded-[1.5rem]">
                   {cardImage ? (
                     <img
                       src={cardImage.image_url}
                       alt={cardImage.alt_text || cardImage.title || program.title}
-                      className="h-full w-full object-contain p-2 transition duration-300 group-hover:scale-105"
+                      className="h-full w-full object-contain p-1 transition duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
                   ) : (
                     <span
-                      className={`grid size-12 place-items-center rounded-2xl transition group-hover:rotate-[-6deg] group-hover:scale-110 sm:size-14 ${tone.icon}`}
+                      className={`grid size-[3.9rem] place-items-center rounded-2xl transition group-hover:rotate-[-6deg] group-hover:scale-110 sm:size-[4.55rem] ${tone.icon}`}
                     >
-                      <Icon size={26} strokeWidth={2.4} aria-hidden="true" />
+                      <Icon size={34} strokeWidth={2.4} aria-hidden="true" />
                     </span>
                   )}
                 </div>
