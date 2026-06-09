@@ -164,11 +164,33 @@ export const filterImagesByUsageArea = (images = [], usageArea) =>
 export const getFirstImageByUsageArea = (images = [], usageArea) =>
   filterImagesByUsageArea(images, usageArea)[0] || null
 
+const getImageDateValue = (image = {}) => {
+  const dateValue = Date.parse(image.updated_at || image.created_at || '')
+
+  return Number.isNaN(dateValue) ? 0 : dateValue
+}
+
+const shouldUseImageForKey = (candidate, current) => {
+  if (!current) {
+    return true
+  }
+
+  if (candidate.is_active !== false && current.is_active === false) {
+    return true
+  }
+
+  if (candidate.is_active === false && current.is_active !== false) {
+    return false
+  }
+
+  return getImageDateValue(candidate) >= getImageDateValue(current)
+}
+
 export const mapImagesByRelatedKey = (images = []) =>
   images.reduce((mappedImages, image) => {
     const key = slugifyKey(image.related_key)
 
-    if (key && !mappedImages[key]) {
+    if (key && shouldUseImageForKey(image, mappedImages[key])) {
       mappedImages[key] = image
     }
 

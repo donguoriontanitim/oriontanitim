@@ -152,6 +152,47 @@ const requireAdminSession = async () => {
   return data.session
 }
 
+const getImageDateValue = (image = {}) => {
+  const dateValue = Date.parse(image.updated_at || image.created_at || '')
+
+  return Number.isNaN(dateValue) ? 0 : dateValue
+}
+
+const shouldPreferSlotImage = (candidate, current) => {
+  if (!current) {
+    return true
+  }
+
+  if (candidate.is_active !== false && current.is_active === false) {
+    return true
+  }
+
+  if (candidate.is_active === false && current.is_active !== false) {
+    return false
+  }
+
+  return getImageDateValue(candidate) >= getImageDateValue(current)
+}
+
+const findImageForSlot = (images, usageArea, relatedKey) => {
+  const normalizedRelatedKey = slugifyKey(relatedKey)
+
+  if (!usageArea || !normalizedRelatedKey) {
+    return null
+  }
+
+  return images.reduce((selectedImage, image) => {
+    const isSameSlot =
+      image.usage_area === usageArea && slugifyKey(image.related_key) === normalizedRelatedKey
+
+    if (!isSameSlot || !shouldPreferSlotImage(image, selectedImage)) {
+      return selectedImage
+    }
+
+    return image
+  }, null)
+}
+
 function ImageManager() {
   const [images, setImages] = useState([])
   const [draft, setDraft] = useState(emptyDraft)
@@ -200,7 +241,7 @@ function ImageManager() {
 
         const currentImage = mappedImages[usageArea][relatedKey]
 
-        if (!currentImage || (image.is_active && !currentImage.is_active)) {
+        if (shouldPreferSlotImage(image, currentImage)) {
           mappedImages[usageArea][relatedKey] = image
         }
 
@@ -347,12 +388,16 @@ function ImageManager() {
     setIsSaving(true)
 
     let uploadedStoragePath = ''
+    let isUpdatingExistingImage = Boolean(editingImage)
 
     try {
       await requireAdminSession()
 
-      let imageUrl = editingImage?.image_url || ''
-      let storagePath = editingImage?.storage_path || ''
+      const existingSlotImage =
+        editingImage || findImageForSlot(images, draft.usage_area, draft.related_key)
+      isUpdatingExistingImage = Boolean(existingSlotImage)
+      let imageUrl = existingSlotImage?.image_url || ''
+      let storagePath = existingSlotImage?.storage_path || ''
 
       if (file) {
         uploadedStoragePath = createSiteImageStoragePath(draft.usage_area, file.name)
@@ -399,8 +444,8 @@ function ImageManager() {
         updated_at: new Date().toISOString(),
       }
 
-      const { error: databaseError } = editingImage
-        ? await supabase.from('site_images').update(payload).eq('id', editingImage.id)
+      const { error: databaseError } = isUpdatingExistingImage
+        ? await supabase.from('site_images').update(payload).eq('id', existingSlotImage.id)
         : await supabase.from('site_images').insert(payload)
 
       if (databaseError) {
@@ -423,10 +468,10 @@ function ImageManager() {
         storage_path: payload.storage_path,
       })
 
-      if (editingImage?.storage_path && uploadedStoragePath && editingImage.storage_path !== uploadedStoragePath) {
+      if (existingSlotImage?.storage_path && uploadedStoragePath && existingSlotImage.storage_path !== uploadedStoragePath) {
         const { error: removeOldError } = await supabase.storage
           .from(SITE_IMAGE_BUCKET)
-          .remove([editingImage.storage_path])
+          .remove([existingSlotImage.storage_path])
 
         if (removeOldError) {
           console.warn(`Eski görsel dosyası silinemedi: ${removeOldError.message}`)
@@ -451,7 +496,7 @@ function ImageManager() {
       formElement.reset()
       setStatus({
         type: 'success',
-        message: editingImage ? 'Görsel güncellendi.' : 'Görsel başarıyla yüklendi.',
+        message: isUpdatingExistingImage ? 'Görsel güncellendi.' : 'Görsel başarıyla yüklendi.',
       })
     } catch (error) {
       console.error('Görsel kaydetme hatası:', error)
@@ -459,7 +504,7 @@ function ImageManager() {
         type: 'error',
         message: getFriendlyErrorMessage(
           error,
-          editingImage ? 'Database kaydı güncellenemedi.' : 'Database kaydı oluşturulamadı.',
+          isUpdatingExistingImage ? 'Database kaydı güncellenemedi.' : 'Database kaydı oluşturulamadı.',
         ),
       })
     } finally {
