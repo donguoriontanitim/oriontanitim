@@ -74,7 +74,7 @@ function ProgramSection({ programs, imagesByRelatedKey = {} }) {
                 <span
                   className={`absolute right-4 top-4 size-3 rounded-full ${tone.dot} shadow-[0_0_0_7px_rgba(255,224,204,0.55)]`}
                 />
-                <div className="mb-4 flex aspect-square max-h-20 items-center justify-center overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-white/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_34px_rgba(11,16,38,0.07)] sm:mb-5 sm:max-h-28 sm:rounded-[1.5rem]">
+                <div className="mx-auto mb-4 flex aspect-square max-h-20 items-center justify-center overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-white/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_34px_rgba(11,16,38,0.07)] sm:mb-5 sm:max-h-28 sm:rounded-[1.5rem]">
                   {cardImage ? (
                     <img
                       src={cardImage.image_url}
@@ -90,10 +90,10 @@ function ProgramSection({ programs, imagesByRelatedKey = {} }) {
                     </span>
                   )}
                 </div>
-                <h3 className="text-base font-black leading-snug text-[#0B1026] sm:text-lg">
+                <h3 className="text-center text-base font-black leading-snug text-[#0B1026] sm:text-lg">
                   {program.title}
                 </h3>
-                <p className="mt-3 line-clamp-4 text-sm font-semibold leading-6 text-[#0B1026]/60">
+                <p className="mx-auto mt-3 line-clamp-4 max-w-[13rem] text-center text-sm font-semibold leading-6 text-[#0B1026]/60">
                   {program.description}
                 </p>
               </article>
