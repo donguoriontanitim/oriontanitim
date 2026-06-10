@@ -1,5 +1,5 @@
 import { Cpu, Dumbbell, GraduationCap, Languages, ShieldCheck, Waves } from 'lucide-react'
-import { getRelatedKeyForItem } from '../lib/siteImages.js'
+import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
 import SafeHtml from './SafeHtml.jsx'
 
 const summaryCards = [
@@ -47,14 +47,22 @@ const summaryCards = [
   },
 ]
 
-function CampSummary({ content, stats = [], imagesByRelatedKey = {} }) {
+function CampSummary({ content, stats = [], imagesByRelatedKey = {}, backgroundImage }) {
   const ageStat = stats.find((stat) => stat.label?.toLocaleLowerCase('tr-TR').includes('yaş'))
   const cards = summaryCards.map((card) =>
     card.key === 'yas-araligi' && ageStat?.value ? { ...card, title: `${ageStat.value} Yaş` } : card,
   )
+  const backgroundStyle = createSectionBackgroundStyle(
+    backgroundImage,
+    'linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,251,245,0.9) 100%)',
+  )
 
   return (
-    <section id="ozet" className="relative bg-white/72 py-14 text-[#0B1026] sm:py-16 lg:py-20">
+    <section
+      id="ozet"
+      className="relative bg-white/72 py-14 text-[#0B1026] sm:py-16 lg:py-20"
+      style={backgroundStyle}
+    >
       <div className="section-shell">
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-eyebrow">Kamp Özeti</p>

@@ -1,15 +1,20 @@
 import { Brush, Clock3, Coffee, Gamepad2, Laptop, MessageCircle, Sparkles } from 'lucide-react'
-import { getRelatedKeyForItem } from '../lib/siteImages.js'
+import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
 
 const flowIcons = [Clock3, Laptop, Gamepad2, Coffee, Brush, Sparkles, MessageCircle]
 
-function DailyFlowSection({ items, imagesByRelatedKey = {} }) {
+function DailyFlowSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
   const activeItems = items.filter((item) => item.is_active !== false)
+  const backgroundStyle = createSectionBackgroundStyle(
+    backgroundImage,
+    'linear-gradient(180deg, rgba(255,251,245,0.9) 0%, rgba(255,255,255,0.88) 100%)',
+  )
 
   return (
     <section
       id="akis"
       className="bg-[linear-gradient(180deg,#FFFBF5_0%,#FFFFFF_100%)] py-16 text-[#0B1026] sm:py-20 lg:py-24"
+      style={backgroundStyle}
     >
       <div className="section-shell">
         <div className="mx-auto max-w-2xl text-center">

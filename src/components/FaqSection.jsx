@@ -1,10 +1,15 @@
 import { HelpCircle, Minus, Plus } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 import SafeHtml from './SafeHtml.jsx'
 
-function FaqSection({ faqs }) {
+function FaqSection({ faqs, backgroundImage }) {
   const [remoteFaqs, setRemoteFaqs] = useState(null)
+  const backgroundStyle = createSectionBackgroundStyle(
+    backgroundImage,
+    'linear-gradient(180deg, rgba(255,251,245,0.9) 0%, rgba(255,255,255,0.9) 100%)',
+  )
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -42,6 +47,7 @@ function FaqSection({ faqs }) {
     <section
       id="sss"
       className="bg-[linear-gradient(180deg,#FFFBF5_0%,#FFFFFF_100%)] py-16 text-[#0B1026] sm:py-20 lg:py-24"
+      style={backgroundStyle}
     >
       <div className="section-shell">
         <div className="mx-auto max-w-2xl text-center">

@@ -1,5 +1,5 @@
 import { BadgeCheck, Rocket, ShieldCheck, SmilePlus, Sparkles, UsersRound } from 'lucide-react'
-import { getRelatedKeyForItem } from '../lib/siteImages.js'
+import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
 import SafeHtml from './SafeHtml.jsx'
 
 const icons = [Rocket, UsersRound, ShieldCheck, SmilePlus, Sparkles, BadgeCheck]
@@ -31,13 +31,18 @@ const cardAccents = [
   },
 ]
 
-function WhyOrionSection({ items, imagesByRelatedKey = {} }) {
+function WhyOrionSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
   const activeItems = items.filter((item) => item.is_active !== false)
+  const backgroundStyle = createSectionBackgroundStyle(
+    backgroundImage,
+    'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,251,245,0.9) 100%)',
+  )
 
   return (
     <section
       id="neden-orion"
       className="relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-16 text-[#0B1026] sm:py-20 lg:py-24"
+      style={backgroundStyle}
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[#FFE0CC]" />
 

@@ -42,6 +42,15 @@ const statusClasses = {
 
 const managedPhotoSections = [
   {
+    usageArea: 'section_background',
+    title: 'Bölüm arka plan görselleri',
+    eyebrow: 'Sayfa Bölümleri',
+    description: 'Hero, Kamp Özeti, Program, NEDEN ORION?, Galeri, SSS, İletişim ve Footer arka planlarını ayrı ayrı yönetin.',
+    icon: ImagePlus,
+    itemLabel: 'bölüm',
+    emptyLabel: 'Arka plan yok',
+  },
+  {
     usageArea: 'summary_card',
     title: 'Kamp Özeti fotoğrafları',
     eyebrow: 'Kamp Özeti',
@@ -109,6 +118,10 @@ const getRelatedKeyLabel = (usageArea) => {
 
   if (usageArea === 'contact_panel_image') {
     return 'Alan seçimi'
+  }
+
+  if (usageArea === 'section_background') {
+    return 'Bölüm seçimi'
   }
 
   if (['program_card', 'summary_card', 'why_orion_card'].includes(usageArea)) {
@@ -674,7 +687,12 @@ function ImageManager() {
                             <img
                               src={currentImage.image_url}
                               alt={currentImage.alt_text || currentImage.title || option.label}
-                              className="h-full w-full object-contain p-1.5"
+                              className={`h-full w-full ${
+                                section.usageArea === 'section_background' ||
+                                section.usageArea === 'contact_panel_image'
+                                  ? 'object-cover'
+                                  : 'object-contain p-1.5'
+                              }`}
                               loading="lazy"
                             />
                           ) : (

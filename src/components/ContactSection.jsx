@@ -1,6 +1,7 @@
 import { Bot, CheckCircle2, Loader2, Mail, Phone, Send, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
+import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 import { whatsappMessage, whatsappNumber } from '../fallbackContent.js'
 import contactVisual from '../assets/orion-hero.png'
@@ -40,23 +41,35 @@ const trustItems = [
   'Hızlı bilgilendirme ve dönüş',
 ]
 
-function ContactSection({ programs, contactInfo, contactImage, contactQuickImage, contactSideImage, content }) {
+function ContactSection({
+  programs,
+  contactInfo,
+  contactImage,
+  contactQuickImage,
+  contactSideImage,
+  content,
+  backgroundImage,
+}) {
   const [form, setForm] = useState(initialForm)
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const contactContent = { ...fallbackContactContent, ...content }
   const contactQuickImageUrl = contactQuickImage?.image_url
   const contactImageUrl = contactSideImage?.image_url || contactImage?.image_url || contactVisual
+  const backgroundStyle = createSectionBackgroundStyle(
+    backgroundImage,
+    'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,251,245,0.9) 100%)',
+  )
   const quickPanelBackgroundStyle = contactQuickImageUrl
     ? {
-        backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.98) 0%, rgba(255,248,240,0.9) 34%, rgba(255,248,240,0.72) 56%, rgba(255,248,240,0.96) 100%), url(${contactQuickImageUrl})`,
+        backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.98) 0%, rgba(255,248,240,0.94) 34%, rgba(255,248,240,0.9) 56%, rgba(255,248,240,0.98) 100%), url(${contactQuickImageUrl})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
       }
     : undefined
   const sidePanelBackgroundStyle = {
-    backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.86) 0%, rgba(255,248,240,0.46) 48%, rgba(255,248,240,0.94) 100%), url(${contactImageUrl})`,
+    backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.94) 0%, rgba(255,248,240,0.82) 48%, rgba(255,248,240,0.98) 100%), url(${contactImageUrl})`,
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
@@ -162,6 +175,7 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
     <section
       id="iletisim"
       className="bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-16 text-[#0B1026] sm:py-20 lg:py-24"
+      style={backgroundStyle}
     >
       <div className="section-shell">
         <div className="overflow-hidden rounded-[1.75rem] border border-[#FFE0CC] bg-[#FFF8F0] p-2.5 shadow-[0_28px_90px_rgba(255,106,42,0.12)] sm:rounded-[2.25rem] sm:p-5 lg:rounded-[3rem] lg:p-6">

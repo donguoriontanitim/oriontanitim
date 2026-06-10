@@ -9,6 +9,7 @@ export const usageAreaOptions = [
   { value: 'summary_card', label: 'Kamp Özeti Kartı' },
   { value: 'program_card', label: 'Program Kartı' },
   { value: 'why_orion_card', label: 'Neden Orion Kartı' },
+  { value: 'section_background', label: 'Bölüm Arka Planı' },
   { value: 'daily_flow', label: 'Günlük Akış' },
   { value: 'gallery', label: 'Galeri' },
   { value: 'contact_robot', label: 'İletişim Robotu' },
@@ -18,6 +19,17 @@ export const usageAreaOptions = [
 ]
 
 export const relatedKeyOptionsByUsageArea = {
+  section_background: [
+    { value: 'hero', label: 'Ana Sayfa / Hero' },
+    { value: 'summary', label: 'Kamp Özeti Bölümü' },
+    { value: 'program', label: 'Program İçerikleri Bölümü' },
+    { value: 'why-orion', label: 'NEDEN ORION? Bölümü' },
+    { value: 'daily-flow', label: 'Günlük Akış Bölümü' },
+    { value: 'gallery', label: 'Galeri Bölümü' },
+    { value: 'faq', label: 'SSS Bölümü' },
+    { value: 'contact', label: 'İletişim Bölümü' },
+    { value: 'footer', label: 'Footer / Alt Bilgi' },
+  ],
   contact_panel_image: [
     { value: 'quick-contact', label: 'Sol Hızlı İletişim Alanı' },
     { value: 'right-panel', label: 'Sağ Görsel Alanı' },
@@ -86,6 +98,27 @@ const turkishCharacterMap = {
 }
 
 const relatedKeyAliases = {
+  section_background: {
+    ana: 'hero',
+    anasayfa: 'hero',
+    home: 'hero',
+    ozet: 'summary',
+    'kamp-ozeti': 'summary',
+    programlar: 'program',
+    'program-icerikleri': 'program',
+    neden: 'why-orion',
+    'neden-orion': 'why-orion',
+    akis: 'daily-flow',
+    'gunluk-akis': 'daily-flow',
+    galeri: 'gallery',
+    gallery: 'gallery',
+    sss: 'faq',
+    faq: 'faq',
+    iletisim: 'contact',
+    contact: 'contact',
+    alt: 'footer',
+    footer: 'footer',
+  },
   contact_panel_image: {
     contact: 'quick-contact',
     left: 'quick-contact',
@@ -176,6 +209,22 @@ export const filterImagesByUsageArea = (images = [], usageArea) =>
 
 export const getFirstImageByUsageArea = (images = [], usageArea) =>
   filterImagesByUsageArea(images, usageArea)[0] || null
+
+export const createSectionBackgroundStyle = (
+  image,
+  overlay = 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,251,245,0.9) 100%)',
+) => {
+  if (!image?.image_url) {
+    return undefined
+  }
+
+  return {
+    backgroundImage: `${overlay}, url(${image.image_url})`,
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+  }
+}
 
 const getImageDateValue = (image = {}) => {
   const dateValue = Date.parse(image.updated_at || image.created_at || '')

@@ -9,7 +9,7 @@ import {
   Sparkles,
   Star,
 } from 'lucide-react'
-import { getRelatedKeyForItem } from '../lib/siteImages.js'
+import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
 import SafeHtml from './SafeHtml.jsx'
 
 const defaultSubtitleHtml =
@@ -22,7 +22,7 @@ const infoCards = [
   { title: 'Teknoloji + Spor', text: 'Üretim ve hareket dengesi', icon: Cpu },
 ]
 
-function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {} }) {
+function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {}, backgroundImage }) {
   const title = content?.title || 'ORION KAMP 2026'
   const [titleLead, ...titleRest] = title.split(' ')
   const subtitleHtml = content?.subtitleHtml || content?.subtitle || content?.html || defaultSubtitleHtml
@@ -34,11 +34,16 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
     mobileImage?.alt_text ||
     desktopImage?.alt_text ||
     'ORION KAMP 2026 teknoloji, robotik ve uzay temalı çocuk yaz kampı'
+  const backgroundStyle = createSectionBackgroundStyle(
+    backgroundImage,
+    'linear-gradient(135deg, rgba(255,251,245,0.9) 0%, rgba(255,255,255,0.86) 48%, rgba(255,241,232,0.9) 100%)',
+  )
 
   return (
     <section
       id="hero"
       className="soft-orbit-bg relative isolate overflow-hidden pt-[6.75rem] sm:pt-[8.5rem] lg:pt-[9.5rem]"
+      style={backgroundStyle}
     >
       <div className="orbit-ring -left-20 top-36 hidden h-[19rem] w-[19rem] sm:block" />
       <div className="orbit-ring -right-24 top-28 hidden h-[26rem] w-[26rem] sm:block" />

@@ -1,12 +1,17 @@
 import { ArrowRight, ImageOff, Images } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 
 const previewLimit = 5
 
-function GallerySection({ images, siteImages = [] }) {
+function GallerySection({ images, siteImages = [], backgroundImage }) {
   const [remoteImages, setRemoteImages] = useState(null)
   const [showAll, setShowAll] = useState(false)
+  const backgroundStyle = createSectionBackgroundStyle(
+    backgroundImage,
+    'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,251,245,0.9) 100%)',
+  )
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -50,6 +55,7 @@ function GallerySection({ images, siteImages = [] }) {
     <section
       id="galeri"
       className="bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-16 text-[#0B1026] sm:py-20 lg:py-24"
+      style={backgroundStyle}
     >
       <div className="section-shell">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

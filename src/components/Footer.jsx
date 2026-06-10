@@ -1,4 +1,5 @@
 import { AtSign, FileText, LayoutDashboard, Mail, MapPin, Phone, Rocket, ShieldCheck } from 'lucide-react'
+import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
 
 const quickLinks = [
@@ -28,15 +29,22 @@ const fallbackContactInfo = {
 
 const phoneHref = (phone = '') => `tel:${phone.replace(/\D/g, '')}`
 
-function Footer({ contactInfo = fallbackContactInfo, decorationImage }) {
+function Footer({ contactInfo = fallbackContactInfo, decorationImage, backgroundImage }) {
   const info = { ...fallbackContactInfo, ...contactInfo }
   const instagramHandle = info.instagram.replace('@', '')
   const instagramUrl = `https://www.instagram.com/${instagramHandle}`
   const whatsappUrl = `https://wa.me/${info.phone1.replace(/\D/g, '')}`
   const year = new Date().getFullYear()
+  const backgroundStyle = createSectionBackgroundStyle(
+    backgroundImage,
+    'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,251,245,0.92) 100%)',
+  )
 
   return (
-    <footer className="relative border-t border-[#FFE0CC] bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] text-[#0B1026]">
+    <footer
+      className="relative border-t border-[#FFE0CC] bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] text-[#0B1026]"
+      style={backgroundStyle}
+    >
       <div className="h-1 bg-[linear-gradient(90deg,#FF8A22_0%,#FF6A2A_55%,#EA5438_100%)]" />
 
       <div className="section-shell py-10 sm:py-12">

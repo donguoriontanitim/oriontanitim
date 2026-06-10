@@ -83,8 +83,10 @@ function LandingPage() {
     const summaryImages = filterImagesByUsageArea(siteImages, 'summary_card')
     const partnerLogoImages = filterImagesByUsageArea(siteImages, 'partner_logo')
     const contactPanelImages = filterImagesByUsageArea(siteImages, 'contact_panel_image')
+    const sectionBackgroundImages = filterImagesByUsageArea(siteImages, 'section_background')
 
     return {
+      sectionBackgroundByKey: mapImagesByRelatedKey(sectionBackgroundImages),
       contactPanelByKey: mapImagesByRelatedKey(contactPanelImages),
       contactRobot: getFirstImageByUsageArea(siteImages, 'contact_robot'),
       footerDecoration: getFirstImageByUsageArea(siteImages, 'footer_decoration'),
@@ -108,27 +110,50 @@ function LandingPage() {
           desktopImage={imageSlots.heroDesktop}
           mobileImage={imageSlots.heroMobile}
           partnerLogosByKey={imageSlots.partnerLogosByKey}
+          backgroundImage={imageSlots.sectionBackgroundByKey?.hero}
         />
         <CampSummary
           content={landingData.summary}
           stats={fallbackContent.stats}
           imagesByRelatedKey={imageSlots.summaryByKey}
+          backgroundImage={imageSlots.sectionBackgroundByKey?.summary}
         />
-        <ProgramSection programs={landingData.programs} imagesByRelatedKey={imageSlots.programByKey} />
-        <WhyOrionSection items={fallbackContent.whyOrion} imagesByRelatedKey={imageSlots.whyOrionByKey} />
-        <DailyFlowSection items={fallbackContent.dailyFlow} imagesByRelatedKey={imageSlots.dailyFlowByKey} />
-        <GallerySection images={fallbackContent.gallery} siteImages={imageSlots.gallery} />
-        <FaqSection faqs={landingData.faqs} />
+        <ProgramSection
+          programs={landingData.programs}
+          imagesByRelatedKey={imageSlots.programByKey}
+          backgroundImage={imageSlots.sectionBackgroundByKey?.program}
+        />
+        <WhyOrionSection
+          items={fallbackContent.whyOrion}
+          imagesByRelatedKey={imageSlots.whyOrionByKey}
+          backgroundImage={imageSlots.sectionBackgroundByKey?.['why-orion']}
+        />
+        <DailyFlowSection
+          items={fallbackContent.dailyFlow}
+          imagesByRelatedKey={imageSlots.dailyFlowByKey}
+          backgroundImage={imageSlots.sectionBackgroundByKey?.['daily-flow']}
+        />
+        <GallerySection
+          images={fallbackContent.gallery}
+          siteImages={imageSlots.gallery}
+          backgroundImage={imageSlots.sectionBackgroundByKey?.gallery}
+        />
+        <FaqSection faqs={landingData.faqs} backgroundImage={imageSlots.sectionBackgroundByKey?.faq} />
         <ContactSection
           programs={landingData.programs}
           contactInfo={landingData.contactInfo}
           content={landingData.contact}
+          backgroundImage={imageSlots.sectionBackgroundByKey?.contact}
           contactQuickImage={imageSlots.contactPanelByKey?.['quick-contact']}
           contactSideImage={imageSlots.contactPanelByKey?.['right-panel']}
           contactImage={imageSlots.contactRobot}
         />
       </main>
-      <Footer contactInfo={landingData.contactInfo} decorationImage={imageSlots.footerDecoration} />
+      <Footer
+        contactInfo={landingData.contactInfo}
+        decorationImage={imageSlots.footerDecoration}
+        backgroundImage={imageSlots.sectionBackgroundByKey?.footer}
+      />
     </div>
   )
 }
