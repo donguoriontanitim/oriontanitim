@@ -12,11 +12,16 @@ export const usageAreaOptions = [
   { value: 'daily_flow', label: 'Günlük Akış' },
   { value: 'gallery', label: 'Galeri' },
   { value: 'contact_robot', label: 'İletişim Robotu' },
+  { value: 'contact_panel_image', label: 'İletişim Panel Görseli' },
   { value: 'decoration', label: 'Dekorasyon' },
   { value: 'footer_decoration', label: 'Footer Dekorasyonu' },
 ]
 
 export const relatedKeyOptionsByUsageArea = {
+  contact_panel_image: [
+    { value: 'quick-contact', label: 'Sol Hızlı İletişim Alanı' },
+    { value: 'right-panel', label: 'Sağ Görsel Alanı' },
+  ],
   partner_logo: [
     { value: 'partner-1', label: 'Partner Logo 1' },
     { value: 'partner-2', label: 'Partner Logo 2' },
@@ -81,6 +86,14 @@ const turkishCharacterMap = {
 }
 
 const relatedKeyAliases = {
+  contact_panel_image: {
+    contact: 'quick-contact',
+    left: 'quick-contact',
+    'left-panel': 'quick-contact',
+    quick: 'quick-contact',
+    right: 'right-panel',
+    'side-panel': 'right-panel',
+  },
   partner_logo: {
     'logo-1': 'partner-1',
     'logo-2': 'partner-2',

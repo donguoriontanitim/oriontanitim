@@ -4,6 +4,7 @@ import {
   LayoutGrid,
   ListChecks,
   Loader2,
+  MessageCircle,
   RefreshCw,
   Save,
   Star,
@@ -61,6 +62,15 @@ const managedPhotoSections = [
     description: 'NEDEN ORION? bölümündeki kart ikonlarının yerine gösterilecek fotoğrafları yönetin.',
     icon: Star,
   },
+  {
+    usageArea: 'contact_panel_image',
+    title: 'İletişim bölümü görselleri',
+    eyebrow: 'İletişim',
+    description: 'Sol hızlı iletişim paneli ve sağ görsel alanına eklenecek fotoğrafları ayrı ayrı yönetin.',
+    icon: MessageCircle,
+    itemLabel: 'alan',
+    emptyLabel: 'Görsel yok',
+  },
 ]
 
 const getFriendlyErrorMessage = (error, fallbackMessage) => {
@@ -95,6 +105,10 @@ const getUsageAreaLabel = (usageArea) =>
 const getRelatedKeyLabel = (usageArea) => {
   if (usageArea === 'partner_logo') {
     return 'Logo seçimi'
+  }
+
+  if (usageArea === 'contact_panel_image') {
+    return 'Alan seçimi'
   }
 
   if (['program_card', 'summary_card', 'why_orion_card'].includes(usageArea)) {
@@ -635,7 +649,7 @@ function ImageManager() {
                   </div>
                 </div>
                 <span className="admin-pill w-fit shrink-0">
-                  {options.length} kart
+                  {options.length} {section.itemLabel || 'kart'}
                 </span>
               </div>
 
@@ -684,7 +698,7 @@ function ImageManager() {
                               ? 'Fotoğraf yayında'
                               : currentImage
                                 ? 'Pasif fotoğraf'
-                                : 'Varsayılan ikon'}
+                                : section.emptyLabel || 'Varsayılan ikon'}
                           </span>
                         </div>
                       </div>

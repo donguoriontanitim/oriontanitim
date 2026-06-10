@@ -26,14 +26,21 @@ const fallbackContactContent = {
     'Formu beklemeden sorularınızı iletebilir, kamp detayları için hızlı dönüş alabilirsiniz.',
 }
 
-function ContactSection({ programs, contactInfo, contactImage, content }) {
+function ContactSection({ programs, contactInfo, contactImage, contactQuickImage, contactSideImage, content }) {
   const [form, setForm] = useState(initialForm)
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const contactContent = { ...fallbackContactContent, ...content }
-  const contactImageUrl = contactImage?.image_url || contactVisual
+  const contactQuickImageUrl = contactQuickImage?.image_url
+  const contactQuickImageAlt =
+    contactQuickImage?.alt_text || contactQuickImage?.title || 'Orion Kamp hızlı iletişim görseli'
+  const contactImageUrl = contactSideImage?.image_url || contactImage?.image_url || contactVisual
   const contactImageAlt =
-    contactImage?.alt_text || contactImage?.title || 'Orion Kamp robotik ve uzay temalı görsel'
+    contactSideImage?.alt_text ||
+    contactSideImage?.title ||
+    contactImage?.alt_text ||
+    contactImage?.title ||
+    'Orion Kamp robotik ve uzay temalı görsel'
 
   const activePrograms = useMemo(
     () => programs.filter((program) => program.is_active !== false),
@@ -149,6 +156,17 @@ function ContactSection({ programs, contactInfo, contactImage, content }) {
                   {contactContent.quickDescription}
                 </p>
               </div>
+
+              {contactQuickImageUrl && (
+                <div className="overflow-hidden rounded-[1.25rem] bg-white p-2 shadow-sm">
+                  <img
+                    src={contactQuickImageUrl}
+                    alt={contactQuickImageAlt}
+                    className="aspect-[4/3] w-full rounded-[1rem] object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
 
               <div className="grid min-w-0 gap-3 text-sm font-bold text-[#0B1026]/72">
                 <a className="flex items-center gap-3" href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}>

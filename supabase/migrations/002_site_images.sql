@@ -24,6 +24,7 @@ create table if not exists public.site_images (
       'daily_flow',
       'gallery',
       'contact_robot',
+      'contact_panel_image',
       'decoration',
       'footer_decoration'
     )
@@ -42,6 +43,7 @@ alter table public.site_images add constraint site_images_usage_area_check check
     'daily_flow',
     'gallery',
     'contact_robot',
+    'contact_panel_image',
     'decoration',
     'footer_decoration'
   )

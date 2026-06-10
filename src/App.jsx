@@ -82,8 +82,10 @@ function LandingPage() {
     const dailyFlowImages = filterImagesByUsageArea(siteImages, 'daily_flow')
     const summaryImages = filterImagesByUsageArea(siteImages, 'summary_card')
     const partnerLogoImages = filterImagesByUsageArea(siteImages, 'partner_logo')
+    const contactPanelImages = filterImagesByUsageArea(siteImages, 'contact_panel_image')
 
     return {
+      contactPanelByKey: mapImagesByRelatedKey(contactPanelImages),
       contactRobot: getFirstImageByUsageArea(siteImages, 'contact_robot'),
       footerDecoration: getFirstImageByUsageArea(siteImages, 'footer_decoration'),
       gallery: filterImagesByUsageArea(siteImages, 'gallery'),
@@ -121,6 +123,8 @@ function LandingPage() {
           programs={landingData.programs}
           contactInfo={landingData.contactInfo}
           content={landingData.contact}
+          contactQuickImage={imageSlots.contactPanelByKey?.['quick-contact']}
+          contactSideImage={imageSlots.contactPanelByKey?.['right-panel']}
           contactImage={imageSlots.contactRobot}
         />
       </main>
