@@ -167,7 +167,7 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
         <div className="overflow-hidden rounded-[1.75rem] border border-[#FFE0CC] bg-[#FFF8F0] p-2.5 shadow-[0_28px_90px_rgba(255,106,42,0.12)] sm:rounded-[2.25rem] sm:p-5 lg:rounded-[3rem] lg:p-6">
           <div className="grid gap-5 rounded-[1.45rem] bg-white p-4 sm:gap-6 sm:rounded-[1.75rem] sm:p-7 lg:grid-cols-[0.78fr_1.18fr_0.78fr] lg:items-stretch lg:rounded-[2.35rem] lg:p-8">
             <aside
-              className="relative isolate flex min-h-[34rem] min-w-0 flex-col justify-between gap-5 overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-[#FFF8F0] p-5 sm:gap-6 sm:rounded-[1.5rem] sm:p-6"
+              className="relative isolate flex min-h-[34rem] min-w-0 flex-col gap-5 overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-[#FFF8F0] p-5 sm:gap-6 sm:rounded-[1.5rem] sm:p-6"
               style={quickPanelBackgroundStyle}
             >
               <a
@@ -190,33 +190,33 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
                 </p>
               </div>
 
-              <div className="grid min-w-0 gap-3 rounded-[1.35rem] border border-white/80 bg-white/90 p-4 text-[1.02rem] font-black leading-tight text-[#0B1026] shadow-[0_18px_42px_rgba(11,16,38,0.14)] backdrop-blur-md sm:text-lg">
+              <div className="mt-auto grid min-w-0 gap-3 rounded-[1.35rem] border border-white/80 bg-white/92 p-3 text-base font-black leading-tight text-[#0B1026] shadow-[0_18px_42px_rgba(11,16,38,0.16)] backdrop-blur-md sm:p-4 sm:text-[1.05rem]">
                 <a
-                  className="flex items-center gap-3 rounded-2xl bg-[#FFFBF5]/96 px-3 py-3"
+                  className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
                   href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}
                 >
-                  <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
                   </span>
-                  <span className="min-w-0 break-words">{contactInfo.phone1}</span>
+                  <span className="min-w-0 flex-1 break-words leading-snug">{contactInfo.phone1}</span>
                 </a>
                 <a
-                  className="flex items-center gap-3 rounded-2xl bg-[#FFFBF5]/96 px-3 py-3"
+                  className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
                   href={`tel:${contactInfo.phone2.replace(/\D/g, '')}`}
                 >
-                  <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
                   </span>
-                  <span className="min-w-0 break-words">{contactInfo.phone2}</span>
+                  <span className="min-w-0 flex-1 break-words leading-snug">{contactInfo.phone2}</span>
                 </a>
                 <a
-                  className="flex items-center gap-3 rounded-2xl bg-[#FFFBF5]/96 px-3 py-3"
+                  className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
                   href={`mailto:${contactInfo.mail}`}
                 >
-                  <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Mail size={17} aria-hidden="true" />
                   </span>
-                  <span className="min-w-0 break-words">{contactInfo.mail}</span>
+                  <span className="min-w-0 flex-1 break-all leading-snug">{contactInfo.mail}</span>
                 </a>
               </div>
             </aside>
@@ -350,7 +350,7 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
             </div>
 
             <aside
-              className="relative isolate hidden min-h-[34rem] overflow-hidden rounded-[1.5rem] border border-[#FFE0CC] bg-[#FFF8F0] p-5 lg:flex lg:flex-col lg:justify-between"
+              className="relative isolate hidden min-h-[34rem] overflow-hidden rounded-[1.5rem] border border-[#FFE0CC] bg-[#FFF8F0] p-5 lg:flex lg:flex-col lg:gap-5"
               style={sidePanelBackgroundStyle}
             >
               <div className="flex items-center justify-between">
@@ -379,7 +379,7 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
                 </dl>
               </div>
 
-              <div className="grid gap-3">
+              <div className="mt-auto grid gap-3">
                 <div className="rounded-[1.25rem] bg-white/92 p-4 shadow-[0_14px_34px_rgba(11,16,38,0.1)] backdrop-blur">
                   <p className="flex items-center gap-2 text-base font-black text-[#0B1026]">
                     <CheckCircle2 size={18} className="text-[#FF6A2A]" aria-hidden="true" />

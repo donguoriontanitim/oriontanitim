@@ -67,11 +67,11 @@ function WhyOrionSection({ items, imagesByRelatedKey = {} }) {
                   className={`absolute right-5 top-5 size-2.5 rounded-full ${accent.mark} shadow-[0_0_0_7px_rgba(255,224,204,0.55)]`}
                 />
                 {cardImage ? (
-                  <div className="mx-auto w-full overflow-hidden rounded-[1.15rem] border border-[#FFE0CC] bg-[#FFF8F0]">
+                  <div className="mx-auto aspect-[16/10] w-full overflow-hidden rounded-[1.15rem] border border-[#FFE0CC] bg-[#FFF8F0]">
                     <img
                       src={cardImage.image_url}
                       alt={cardImage.alt_text || cardImage.title || item.title}
-                      className="aspect-[16/10] w-full object-contain p-1 transition duration-300 group-hover:scale-105"
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                       loading="lazy"
                     />
                   </div>
