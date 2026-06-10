@@ -35,14 +35,14 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
   const contactImageUrl = contactSideImage?.image_url || contactImage?.image_url || contactVisual
   const quickPanelBackgroundStyle = contactQuickImageUrl
     ? {
-        backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.96) 0%, rgba(255,248,240,0.82) 36%, rgba(255,248,240,0.64) 56%, rgba(255,248,240,0.92) 100%), url(${contactQuickImageUrl})`,
+        backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.98) 0%, rgba(255,248,240,0.9) 34%, rgba(255,248,240,0.72) 56%, rgba(255,248,240,0.96) 100%), url(${contactQuickImageUrl})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
       }
     : undefined
   const sidePanelBackgroundStyle = {
-    backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.78) 0%, rgba(255,248,240,0.34) 48%, rgba(255,248,240,0.86) 100%), url(${contactImageUrl})`,
+    backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.86) 0%, rgba(255,248,240,0.46) 48%, rgba(255,248,240,0.94) 100%), url(${contactImageUrl})`,
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
@@ -151,22 +151,22 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
     >
       <div className="section-shell">
         <div className="overflow-hidden rounded-[1.75rem] border border-[#FFE0CC] bg-[#FFF8F0] p-2.5 shadow-[0_28px_90px_rgba(255,106,42,0.12)] sm:rounded-[2.25rem] sm:p-5 lg:rounded-[3rem] lg:p-6">
-          <div className="grid gap-5 rounded-[1.45rem] bg-white p-4 sm:gap-6 sm:rounded-[1.75rem] sm:p-7 lg:grid-cols-[0.72fr_1.24fr_0.62fr] lg:items-stretch lg:rounded-[2.35rem] lg:p-8">
+          <div className="grid gap-5 rounded-[1.45rem] bg-white p-4 sm:gap-6 sm:rounded-[1.75rem] sm:p-7 lg:grid-cols-[0.78fr_1.18fr_0.78fr] lg:items-stretch lg:rounded-[2.35rem] lg:p-8">
             <aside
-              className="relative isolate flex min-w-0 flex-col justify-between gap-5 overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-[#FFF8F0] p-4 sm:gap-6 sm:rounded-[1.5rem] sm:p-5"
+              className="relative isolate flex min-h-[34rem] min-w-0 flex-col justify-between gap-5 overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-[#FFF8F0] p-5 sm:gap-6 sm:rounded-[1.5rem] sm:p-6"
               style={quickPanelBackgroundStyle}
             >
               <div>
-                <p className="section-eyebrow">Hızlı İletişim</p>
-                <h3 className="mt-3 text-xl font-black leading-tight sm:text-2xl">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-[#FF6A2A]">Hızlı İletişim</p>
+                <h3 className="mt-3 text-2xl font-black leading-tight text-[#0B1026] sm:text-[1.7rem]">
                   {contactContent.quickTitle}
                 </h3>
-                <p className="mt-3 text-sm font-semibold leading-6 text-[#0B1026]/62">
+                <p className="mt-3 text-sm font-bold leading-6 text-[#0B1026]/78">
                   {contactContent.quickDescription}
                 </p>
               </div>
 
-              <div className="grid min-w-0 gap-3 text-sm font-bold text-[#0B1026]/72">
+              <div className="grid min-w-0 gap-3 text-sm font-black text-[#0B1026]/86">
                 <a className="flex items-center gap-3" href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}>
                   <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
@@ -327,7 +327,7 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
             </div>
 
             <aside
-              className="relative isolate hidden min-h-[34rem] overflow-hidden rounded-[1.5rem] border border-[#FFE0CC] bg-[#FFF8F0] p-4 lg:flex lg:flex-col lg:justify-between"
+              className="relative isolate hidden min-h-[34rem] overflow-hidden rounded-[1.5rem] border border-[#FFE0CC] bg-[#FFF8F0] p-5 lg:flex lg:flex-col lg:justify-between"
               style={sidePanelBackgroundStyle}
             >
               <div className="flex items-center justify-between">
@@ -339,12 +339,12 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
                 </span>
               </div>
 
-              <div className="rounded-[1.25rem] bg-white p-4">
-                <p className="flex items-center gap-2 text-sm font-black text-[#0B1026]">
+              <div className="rounded-[1.25rem] bg-white/92 p-4 shadow-[0_14px_34px_rgba(11,16,38,0.1)] backdrop-blur">
+                <p className="flex items-center gap-2 text-base font-black text-[#0B1026]">
                   <CheckCircle2 size={18} className="text-[#FF6A2A]" aria-hidden="true" />
                   Hızlı dönüş
                 </p>
-                <p className="mt-2 text-sm font-semibold leading-6 text-[#0B1026]/60">
+                <p className="mt-2 text-sm font-bold leading-6 text-[#0B1026]/76">
                   Yaş, program ve kontenjan detaylarını birlikte netleştirelim.
                 </p>
               </div>
