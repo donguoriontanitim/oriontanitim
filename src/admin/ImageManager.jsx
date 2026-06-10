@@ -703,14 +703,40 @@ function ImageManager() {
                         </div>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => selectManagedPhotoSlot(section, option, currentImage)}
-                        className="admin-secondary-button mt-3 w-full rounded-full text-xs"
-                      >
-                        {currentImage ? <Edit3 size={15} aria-hidden="true" /> : <ImagePlus size={15} aria-hidden="true" />}
-                        {currentImage ? 'Fotoğrafı değiştir' : 'Fotoğraf yükle'}
-                      </button>
+                      {currentImage ? (
+                        <div className="mt-3 grid grid-cols-[1fr_auto] gap-2">
+                          <button
+                            type="button"
+                            onClick={() => selectManagedPhotoSlot(section, option, currentImage)}
+                            className="admin-secondary-button rounded-full text-xs"
+                          >
+                            <Edit3 size={15} aria-hidden="true" />
+                            Fotoğrafı düzenle
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteImage(currentImage)}
+                            disabled={deletingId === currentImage.id}
+                            className="admin-danger-button admin-icon-danger-button disabled:opacity-60"
+                            aria-label={`${option.label} görselini sil`}
+                          >
+                            {deletingId === currentImage.id ? (
+                              <Loader2 className="animate-spin" size={15} aria-hidden="true" />
+                            ) : (
+                              <Trash2 aria-hidden="true" />
+                            )}
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => selectManagedPhotoSlot(section, option, currentImage)}
+                          className="admin-secondary-button mt-3 w-full rounded-full text-xs"
+                        >
+                          <ImagePlus size={15} aria-hidden="true" />
+                          Fotoğraf yükle
+                        </button>
+                      )}
                     </div>
                   )
                 })}
