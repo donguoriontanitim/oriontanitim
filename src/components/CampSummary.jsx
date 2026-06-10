@@ -77,7 +77,7 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {} }) {
                 className="soft-card-strong group flex min-h-[12rem] flex-col items-center justify-between p-5 text-center transition hover:-translate-y-1 hover:scale-[1.015] sm:min-h-[13.25rem] sm:p-6 lg:min-h-[14rem]"
               >
                 {cardImage ? (
-                  <span className="grid size-[5.4rem] place-items-center overflow-hidden rounded-[1.35rem] border border-[#FFE0CC] bg-white shadow-[0_16px_34px_rgba(11,16,38,0.1)] sm:size-[6rem]">
+                  <span className="grid size-[7rem] place-items-center overflow-hidden rounded-[1.35rem] border border-[#FFE0CC] bg-white shadow-[0_16px_34px_rgba(11,16,38,0.1)] sm:size-[7.8rem]">
                     <img
                       src={cardImage.image_url}
                       alt={cardImage.alt_text || cardImage.title || card.title}
@@ -87,13 +87,13 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {} }) {
                   </span>
                 ) : (
                   <span
-                    className={`grid size-[5.4rem] place-items-center rounded-[1.35rem] shadow-[0_16px_34px_rgba(11,16,38,0.1)] sm:size-[6rem] ${
+                    className={`grid size-[7rem] place-items-center rounded-[1.35rem] shadow-[0_16px_34px_rgba(11,16,38,0.1)] sm:size-[7.8rem] ${
                       isBlue
                         ? 'bg-[#E9FAFE] text-[#22B8D6]'
                         : 'bg-[#FFF1E8] text-[#FF6A2A]'
                     }`}
                   >
-                    <Icon size={44} aria-hidden="true" />
+                    <Icon size={57} aria-hidden="true" />
                   </span>
                 )}
                 <span>
