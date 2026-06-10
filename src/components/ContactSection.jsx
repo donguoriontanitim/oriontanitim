@@ -32,15 +32,21 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
   const [isSubmitting, setIsSubmitting] = useState(false)
   const contactContent = { ...fallbackContactContent, ...content }
   const contactQuickImageUrl = contactQuickImage?.image_url
-  const contactQuickImageAlt =
-    contactQuickImage?.alt_text || contactQuickImage?.title || 'Orion Kamp hızlı iletişim görseli'
   const contactImageUrl = contactSideImage?.image_url || contactImage?.image_url || contactVisual
-  const contactImageAlt =
-    contactSideImage?.alt_text ||
-    contactSideImage?.title ||
-    contactImage?.alt_text ||
-    contactImage?.title ||
-    'Orion Kamp robotik ve uzay temalı görsel'
+  const quickPanelBackgroundStyle = contactQuickImageUrl
+    ? {
+        backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.96) 0%, rgba(255,248,240,0.82) 36%, rgba(255,248,240,0.64) 56%, rgba(255,248,240,0.92) 100%), url(${contactQuickImageUrl})`,
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+      }
+    : undefined
+  const sidePanelBackgroundStyle = {
+    backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.78) 0%, rgba(255,248,240,0.34) 48%, rgba(255,248,240,0.86) 100%), url(${contactImageUrl})`,
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+  }
 
   const activePrograms = useMemo(
     () => programs.filter((program) => program.is_active !== false),
@@ -146,7 +152,10 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
       <div className="section-shell">
         <div className="overflow-hidden rounded-[1.75rem] border border-[#FFE0CC] bg-[#FFF8F0] p-2.5 shadow-[0_28px_90px_rgba(255,106,42,0.12)] sm:rounded-[2.25rem] sm:p-5 lg:rounded-[3rem] lg:p-6">
           <div className="grid gap-5 rounded-[1.45rem] bg-white p-4 sm:gap-6 sm:rounded-[1.75rem] sm:p-7 lg:grid-cols-[0.72fr_1.24fr_0.62fr] lg:items-stretch lg:rounded-[2.35rem] lg:p-8">
-            <aside className="flex min-w-0 flex-col justify-between gap-5 rounded-[1.25rem] border border-[#FFE0CC] bg-[#FFF8F0] p-4 sm:gap-6 sm:rounded-[1.5rem] sm:p-5">
+            <aside
+              className="relative isolate flex min-w-0 flex-col justify-between gap-5 overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-[#FFF8F0] p-4 sm:gap-6 sm:rounded-[1.5rem] sm:p-5"
+              style={quickPanelBackgroundStyle}
+            >
               <div>
                 <p className="section-eyebrow">Hızlı İletişim</p>
                 <h3 className="mt-3 text-xl font-black leading-tight sm:text-2xl">
@@ -156,17 +165,6 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
                   {contactContent.quickDescription}
                 </p>
               </div>
-
-              {contactQuickImageUrl && (
-                <div className="overflow-hidden rounded-[1.25rem] bg-white p-2 shadow-sm">
-                  <img
-                    src={contactQuickImageUrl}
-                    alt={contactQuickImageAlt}
-                    className="aspect-[4/3] w-full rounded-[1rem] object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              )}
 
               <div className="grid min-w-0 gap-3 text-sm font-bold text-[#0B1026]/72">
                 <a className="flex items-center gap-3" href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}>
@@ -328,7 +326,10 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
               </form>
             </div>
 
-            <aside className="hidden overflow-hidden rounded-[1.5rem] border border-[#FFE0CC] bg-[#FFF8F0] p-4 lg:flex lg:flex-col lg:justify-between">
+            <aside
+              className="relative isolate hidden min-h-[34rem] overflow-hidden rounded-[1.5rem] border border-[#FFE0CC] bg-[#FFF8F0] p-4 lg:flex lg:flex-col lg:justify-between"
+              style={sidePanelBackgroundStyle}
+            >
               <div className="flex items-center justify-between">
                 <span className="grid size-11 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                   <Bot size={22} aria-hidden="true" />
@@ -336,14 +337,6 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
                 <span className="grid size-9 place-items-center rounded-full bg-[#FFD166] text-[#0B1026]">
                   <Sparkles size={18} aria-hidden="true" />
                 </span>
-              </div>
-
-              <div className="my-5 overflow-hidden rounded-[1.25rem] bg-white p-2 shadow-sm">
-                <img
-                  src={contactImageUrl}
-                  alt={contactImageAlt}
-                  className="aspect-[4/5] w-full rounded-[1rem] object-cover"
-                />
               </div>
 
               <div className="rounded-[1.25rem] bg-white p-4">
