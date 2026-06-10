@@ -64,7 +64,7 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {} }) {
           <SafeHtml html={content.html} className="mt-4 text-base leading-8 text-[#0B1026]/66 sm:text-lg" />
         </div>
 
-        <div className="mt-8 grid gap-3 min-[390px]:grid-cols-2 sm:mt-10 sm:gap-4 lg:grid-cols-6">
+        <div className="mx-auto mt-8 grid max-w-5xl gap-4 min-[390px]:grid-cols-2 sm:mt-10 sm:gap-5 lg:grid-cols-3">
           {cards.map((card) => {
             const Icon = card.icon
             const isBlue = card.tone === 'blue'
@@ -74,33 +74,33 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {} }) {
             return (
               <article
                 key={card.key || card.title}
-                className="soft-card-strong group flex min-h-36 flex-col items-center justify-between p-4 text-center transition hover:-translate-y-1 hover:scale-[1.015] sm:min-h-40 sm:p-5"
+                className="soft-card-strong group flex min-h-[12rem] flex-col items-center justify-between p-5 text-center transition hover:-translate-y-1 hover:scale-[1.015] sm:min-h-[13.25rem] sm:p-6 lg:min-h-[14rem]"
               >
                 {cardImage ? (
-                  <span className="grid size-[3.9rem] place-items-center overflow-hidden rounded-2xl border border-[#FFE0CC] bg-white shadow-[0_14px_30px_rgba(11,16,38,0.08)]">
+                  <span className="grid size-[5.4rem] place-items-center overflow-hidden rounded-[1.35rem] border border-[#FFE0CC] bg-white shadow-[0_16px_34px_rgba(11,16,38,0.1)] sm:size-[6rem]">
                     <img
                       src={cardImage.image_url}
                       alt={cardImage.alt_text || cardImage.title || card.title}
-                      className="h-full w-full object-contain p-1.5"
+                      className="h-full w-full object-contain p-2"
                       loading="lazy"
                     />
                   </span>
                 ) : (
                   <span
-                    className={`grid size-[3.9rem] place-items-center rounded-2xl shadow-[0_14px_30px_rgba(11,16,38,0.08)] ${
+                    className={`grid size-[5.4rem] place-items-center rounded-[1.35rem] shadow-[0_16px_34px_rgba(11,16,38,0.1)] sm:size-[6rem] ${
                       isBlue
                         ? 'bg-[#E9FAFE] text-[#22B8D6]'
                         : 'bg-[#FFF1E8] text-[#FF6A2A]'
                     }`}
                   >
-                    <Icon size={30} aria-hidden="true" />
+                    <Icon size={44} aria-hidden="true" />
                   </span>
                 )}
                 <span>
-                  <span className="block text-base font-black leading-snug text-[#0B1026] sm:text-lg">
+                  <span className="block text-lg font-black leading-snug text-[#0B1026] sm:text-xl">
                     {card.title}
                   </span>
-                  <span className="mt-1 block text-sm font-bold leading-5 text-[#0B1026]/58">
+                  <span className="mt-2 block text-sm font-bold leading-6 text-[#0B1026]/58 sm:text-base">
                     {card.subtitle}
                   </span>
                 </span>
