@@ -353,24 +353,24 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
                 </span>
               </div>
 
-              <div className="grid gap-3">
-                <div className="rounded-[1.25rem] bg-white/92 p-4 shadow-[0_14px_34px_rgba(11,16,38,0.1)] backdrop-blur">
-                  <p className="text-xs font-black uppercase tracking-[0.18em] text-[#FF6A2A]">
-                    Kamp Özeti
-                  </p>
-                  <dl className="mt-3 grid gap-2">
-                    {contactSummaryItems.map((item) => (
-                      <div
-                        key={item.label}
-                        className="flex items-center justify-between gap-3 rounded-2xl bg-[#FFFBF5]/92 px-3 py-2.5"
-                      >
-                        <dt className="text-xs font-black text-[#0B1026]/58">{item.label}</dt>
-                        <dd className="text-sm font-black text-[#0B1026]">{item.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
+              <div className="rounded-[1.25rem] bg-white/92 p-4 shadow-[0_14px_34px_rgba(11,16,38,0.1)] backdrop-blur">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#FF6A2A]">
+                  Kamp Özeti
+                </p>
+                <dl className="mt-3 grid gap-2">
+                  {contactSummaryItems.map((item) => (
+                    <div
+                      key={item.label}
+                      className="flex items-center justify-between gap-3 rounded-2xl bg-[#FFFBF5]/92 px-3 py-2.5"
+                    >
+                      <dt className="text-xs font-black text-[#0B1026]/58">{item.label}</dt>
+                      <dd className="text-sm font-black text-[#0B1026]">{item.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
 
+              <div className="grid gap-3">
                 <div className="rounded-[1.25rem] bg-white/92 p-4 shadow-[0_14px_34px_rgba(11,16,38,0.1)] backdrop-blur">
                   <p className="flex items-center gap-2 text-base font-black text-[#0B1026]">
                     <CheckCircle2 size={18} className="text-[#FF6A2A]" aria-hidden="true" />
