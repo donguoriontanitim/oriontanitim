@@ -170,6 +170,16 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
               className="relative isolate flex min-h-[34rem] min-w-0 flex-col justify-between gap-5 overflow-hidden rounded-[1.25rem] border border-[#FFE0CC] bg-[#FFF8F0] p-5 sm:gap-6 sm:rounded-[1.5rem] sm:p-6"
               style={quickPanelBackgroundStyle}
             >
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-4 text-base font-black text-white shadow-[0_16px_36px_rgba(37,211,102,0.3)] transition hover:bg-[#1ebe5d]"
+              >
+                <WhatsAppIcon size={20} />
+                WhatsApp ile yazın
+              </a>
+
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-[#FF6A2A]">Hızlı İletişim</p>
                 <h3 className="mt-3 text-[1.7rem] font-black leading-[1.05] text-[#0B1026] sm:text-3xl">
@@ -180,36 +190,35 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
                 </p>
               </div>
 
-              <div className="grid min-w-0 gap-3 text-base font-black text-[#0B1026]/88">
-                <a className="flex items-center gap-3" href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}>
-                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
+              <div className="grid min-w-0 gap-3 rounded-[1.35rem] border border-white/80 bg-white/90 p-4 text-[1.02rem] font-black leading-tight text-[#0B1026] shadow-[0_18px_42px_rgba(11,16,38,0.14)] backdrop-blur-md sm:text-lg">
+                <a
+                  className="flex items-center gap-3 rounded-2xl bg-[#FFFBF5]/96 px-3 py-3"
+                  href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}
+                >
+                  <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
                   </span>
                   <span className="min-w-0 break-words">{contactInfo.phone1}</span>
                 </a>
-                <a className="flex items-center gap-3" href={`tel:${contactInfo.phone2.replace(/\D/g, '')}`}>
-                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
+                <a
+                  className="flex items-center gap-3 rounded-2xl bg-[#FFFBF5]/96 px-3 py-3"
+                  href={`tel:${contactInfo.phone2.replace(/\D/g, '')}`}
+                >
+                  <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
                   </span>
                   <span className="min-w-0 break-words">{contactInfo.phone2}</span>
                 </a>
-                <a className="flex items-center gap-3" href={`mailto:${contactInfo.mail}`}>
-                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
+                <a
+                  className="flex items-center gap-3 rounded-2xl bg-[#FFFBF5]/96 px-3 py-3"
+                  href={`mailto:${contactInfo.mail}`}
+                >
+                  <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Mail size={17} aria-hidden="true" />
                   </span>
                   <span className="min-w-0 break-words">{contactInfo.mail}</span>
                 </a>
               </div>
-
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-4 font-black text-white shadow-[0_16px_36px_rgba(37,211,102,0.25)] transition hover:bg-[#1ebe5d]"
-              >
-                <WhatsAppIcon size={20} />
-                WhatsApp ile yazın
-              </a>
             </aside>
 
             <div>
