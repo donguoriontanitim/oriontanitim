@@ -210,19 +210,13 @@ export const filterImagesByUsageArea = (images = [], usageArea) =>
 export const getFirstImageByUsageArea = (images = [], usageArea) =>
   filterImagesByUsageArea(images, usageArea)[0] || null
 
-export const createSectionBackgroundStyle = (
-  image,
-  overlay = 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,251,245,0.9) 100%)',
-) => {
+export const createSectionBackgroundStyle = (image) => {
   if (!image?.image_url) {
     return undefined
   }
 
   return {
-    backgroundImage: `${overlay}, url(${image.image_url})`,
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
+    '--section-bg-image': `url(${image.image_url})`,
   }
 }
 

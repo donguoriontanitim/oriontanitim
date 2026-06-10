@@ -56,10 +56,7 @@ function ContactSection({
   const contactContent = { ...fallbackContactContent, ...content }
   const contactQuickImageUrl = contactQuickImage?.image_url
   const contactImageUrl = contactSideImage?.image_url || contactImage?.image_url || contactVisual
-  const backgroundStyle = createSectionBackgroundStyle(
-    backgroundImage,
-    'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,251,245,0.9) 100%)',
-  )
+  const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
   const quickPanelBackgroundStyle = contactQuickImageUrl
     ? {
         backgroundImage: `linear-gradient(180deg, rgba(255,248,240,0.98) 0%, rgba(255,248,240,0.94) 34%, rgba(255,248,240,0.9) 56%, rgba(255,248,240,0.98) 100%), url(${contactQuickImageUrl})`,
@@ -174,7 +171,7 @@ function ContactSection({
   return (
     <section
       id="iletisim"
-      className="bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-16 text-[#0B1026] sm:py-20 lg:py-24"
+      className="section-background-frame bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-12 text-[#0B1026] sm:py-14 lg:py-16"
       style={backgroundStyle}
     >
       <div className="section-shell">

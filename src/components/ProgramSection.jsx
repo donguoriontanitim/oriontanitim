@@ -45,15 +45,12 @@ const cardTones = [
 
 function ProgramSection({ programs, imagesByRelatedKey = {}, backgroundImage }) {
   const activePrograms = programs.filter((program) => program.is_active !== false)
-  const backgroundStyle = createSectionBackgroundStyle(
-    backgroundImage,
-    'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,251,245,0.88) 100%)',
-  )
+  const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
 
   return (
     <section
       id="program"
-      className="bg-white/80 py-16 text-[#0B1026] sm:py-18 lg:py-24"
+      className="section-background-frame bg-white/80 py-12 text-[#0B1026] sm:py-14 lg:py-16"
       style={backgroundStyle}
     >
       <div className="section-shell">

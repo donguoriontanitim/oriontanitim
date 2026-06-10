@@ -34,15 +34,12 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
     mobileImage?.alt_text ||
     desktopImage?.alt_text ||
     'ORION KAMP 2026 teknoloji, robotik ve uzay temalı çocuk yaz kampı'
-  const backgroundStyle = createSectionBackgroundStyle(
-    backgroundImage,
-    'linear-gradient(135deg, rgba(255,251,245,0.9) 0%, rgba(255,255,255,0.86) 48%, rgba(255,241,232,0.9) 100%)',
-  )
+  const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
 
   return (
     <section
       id="hero"
-      className="soft-orbit-bg relative isolate overflow-hidden pt-[6.75rem] sm:pt-[8.5rem] lg:pt-[9.5rem]"
+      className="section-background-frame soft-orbit-bg relative isolate overflow-hidden pt-[6.75rem] sm:pt-[8.5rem] lg:pt-[9.5rem]"
       style={backgroundStyle}
     >
       <div className="orbit-ring -left-20 top-36 hidden h-[19rem] w-[19rem] sm:block" />
@@ -151,7 +148,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
           </div>
         </div>
 
-        <div className="grid gap-3 pb-12 min-[390px]:grid-cols-2 sm:pb-16 lg:grid-cols-4">
+        <div className="grid gap-3 pb-8 min-[390px]:grid-cols-2 sm:pb-10 lg:grid-cols-4">
           {infoCards.map((item) => {
             const Icon = item.icon
 

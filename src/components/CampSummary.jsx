@@ -52,15 +52,12 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {}, backgroundI
   const cards = summaryCards.map((card) =>
     card.key === 'yas-araligi' && ageStat?.value ? { ...card, title: `${ageStat.value} Yaş` } : card,
   )
-  const backgroundStyle = createSectionBackgroundStyle(
-    backgroundImage,
-    'linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(255,251,245,0.9) 100%)',
-  )
+  const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
 
   return (
     <section
       id="ozet"
-      className="relative bg-white/72 py-14 text-[#0B1026] sm:py-16 lg:py-20"
+      className="section-background-frame relative bg-white/72 py-10 text-[#0B1026] sm:py-12 lg:py-14"
       style={backgroundStyle}
     >
       <div className="section-shell">

@@ -35,19 +35,16 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, background
   const instagramUrl = `https://www.instagram.com/${instagramHandle}`
   const whatsappUrl = `https://wa.me/${info.phone1.replace(/\D/g, '')}`
   const year = new Date().getFullYear()
-  const backgroundStyle = createSectionBackgroundStyle(
-    backgroundImage,
-    'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,251,245,0.92) 100%)',
-  )
+  const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
 
   return (
     <footer
-      className="relative border-t border-[#FFE0CC] bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] text-[#0B1026]"
+      className="section-background-frame relative border-t border-[#FFE0CC] bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] text-[#0B1026]"
       style={backgroundStyle}
     >
       <div className="h-1 bg-[linear-gradient(90deg,#FF8A22_0%,#FF6A2A_55%,#EA5438_100%)]" />
 
-      <div className="section-shell py-10 sm:py-12">
+      <div className="section-shell py-8 sm:py-10">
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr_1.15fr_0.85fr]">
           <div className="min-w-0">
             <a href="#/?section=hero" className="inline-flex items-center gap-3">

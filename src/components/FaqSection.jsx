@@ -6,10 +6,7 @@ import SafeHtml from './SafeHtml.jsx'
 
 function FaqSection({ faqs, backgroundImage }) {
   const [remoteFaqs, setRemoteFaqs] = useState(null)
-  const backgroundStyle = createSectionBackgroundStyle(
-    backgroundImage,
-    'linear-gradient(180deg, rgba(255,251,245,0.9) 0%, rgba(255,255,255,0.9) 100%)',
-  )
+  const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -86,7 +83,7 @@ function FaqSection({ faqs, backgroundImage }) {
   return (
     <section
       id="sss"
-      className="bg-[linear-gradient(180deg,#FFFBF5_0%,#FFFFFF_100%)] py-16 text-[#0B1026] sm:py-20 lg:py-24"
+      className="section-background-frame bg-[linear-gradient(180deg,#FFFBF5_0%,#FFFFFF_100%)] py-12 text-[#0B1026] sm:py-14 lg:py-16"
       style={backgroundStyle}
     >
       <div className="section-shell">

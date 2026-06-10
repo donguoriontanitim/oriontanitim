@@ -56,6 +56,44 @@ svg {
   width: min(1180px, calc(100% - 24px));
 }
 
+.section-background-frame {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 224, 204, 0.82);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.84),
+    inset 0 -1px 0 rgba(255, 224, 204, 0.54);
+}
+
+.section-background-frame > .section-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.section-background-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0) 16%, rgba(255, 255, 255, 0) 82%, rgba(255, 255, 255, 0.9) 100%),
+    var(--section-bg-image);
+  background-position:
+    center,
+    center top;
+  background-repeat: no-repeat;
+  background-size:
+    100% 100%,
+    cover;
+  opacity: 0.1;
+}
+
+.section-background-frame:not([style*="--section-bg-image"])::after {
+  display: none;
+}
+
 .orion-page-bg {
   position: relative;
   isolation: isolate;
@@ -575,9 +613,20 @@ svg {
   .section-shell {
     width: min(1180px, calc(100% - 32px));
   }
+
+  .section-background-frame::after {
+    background-position:
+      center,
+      center;
+    opacity: 0.12;
+  }
 }
 
 @media (max-width: 640px) {
+  .section-background-frame::after {
+    opacity: 0.075;
+  }
+
   .admin-title {
     font-size: 1.8rem;
     line-height: 1.12;
