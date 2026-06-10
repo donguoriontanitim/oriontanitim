@@ -74,26 +74,26 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {} }) {
             return (
               <article
                 key={card.key || card.title}
-                className="soft-card-strong group flex min-h-[12rem] flex-col items-center justify-between p-5 text-center transition hover:-translate-y-1 hover:scale-[1.015] sm:min-h-[13.25rem] sm:p-6 lg:min-h-[14rem]"
+                className="soft-card-strong group flex min-h-[17.5rem] flex-col items-center justify-start gap-5 p-5 text-center transition hover:-translate-y-1 hover:scale-[1.015] sm:min-h-[18.5rem] sm:p-6 lg:min-h-[20rem] lg:gap-6"
               >
                 {cardImage ? (
-                  <span className="grid size-[7rem] place-items-center overflow-hidden rounded-[1.35rem] border border-[#FFE0CC] bg-white shadow-[0_16px_34px_rgba(11,16,38,0.1)] sm:size-[7.8rem]">
+                  <span className="grid size-[9rem] place-items-center overflow-hidden rounded-[1.75rem] border border-[#FFE0CC] bg-white shadow-[0_18px_38px_rgba(11,16,38,0.12)] sm:size-[10.5rem] lg:size-[12rem]">
                     <img
                       src={cardImage.image_url}
                       alt={cardImage.alt_text || cardImage.title || card.title}
-                      className="h-full w-full object-contain p-2"
+                      className="h-full w-full object-contain p-1.5 sm:p-2"
                       loading="lazy"
                     />
                   </span>
                 ) : (
                   <span
-                    className={`grid size-[7rem] place-items-center rounded-[1.35rem] shadow-[0_16px_34px_rgba(11,16,38,0.1)] sm:size-[7.8rem] ${
+                    className={`grid size-[9rem] place-items-center rounded-[1.75rem] shadow-[0_18px_38px_rgba(11,16,38,0.12)] sm:size-[10.5rem] lg:size-[12rem] ${
                       isBlue
                         ? 'bg-[#E9FAFE] text-[#22B8D6]'
                         : 'bg-[#FFF1E8] text-[#FF6A2A]'
                     }`}
                   >
-                    <Icon size={57} aria-hidden="true" />
+                    <Icon className="size-[5.4rem] sm:size-[6rem] lg:size-[6.75rem]" aria-hidden="true" />
                   </span>
                 )}
                 <span>
