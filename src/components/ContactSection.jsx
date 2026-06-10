@@ -26,6 +26,20 @@ const fallbackContactContent = {
     'Formu beklemeden sorularınızı iletebilir, kamp detayları için hızlı dönüş alabilirsiniz.',
 }
 
+const contactSummaryItems = [
+  { label: 'Yaş aralığı', value: '7-13' },
+  { label: 'Program', value: 'Teknoloji + Spor' },
+  { label: 'Dönem', value: '2026 Yaz' },
+  { label: 'Kontenjan', value: 'Sınırlı' },
+]
+
+const trustItems = [
+  'Uzman eğitmen kadrosu',
+  'Güvenli kamp ortamı',
+  'Yaşa uygun etkinlik akışı',
+  'Hızlı bilgilendirme ve dönüş',
+]
+
 function ContactSection({ programs, contactInfo, contactImage, contactQuickImage, contactSideImage, content }) {
   const [form, setForm] = useState(initialForm)
   const [status, setStatus] = useState({ type: 'idle', message: '' })
@@ -157,30 +171,30 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
               style={quickPanelBackgroundStyle}
             >
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-[#FF6A2A]">Hızlı İletişim</p>
-                <h3 className="mt-3 text-2xl font-black leading-tight text-[#0B1026] sm:text-[1.7rem]">
+                <p className="text-xs font-black uppercase tracking-[0.22em] text-[#FF6A2A]">Hızlı İletişim</p>
+                <h3 className="mt-3 text-[1.7rem] font-black leading-[1.05] text-[#0B1026] sm:text-3xl">
                   {contactContent.quickTitle}
                 </h3>
-                <p className="mt-3 text-sm font-bold leading-6 text-[#0B1026]/78">
+                <p className="mt-4 text-base font-extrabold leading-7 text-[#0B1026]/80">
                   {contactContent.quickDescription}
                 </p>
               </div>
 
-              <div className="grid min-w-0 gap-3 text-sm font-black text-[#0B1026]/86">
+              <div className="grid min-w-0 gap-3 text-base font-black text-[#0B1026]/88">
                 <a className="flex items-center gap-3" href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}>
-                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
                   </span>
                   <span className="min-w-0 break-words">{contactInfo.phone1}</span>
                 </a>
                 <a className="flex items-center gap-3" href={`tel:${contactInfo.phone2.replace(/\D/g, '')}`}>
-                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
                   </span>
                   <span className="min-w-0 break-words">{contactInfo.phone2}</span>
                 </a>
                 <a className="flex items-center gap-3" href={`mailto:${contactInfo.mail}`}>
-                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Mail size={17} aria-hidden="true" />
                   </span>
                   <span className="min-w-0 break-words">{contactInfo.mail}</span>
@@ -339,14 +353,38 @@ function ContactSection({ programs, contactInfo, contactImage, contactQuickImage
                 </span>
               </div>
 
-              <div className="rounded-[1.25rem] bg-white/92 p-4 shadow-[0_14px_34px_rgba(11,16,38,0.1)] backdrop-blur">
-                <p className="flex items-center gap-2 text-base font-black text-[#0B1026]">
-                  <CheckCircle2 size={18} className="text-[#FF6A2A]" aria-hidden="true" />
-                  Hızlı dönüş
-                </p>
-                <p className="mt-2 text-sm font-bold leading-6 text-[#0B1026]/76">
-                  Yaş, program ve kontenjan detaylarını birlikte netleştirelim.
-                </p>
+              <div className="grid gap-3">
+                <div className="rounded-[1.25rem] bg-white/92 p-4 shadow-[0_14px_34px_rgba(11,16,38,0.1)] backdrop-blur">
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-[#FF6A2A]">
+                    Kamp Özeti
+                  </p>
+                  <dl className="mt-3 grid gap-2">
+                    {contactSummaryItems.map((item) => (
+                      <div
+                        key={item.label}
+                        className="flex items-center justify-between gap-3 rounded-2xl bg-[#FFFBF5]/92 px-3 py-2.5"
+                      >
+                        <dt className="text-xs font-black text-[#0B1026]/58">{item.label}</dt>
+                        <dd className="text-sm font-black text-[#0B1026]">{item.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+
+                <div className="rounded-[1.25rem] bg-white/92 p-4 shadow-[0_14px_34px_rgba(11,16,38,0.1)] backdrop-blur">
+                  <p className="flex items-center gap-2 text-base font-black text-[#0B1026]">
+                    <CheckCircle2 size={18} className="text-[#FF6A2A]" aria-hidden="true" />
+                    Güven veren detaylar
+                  </p>
+                  <ul className="mt-3 grid gap-2.5 text-sm font-extrabold leading-5 text-[#0B1026]/78">
+                    {trustItems.map((item) => (
+                      <li key={item} className="flex gap-2">
+                        <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-[#FF6A2A]" aria-hidden="true" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </aside>
           </div>
