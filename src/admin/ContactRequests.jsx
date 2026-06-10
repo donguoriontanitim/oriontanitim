@@ -1,4 +1,4 @@
-import { MessageCircle, Phone } from 'lucide-react'
+﻿import { MessageCircle, Phone } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 
@@ -87,7 +87,7 @@ function ContactRequests() {
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="min-w-0 break-words text-xl font-black text-[#0B1026]">{request.parent_name}</h2>
+                    <h2 className="min-w-0 break-words text-xl font-black text-[#222222]">{request.parent_name}</h2>
                     <span className="admin-pill">
                       {request.status || 'Yeni'}
                     </span>
@@ -98,7 +98,7 @@ function ContactRequests() {
                     )}
                   </div>
 
-                  <div className="mt-3 flex flex-wrap gap-3 text-sm font-bold text-[#0B1026]/62">
+                  <div className="mt-3 flex flex-wrap gap-3 text-sm font-bold text-[#222222]/62">
                     <a className="inline-flex items-center gap-2" href={`tel:${request.phone}`}>
                       <Phone size={16} aria-hidden="true" />
                       {request.phone}
@@ -117,16 +117,16 @@ function ContactRequests() {
                   {interests.length > 0 && (
                     <div className="mt-4 flex flex-wrap gap-2">
                       {interests.map((area) => (
-                        <span key={area} className="rounded-full bg-[#FFF8F0] px-3 py-1 text-xs font-black text-[#0B1026]/62">
+                        <span key={area} className="rounded-full bg-[#FFF8F0] px-3 py-1 text-xs font-black text-[#222222]/62">
                           {area}
                         </span>
                       ))}
                     </div>
                   )}
 
-                  {request.message && <p className="mt-4 break-words leading-7 text-[#0B1026]/64">{request.message}</p>}
+                  {request.message && <p className="mt-4 break-words leading-7 text-[#222222]/64">{request.message}</p>}
                   {request.created_at && (
-                    <p className="mt-3 text-xs font-bold text-[#0B1026]/40">
+                    <p className="mt-3 text-xs font-bold text-[#222222]/40">
                       {new Date(request.created_at).toLocaleString('tr-TR')}
                     </p>
                   )}
@@ -152,7 +152,7 @@ function ContactRequests() {
         })}
 
         {requests.length === 0 && (
-          <div className="admin-card border-dashed p-8 text-center font-bold text-[#0B1026]/50">
+          <div className="admin-card border-dashed p-8 text-center font-bold text-[#222222]/50">
             Henüz iletişim talebi yok.
           </div>
         )}

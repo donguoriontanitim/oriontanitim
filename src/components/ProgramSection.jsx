@@ -1,4 +1,4 @@
-import {
+﻿import {
   Activity,
   Blocks,
   Bot,
@@ -50,7 +50,7 @@ function ProgramSection({ programs, imagesByRelatedKey = {}, backgroundImage }) 
   return (
     <section
       id="program"
-      className="section-background-frame bg-white/80 py-12 text-[#0B1026] sm:py-14 lg:py-16"
+      className="section-background-frame bg-white/80 py-12 text-[#222222] sm:py-14 lg:py-16"
       style={backgroundStyle}
     >
       <div className="section-shell">
@@ -59,7 +59,7 @@ function ProgramSection({ programs, imagesByRelatedKey = {}, backgroundImage }) 
           <h2 className="mt-3 text-3xl font-black tracking-wide text-[#FF6A2A] sm:text-5xl">
             PROGRAM
           </h2>
-          <p className="mt-4 text-base font-semibold leading-7 text-[#0B1026]/66 sm:text-lg sm:leading-8">
+          <p className="mt-4 text-base font-semibold leading-7 text-[#222222]/66 sm:text-lg sm:leading-8">
             Teknoloji, spor ve sanat dolu atölyelerle geleceği keşfet!
           </p>
         </div>
@@ -95,10 +95,10 @@ function ProgramSection({ programs, imagesByRelatedKey = {}, backgroundImage }) 
                     </span>
                   )}
                 </div>
-                <h3 className="text-center text-base font-black leading-snug text-[#0B1026] sm:text-lg">
+                <h3 className="text-center text-base font-black leading-snug text-[#222222] sm:text-lg">
                   {program.title}
                 </h3>
-                <p className="mx-auto mt-3 line-clamp-4 max-w-[13rem] text-center text-sm font-semibold leading-6 text-[#0B1026]/60">
+                <p className="mx-auto mt-3 line-clamp-4 max-w-[13rem] text-center text-sm font-semibold leading-6 text-[#222222]/60">
                   {program.description}
                 </p>
               </article>

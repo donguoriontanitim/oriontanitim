@@ -1,4 +1,4 @@
-import { FileText, Images, Inbox, ListChecks, MessageSquareText } from 'lucide-react'
+﻿import { FileText, Images, Inbox, ListChecks, MessageSquareText } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { fallbackContent } from '../fallbackContent.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
@@ -64,8 +64,8 @@ function Dashboard() {
               <div className="orion-gradient mb-5 grid size-12 place-items-center rounded-2xl text-white shadow-[0_14px_30px_rgba(255,106,42,0.24)]">
                 <Icon size={24} aria-hidden="true" />
               </div>
-              <p className="text-4xl font-black text-[#0B1026]">{counts[card.key]}</p>
-              <h2 className="mt-2 text-lg font-black text-[#0B1026]/78">{card.label}</h2>
+              <p className="text-4xl font-black text-[#222222]">{counts[card.key]}</p>
+              <h2 className="mt-2 text-lg font-black text-[#222222]/78">{card.label}</h2>
             </Link>
           )
         })}

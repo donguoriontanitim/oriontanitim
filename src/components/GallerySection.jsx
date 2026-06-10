@@ -1,4 +1,4 @@
-import { ArrowRight, ImageOff, Images, X } from 'lucide-react'
+﻿import { ArrowRight, ImageOff, Images, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
@@ -73,7 +73,7 @@ function GallerySection({ images, siteImages = [], backgroundImage }) {
   return (
     <section
       id="galeri"
-      className="section-background-frame bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-12 text-[#0B1026] sm:py-14 lg:py-16"
+      className="section-background-frame bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-12 text-[#222222] sm:py-14 lg:py-16"
       style={backgroundStyle}
     >
       <div className="section-shell">
@@ -120,7 +120,7 @@ function GallerySection({ images, siteImages = [], backgroundImage }) {
                     />
                   </div>
                   {image.title && (
-                    <span className="block break-words px-2 pb-2 pt-3 text-base font-black leading-snug text-[#0B1026]">
+                    <span className="block break-words px-2 pb-2 pt-3 text-base font-black leading-snug text-[#222222]">
                       {image.title}
                     </span>
                   )}
@@ -147,7 +147,7 @@ function GallerySection({ images, siteImages = [], backgroundImage }) {
               <ImageOff size={25} aria-hidden="true" />
             </div>
             <h3 className="mt-4 text-xl font-black">Galeri yakında güncellenecek.</h3>
-            <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-[#0B1026]/62">
+            <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-[#222222]/62">
               Admin panelinden aktif görseller eklendiğinde bu alan otomatik olarak dolacak.
             </p>
           </div>
@@ -156,7 +156,7 @@ function GallerySection({ images, siteImages = [], backgroundImage }) {
 
       {selectedImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B1026]/74 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#222222]/74 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-label={selectedImage.title || 'Galeri görseli'}
@@ -169,7 +169,7 @@ function GallerySection({ images, siteImages = [], backgroundImage }) {
             <button
               type="button"
               onClick={() => setSelectedImage(null)}
-              className="absolute right-4 top-4 z-10 grid size-11 place-items-center rounded-full bg-white text-[#0B1026] shadow-[0_12px_32px_rgba(11,16,38,0.18)] transition hover:bg-[#FFF1E8] hover:text-[#FF6A2A]"
+              className="absolute right-4 top-4 z-10 grid size-11 place-items-center rounded-full bg-white text-[#222222] shadow-[0_12px_32px_rgba(11,16,38,0.18)] transition hover:bg-[#FFF1E8] hover:text-[#FF6A2A]"
               aria-label="Galeri görselini kapat"
             >
               <X size={20} aria-hidden="true" />
@@ -182,12 +182,12 @@ function GallerySection({ images, siteImages = [], backgroundImage }) {
             {(selectedImage.title || selectedImage.description) && (
               <div className="px-3 pb-3 pt-4 sm:px-4">
                 {selectedImage.title && (
-                  <h3 className="text-xl font-black leading-tight text-[#0B1026]">
+                  <h3 className="text-xl font-black leading-tight text-[#222222]">
                     {selectedImage.title}
                   </h3>
                 )}
                 {selectedImage.description && (
-                  <p className="mt-2 text-sm font-semibold leading-6 text-[#0B1026]/66">
+                  <p className="mt-2 text-sm font-semibold leading-6 text-[#222222]/66">
                     {selectedImage.description}
                   </p>
                 )}

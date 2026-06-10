@@ -1,4 +1,4 @@
-import {
+﻿import {
   BookOpen,
   CalendarClock,
   CircleHelp,
@@ -14,18 +14,19 @@ import { useState } from 'react'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
 
 const navItems = [
-  { label: 'Ana Sayfa', href: '#/?section=hero', icon: Home },
-  { label: 'Program', href: '#/?section=program', icon: BookOpen },
-  { label: 'Neden Orion?', href: '#/?section=neden-orion', icon: Sparkles },
-  { label: 'Günlük Akış', href: '#/?section=akis', icon: CalendarClock },
-  { label: 'Galeri', href: '#/?section=galeri', icon: Images },
-  { label: 'SSS', href: '#/?section=sss', icon: CircleHelp },
-  { label: 'İletişim', href: '#/?section=iletisim', icon: MessageCircle },
+  { label: 'Ana Sayfa', href: '#/hero', icon: Home },
+  { label: 'Program', href: '#/program', icon: BookOpen },
+  { label: 'Neden Orion?', href: '#/neden-orion', icon: Sparkles },
+  { label: 'Günlük Akış', href: '#/akis', icon: CalendarClock },
+  { label: 'Galeri', href: '#/galeri', icon: Images },
+  { label: 'SSS', href: '#/sss', icon: CircleHelp },
+  { label: 'İletişim', href: '#/iletisim', icon: MessageCircle },
 ]
 
-function Navbar({ contactInfo }) {
+function Navbar({ contactInfo, logoImage }) {
   const [isOpen, setIsOpen] = useState(false)
   const ctaTitle = contactInfo?.phone1 ? `Bilgi almak için ${contactInfo.phone1}` : 'Bilgi Al'
+  const logoUrl = logoImage?.image_url
 
   const closeMenu = () => setIsOpen(false)
 
@@ -33,12 +34,20 @@ function Navbar({ contactInfo }) {
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4">
       <nav className="mx-auto w-full max-w-[1180px] rounded-[1.65rem] border border-[#FFE0CC] bg-white/88 shadow-[0_16px_54px_rgba(255,106,42,0.12)] backdrop-blur-xl sm:rounded-[2rem]">
         <div className="flex min-h-16 items-center justify-between gap-2 px-3 py-2.5 sm:min-h-18 sm:gap-3 sm:px-4 sm:py-3 lg:px-5">
-          <a href="#/?section=hero" className="flex min-w-0 items-center gap-3" onClick={closeMenu}>
+          <a href="#/hero" className="flex min-w-0 items-center gap-3" onClick={closeMenu}>
             <span className="icon-bubble grid size-10 shrink-0 place-items-center rounded-2xl sm:size-11">
-              <Rocket size={22} aria-hidden="true" />
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={logoImage.alt_text || logoImage.title || 'ORION KAMP logosu'}
+                  className="h-8 w-8 object-contain"
+                />
+              ) : (
+                <Rocket size={22} aria-hidden="true" />
+              )}
             </span>
             <span className="min-w-0">
-              <span className="block truncate text-sm font-black uppercase tracking-[0.18em] text-[#0B1026]">
+              <span className="block truncate text-sm font-black uppercase tracking-[0.18em] text-[#222222]">
                 Orion
               </span>
               <span className="block truncate text-xs font-extrabold text-[#FF6A2A]">
@@ -52,7 +61,7 @@ function Navbar({ contactInfo }) {
               <a
                 key={item.href}
                 href={item.href}
-                className="rounded-full px-3.5 py-2 text-sm font-extrabold text-[#0B1026]/72 transition hover:-translate-y-0.5 hover:bg-[#FFF1E8] hover:text-[#FF6A2A]"
+                className="rounded-full px-3.5 py-2 text-sm font-extrabold text-[#222222]/72 transition hover:-translate-y-0.5 hover:bg-[#FFF1E8] hover:text-[#FF6A2A]"
               >
                 {item.label}
               </a>
@@ -61,7 +70,7 @@ function Navbar({ contactInfo }) {
 
           <div className="flex items-center gap-2">
             <a
-              href="#/?section=iletisim"
+              href="#/iletisim"
               title={ctaTitle}
               className="orion-gradient orion-gradient-hover cta-orange inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-3.5 py-2.5 text-sm font-black text-white transition sm:px-5"
             >
@@ -95,7 +104,7 @@ function Navbar({ contactInfo }) {
                     key={item.href}
                     href={item.href}
                     onClick={closeMenu}
-                    className="flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-sm font-black text-[#0B1026]/78 transition hover:border-[#FFE0CC] hover:bg-[#FFF8F0] hover:text-[#FF6A2A]"
+                    className="flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-sm font-black text-[#222222]/78 transition hover:border-[#FFE0CC] hover:bg-[#FFF8F0] hover:text-[#FF6A2A]"
                   >
                     <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#FFF1E8] text-[#FF6A2A]">
                       <Icon size={17} aria-hidden="true" />
@@ -106,7 +115,7 @@ function Navbar({ contactInfo }) {
               })}
 
               <a
-                href="#/?section=iletisim"
+                href="#/iletisim"
                 onClick={closeMenu}
                 title={ctaTitle}
                 className="orion-gradient cta-orange mt-2 inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-black text-white transition"

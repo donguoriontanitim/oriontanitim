@@ -1,4 +1,4 @@
-import { Brush, Clock3, Coffee, Gamepad2, Laptop, MessageCircle, Sparkles } from 'lucide-react'
+﻿import { Brush, Clock3, Coffee, Gamepad2, Laptop, MessageCircle, Sparkles } from 'lucide-react'
 import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
 
 const flowIcons = [Clock3, Laptop, Gamepad2, Coffee, Brush, Sparkles, MessageCircle]
@@ -10,7 +10,7 @@ function DailyFlowSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
   return (
     <section
       id="akis"
-      className="section-background-frame bg-[linear-gradient(180deg,#FFFBF5_0%,#FFFFFF_100%)] py-12 text-[#0B1026] sm:py-14 lg:py-16"
+      className="section-background-frame bg-[linear-gradient(180deg,#FFFBF5_0%,#FFFFFF_100%)] py-12 text-[#222222] sm:py-14 lg:py-16"
       style={backgroundStyle}
     >
       <div className="section-shell">
@@ -53,11 +53,11 @@ function DailyFlowSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
 
                   <div className="soft-card-strong min-w-0 w-full flex-1 rounded-[1.35rem] p-4 lg:mt-6 lg:min-h-44 lg:rounded-[1.5rem]">
                     <p className="text-sm font-black text-[#FF6A2A]">{item.time}</p>
-                    <h3 className="mt-2 text-base font-black leading-snug text-[#0B1026] sm:text-lg">
+                    <h3 className="mt-2 text-base font-black leading-snug text-[#222222] sm:text-lg">
                       {item.title}
                     </h3>
                     {item.text && (
-                      <p className="mt-2 text-sm font-semibold leading-6 text-[#0B1026]/62">
+                      <p className="mt-2 text-sm font-semibold leading-6 text-[#222222]/62">
                         {item.text}
                       </p>
                     )}

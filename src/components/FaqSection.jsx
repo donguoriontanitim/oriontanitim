@@ -1,4 +1,4 @@
-import { HelpCircle, Minus, Plus } from 'lucide-react'
+﻿import { HelpCircle, Minus, Plus } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
@@ -69,9 +69,9 @@ function FaqSection({ faqs, backgroundImage }) {
         </summary>
         <div className="mx-3 mb-3 rounded-[1.15rem] border border-[#FFE0CC]/70 bg-[#FFF8F0] px-4 py-4 sm:mx-5 sm:mb-4 sm:rounded-[1.25rem] sm:px-5">
           {rendersHtml ? (
-            <SafeHtml html={faq.answer} className="text-sm font-semibold leading-7 text-[#0B1026]/68" />
+            <SafeHtml html={faq.answer} className="text-sm font-semibold leading-7 text-[#222222]/68" />
           ) : (
-            <p className="text-sm font-semibold leading-7 text-[#0B1026]/68">
+            <p className="text-sm font-semibold leading-7 text-[#222222]/68">
               {faq.answer}
             </p>
           )}
@@ -83,7 +83,7 @@ function FaqSection({ faqs, backgroundImage }) {
   return (
     <section
       id="sss"
-      className="section-background-frame bg-[linear-gradient(180deg,#FFFBF5_0%,#FFFFFF_100%)] py-12 text-[#0B1026] sm:py-14 lg:py-16"
+      className="section-background-frame bg-[linear-gradient(180deg,#FFFBF5_0%,#FFFFFF_100%)] py-12 text-[#222222] sm:py-14 lg:py-16"
       style={backgroundStyle}
     >
       <div className="section-shell">

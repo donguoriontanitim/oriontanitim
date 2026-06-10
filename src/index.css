@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 :root {
   --orion-bg: #fffbf5;
@@ -6,7 +6,7 @@
   --orion-card: #ffffff;
   --orion-orange: #ff6a2a;
   --orion-orange-soft: #fff1e8;
-  --orion-navy: #0b1026;
+  --orion-navy: #222222;
   --orion-blue: #22b8d6;
   --orion-yellow: #ffd166;
   --orion-border: #ffe0cc;
@@ -125,7 +125,7 @@ svg {
 
 .orion-page-bg::before {
   background-image:
-    radial-gradient(circle, rgba(11, 16, 38, 0.12) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(34, 34, 34, 0.12) 0 1px, transparent 1.6px),
     radial-gradient(circle, rgba(255, 106, 42, 0.26) 0 1.4px, transparent 2px),
     radial-gradient(circle, rgba(255, 209, 102, 0.28) 0 1.6px, transparent 2.2px);
   background-position:
@@ -187,7 +187,7 @@ svg {
   pointer-events: none;
   background-image:
     radial-gradient(circle, rgba(255, 106, 42, 0.2) 0 1.4px, transparent 2px),
-    radial-gradient(circle, rgba(11, 16, 38, 0.1) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(34, 34, 34, 0.1) 0 1px, transparent 1.8px),
     radial-gradient(circle, rgba(255, 209, 102, 0.22) 0 1.3px, transparent 2px);
   background-position:
     24px 28px,
@@ -222,7 +222,7 @@ svg {
   border: 1px solid var(--orion-border);
   background: #fff;
   border-radius: 28px;
-  box-shadow: 0 24px 70px rgba(11, 16, 38, 0.08);
+  box-shadow: 0 24px 70px rgba(34, 34, 34, 0.08);
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
@@ -253,7 +253,7 @@ svg {
   border-radius: 999px;
   padding: 1rem 1.5rem;
   font-weight: 900;
-  box-shadow: 0 14px 34px rgba(11, 16, 38, 0.06);
+  box-shadow: 0 14px 34px rgba(34, 34, 34, 0.06);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -297,7 +297,7 @@ svg {
 .contact-label {
   display: grid;
   gap: 0.5rem;
-  color: rgba(11, 16, 38, 0.72);
+  color: rgba(34, 34, 34, 0.72);
   font-size: 0.875rem;
   font-weight: 900;
 }
@@ -318,7 +318,7 @@ svg {
 }
 
 .contact-input::placeholder {
-  color: rgba(11, 16, 38, 0.36);
+  color: rgba(34, 34, 34, 0.36);
 }
 
 .contact-input:focus {
@@ -428,7 +428,7 @@ svg {
 .admin-label {
   display: grid;
   gap: 0.5rem;
-  color: rgba(11, 16, 38, 0.72);
+  color: rgba(34, 34, 34, 0.72);
   font-size: 0.875rem;
   font-weight: 900;
 }
@@ -549,7 +549,7 @@ svg {
 
 .admin-status-button-muted {
   background: #f8fafc;
-  color: rgba(11, 16, 38, 0.56);
+  color: rgba(34, 34, 34, 0.56);
 }
 
 .admin-file-button {
@@ -606,7 +606,7 @@ svg {
   background: #fffbf5;
   border-radius: 16px;
   padding: 1rem;
-  color: rgba(11, 16, 38, 0.72);
+  color: rgba(34, 34, 34, 0.72);
   font-size: 0.875rem;
   font-weight: 900;
 }

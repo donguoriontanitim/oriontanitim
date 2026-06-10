@@ -1,4 +1,4 @@
-import { Bot, CheckCircle2, Loader2, Mail, Phone, Send, Sparkles } from 'lucide-react'
+﻿import { Bot, CheckCircle2, Loader2, Mail, Phone, Send, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
@@ -171,7 +171,7 @@ function ContactSection({
   return (
     <section
       id="iletisim"
-      className="section-background-frame bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-12 text-[#0B1026] sm:py-14 lg:py-16"
+      className="section-background-frame bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-12 text-[#222222] sm:py-14 lg:py-16"
       style={backgroundStyle}
     >
       <div className="section-shell">
@@ -193,15 +193,15 @@ function ContactSection({
 
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-[#FF6A2A]">Hızlı İletişim</p>
-                <h3 className="mt-3 text-[1.7rem] font-black leading-[1.05] text-[#0B1026] sm:text-3xl">
+                <h3 className="mt-3 text-[1.7rem] font-black leading-[1.05] text-[#222222] sm:text-3xl">
                   {contactContent.quickTitle}
                 </h3>
-                <p className="mt-4 text-base font-extrabold leading-7 text-[#0B1026]/80">
+                <p className="mt-4 text-base font-extrabold leading-7 text-[#222222]/80">
                   {contactContent.quickDescription}
                 </p>
               </div>
 
-              <div className="mt-auto grid min-w-0 gap-3 rounded-[1.35rem] border border-white/80 bg-white/92 p-3 text-base font-black leading-tight text-[#0B1026] shadow-[0_18px_42px_rgba(11,16,38,0.16)] backdrop-blur-md sm:p-4 sm:text-[1.05rem]">
+              <div className="mt-auto grid min-w-0 gap-3 rounded-[1.35rem] border border-white/80 bg-white/92 p-3 text-base font-black leading-tight text-[#222222] shadow-[0_18px_42px_rgba(11,16,38,0.16)] backdrop-blur-md sm:p-4 sm:text-[1.05rem]">
                 <a
                   className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
                   href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}
@@ -235,18 +235,18 @@ function ContactSection({
             <div>
               <div className="mb-6">
                 <p className="section-eyebrow">{contactContent.eyebrow}</p>
-                <h2 className="mt-3 text-2xl font-black leading-tight text-[#0B1026] min-[390px]:text-3xl sm:text-4xl lg:text-5xl">
+                <h2 className="mt-3 text-2xl font-black leading-tight text-[#222222] min-[390px]:text-3xl sm:text-4xl lg:text-5xl">
                   {contactContent.title}
                   {contactContent.highlight && (
                     <span className="block text-[#FF6A2A]">{contactContent.highlight}</span>
                   )}
                 </h2>
-                <p className="mt-4 text-base font-semibold leading-7 text-[#0B1026]/64">
+                <p className="mt-4 text-base font-semibold leading-7 text-[#222222]/64">
                   {contactContent.description}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} noValidate className="text-[#0B1026]">
+              <form onSubmit={handleSubmit} noValidate className="text-[#222222]">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className={labelClass}>
                     Veli Adı Soyadı
@@ -287,7 +287,7 @@ function ContactSection({
                 </div>
 
                 <fieldset className="mt-5">
-                  <legend className="text-sm font-black text-[#0B1026]/72">İlgilendiği Alanlar</legend>
+                  <legend className="text-sm font-black text-[#222222]/72">İlgilendiği Alanlar</legend>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {activePrograms.map((program) => {
                       const selected = form.interested_areas.includes(program.title)
@@ -300,7 +300,7 @@ function ContactSection({
                           className={`min-h-11 rounded-full border px-4 py-2.5 text-sm font-black transition ${
                             selected
                               ? 'orion-gradient border-transparent text-white shadow-[0_12px_26px_rgba(255,106,42,0.2)]'
-                              : 'border-[#FFE0CC] bg-[#FFFBF5] text-[#0B1026]/72 hover:border-[#FF6A2A] hover:bg-[#FFF1E8]'
+                              : 'border-[#FFE0CC] bg-[#FFFBF5] text-[#222222]/72 hover:border-[#FF6A2A] hover:bg-[#FFF1E8]'
                           }`}
                         >
                           {program.title}
@@ -321,7 +321,7 @@ function ContactSection({
                   />
                 </label>
 
-                <label className="mt-5 flex gap-3 rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4 text-sm font-semibold leading-6 text-[#0B1026]/64">
+                <label className="mt-5 flex gap-3 rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4 text-sm font-semibold leading-6 text-[#222222]/64">
                   <input
                     type="checkbox"
                     checked={form.kvkk_approved}
@@ -368,7 +368,7 @@ function ContactSection({
                 <span className="grid size-11 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                   <Bot size={22} aria-hidden="true" />
                 </span>
-                <span className="grid size-9 place-items-center rounded-full bg-[#FFD166] text-[#0B1026]">
+                <span className="grid size-9 place-items-center rounded-full bg-[#FFD166] text-[#222222]">
                   <Sparkles size={18} aria-hidden="true" />
                 </span>
               </div>
@@ -383,8 +383,8 @@ function ContactSection({
                       key={item.label}
                       className="flex items-center justify-between gap-3 rounded-2xl bg-[#FFFBF5]/92 px-3 py-2.5"
                     >
-                      <dt className="text-xs font-black text-[#0B1026]/58">{item.label}</dt>
-                      <dd className="text-sm font-black text-[#0B1026]">{item.value}</dd>
+                      <dt className="text-xs font-black text-[#222222]/58">{item.label}</dt>
+                      <dd className="text-sm font-black text-[#222222]">{item.value}</dd>
                     </div>
                   ))}
                 </dl>
@@ -392,11 +392,11 @@ function ContactSection({
 
               <div className="mt-auto grid gap-3">
                 <div className="rounded-[1.25rem] bg-white/92 p-4 shadow-[0_14px_34px_rgba(11,16,38,0.1)] backdrop-blur">
-                  <p className="flex items-center gap-2 text-base font-black text-[#0B1026]">
+                  <p className="flex items-center gap-2 text-base font-black text-[#222222]">
                     <CheckCircle2 size={18} className="text-[#FF6A2A]" aria-hidden="true" />
                     Güven veren detaylar
                   </p>
-                  <ul className="mt-3 grid gap-2.5 text-sm font-extrabold leading-5 text-[#0B1026]/78">
+                  <ul className="mt-3 grid gap-2.5 text-sm font-extrabold leading-5 text-[#222222]/78">
                     {trustItems.map((item) => (
                       <li key={item} className="flex gap-2">
                         <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-[#FF6A2A]" aria-hidden="true" />

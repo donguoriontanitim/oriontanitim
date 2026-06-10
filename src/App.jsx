@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import AdminLayout from './admin/AdminLayout.jsx'
 import AdminLogin from './admin/AdminLogin.jsx'
+import AnalyticsReport from './admin/AnalyticsReport.jsx'
 import ContactRequests from './admin/ContactRequests.jsx'
 import ContentManager from './admin/ContentManager.jsx'
 import Dashboard from './admin/Dashboard.jsx'
@@ -21,6 +22,7 @@ import Navbar from './components/Navbar.jsx'
 import ProgramSection from './components/ProgramSection.jsx'
 import WhyOrionSection from './components/WhyOrionSection.jsx'
 import { fallbackContent } from './fallbackContent.js'
+import useLandingAnalytics from './hooks/useLandingAnalytics.js'
 import { legalDocuments } from './legalDocuments.js'
 import {
   filterImagesByUsageArea,
@@ -31,6 +33,7 @@ import {
 import { getLandingData } from './lib/landingData.js'
 
 function LandingPage() {
+  useLandingAnalytics()
   const [siteImages, setSiteImages] = useState([])
   const [landingData, setLandingData] = useState(() => ({
     contact: null,
@@ -63,7 +66,8 @@ function LandingPage() {
   }, [])
 
   useEffect(() => {
-    const sectionId = new URLSearchParams(location.search).get('section')
+    const routeSectionId = location.pathname.replace(/^\/+/, '').split('/')[0]
+    const sectionId = routeSectionId || new URLSearchParams(location.search).get('section')
 
     if (!sectionId) {
       return undefined
@@ -74,9 +78,10 @@ function LandingPage() {
     })
 
     return () => window.cancelAnimationFrame(frameId)
-  }, [location.search])
+  }, [location.pathname, location.search])
 
   const imageSlots = useMemo(() => {
+    const brandAssetImages = filterImagesByUsageArea(siteImages, 'brand_asset')
     const programImages = filterImagesByUsageArea(siteImages, 'program_card')
     const whyOrionImages = filterImagesByUsageArea(siteImages, 'why_orion_card')
     const dailyFlowImages = filterImagesByUsageArea(siteImages, 'daily_flow')
@@ -86,6 +91,7 @@ function LandingPage() {
     const sectionBackgroundImages = filterImagesByUsageArea(siteImages, 'section_background')
 
     return {
+      brandAssetByKey: mapImagesByRelatedKey(brandAssetImages),
       sectionBackgroundByKey: mapImagesByRelatedKey(sectionBackgroundImages),
       contactPanelByKey: mapImagesByRelatedKey(contactPanelImages),
       contactRobot: getFirstImageByUsageArea(siteImages, 'contact_robot'),
@@ -101,9 +107,27 @@ function LandingPage() {
     }
   }, [siteImages])
 
+  useEffect(() => {
+    const favicon = imageSlots.brandAssetByKey?.favicon
+
+    if (!favicon?.image_url) {
+      return
+    }
+
+    let iconLink = document.querySelector("link[rel='icon']")
+
+    if (!iconLink) {
+      iconLink = document.createElement('link')
+      iconLink.rel = 'icon'
+      document.head.appendChild(iconLink)
+    }
+
+    iconLink.href = favicon.image_url
+  }, [imageSlots.brandAssetByKey])
+
   return (
-    <div className="orion-page-bg text-[#0B1026]">
-      <Navbar contactInfo={landingData.contactInfo} />
+    <div className="orion-page-bg text-[#222222]">
+      <Navbar contactInfo={landingData.contactInfo} logoImage={imageSlots.brandAssetByKey?.['site-logo']} />
       <main>
         <HeroSection
           content={landingData.hero}
@@ -152,6 +176,7 @@ function LandingPage() {
       <Footer
         contactInfo={landingData.contactInfo}
         decorationImage={imageSlots.footerDecoration}
+        logoImage={imageSlots.brandAssetByKey?.['site-logo']}
         backgroundImage={imageSlots.sectionBackgroundByKey?.footer}
       />
     </div>
@@ -162,6 +187,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/:sectionId" element={<LandingPage />} />
       <Route
         path="/kvkk"
         element={<LegalPage document={legalDocuments.kvkk} contactInfo={fallbackContent.contactInfo} />}
@@ -175,9 +201,10 @@ function App() {
         element={<LegalPage document={legalDocuments.terms} contactInfo={fallbackContent.contactInfo} />}
       />
       <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="contents" element={<ContentManager />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="analytics" element={<AnalyticsReport />} />
+          <Route path="contents" element={<ContentManager />} />
         <Route path="programs" element={<ProgramManager />} />
         <Route path="gallery" element={<GalleryManager />} />
         <Route path="images" element={<ImageManager />} />

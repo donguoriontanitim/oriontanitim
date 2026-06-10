@@ -5,6 +5,7 @@ export const SITE_IMAGE_BUCKET = 'orion-assets'
 export const usageAreaOptions = [
   { value: 'hero_desktop', label: 'Hero Desktop' },
   { value: 'hero_mobile', label: 'Hero Mobile' },
+  { value: 'brand_asset', label: 'Logo / Favicon' },
   { value: 'partner_logo', label: 'Hero Partner Logosu' },
   { value: 'summary_card', label: 'Kamp Özeti Kartı' },
   { value: 'program_card', label: 'Program Kartı' },
@@ -19,6 +20,10 @@ export const usageAreaOptions = [
 ]
 
 export const relatedKeyOptionsByUsageArea = {
+  brand_asset: [
+    { value: 'site-logo', label: 'Site Logosu' },
+    { value: 'favicon', label: 'Favicon / Tarayıcı İkonu' },
+  ],
   section_background: [
     { value: 'hero', label: 'Ana Sayfa / Hero' },
     { value: 'summary', label: 'Kamp Özeti Bölümü' },
@@ -98,6 +103,14 @@ const turkishCharacterMap = {
 }
 
 const relatedKeyAliases = {
+  brand_asset: {
+    logo: 'site-logo',
+    'site-logo': 'site-logo',
+    marka: 'site-logo',
+    favicon: 'favicon',
+    icon: 'favicon',
+    ikon: 'favicon',
+  },
   section_background: {
     ana: 'hero',
     anasayfa: 'hero',

@@ -1,4 +1,4 @@
-import { Plus, Save, Trash2 } from 'lucide-react'
+﻿import { Plus, Save, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import SafeHtml from '../components/SafeHtml.jsx'
 import { fallbackContent } from '../fallbackContent.js'
@@ -129,14 +129,14 @@ function FaqManager() {
             <article key={faq.id} className="admin-card p-5">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#0B1026]/38">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#222222]/38">
                     Sıra {faq.sort_order || 0} · {faq.is_html ? 'HTML' : 'Text'}
                   </p>
-                  <h2 className="mt-2 break-words text-xl font-black text-[#0B1026]">{faq.question}</h2>
+                  <h2 className="mt-2 break-words text-xl font-black text-[#222222]">{faq.question}</h2>
                   {faq.is_html ? (
-                    <SafeHtml html={faq.answer} className="mt-2 leading-7 text-[#0B1026]/64" />
+                    <SafeHtml html={faq.answer} className="mt-2 leading-7 text-[#222222]/64" />
                   ) : (
-                    <p className="mt-2 break-words leading-7 text-[#0B1026]/64">{faq.answer}</p>
+                    <p className="mt-2 break-words leading-7 text-[#222222]/64">{faq.answer}</p>
                   )}
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-2 sm:flex-nowrap">

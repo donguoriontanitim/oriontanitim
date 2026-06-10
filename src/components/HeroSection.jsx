@@ -1,4 +1,4 @@
-import {
+﻿import {
   ArrowRight,
   BookOpen,
   Cpu,
@@ -54,31 +54,31 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
       <div className="section-shell relative z-10">
         <div className="grid min-h-[calc(100svh-7rem)] items-center gap-9 py-8 sm:gap-12 sm:py-10 lg:grid-cols-[0.92fr_1.08fr] lg:py-14">
           <div className="max-w-2xl">
-            <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-[#FFE0CC] bg-white/82 px-3.5 py-2 text-sm font-black text-[#0B1026] shadow-sm backdrop-blur sm:mb-6 sm:px-4">
+            <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-[#FFE0CC] bg-white/82 px-3.5 py-2 text-sm font-black text-[#222222] shadow-sm backdrop-blur sm:mb-6 sm:px-4">
               <Rocket className="text-[#FF6A2A]" size={17} aria-hidden="true" />
               <span className="min-w-0 truncate">{content?.eyebrow || '7–13 yaş çocuklar için yaz kampı'}</span>
             </div>
 
-            <h1 className="max-w-3xl text-[2.65rem] font-black leading-[0.98] text-[#0B1026] sm:text-6xl sm:leading-[0.94] lg:text-7xl">
+            <h1 className="max-w-3xl text-[2.65rem] font-black leading-[0.98] text-[#222222] sm:text-6xl sm:leading-[0.94] lg:text-7xl">
               <span className="block">{titleLead}</span>
               <span className="block text-[#FF6A2A]">{titleRest.join(' ')}</span>
             </h1>
 
             <SafeHtml
               html={subtitleHtml}
-              className="mt-5 max-w-xl text-base font-semibold leading-7 text-[#0B1026]/72 sm:mt-6 sm:text-xl sm:leading-8"
+              className="mt-5 max-w-xl text-base font-semibold leading-7 text-[#222222]/72 sm:mt-6 sm:text-xl sm:leading-8"
             />
 
             <div className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row">
               <a
-                href="#/?section=iletisim"
+                href="#/iletisim"
                 className="orion-gradient orion-gradient-hover cta-orange inline-flex min-h-13 items-center justify-center gap-2 rounded-full px-6 py-4 text-base font-black text-white transition"
               >
                 {primaryLabel}
                 <ArrowRight size={19} aria-hidden="true" />
               </a>
               <a
-                href="#/?section=program"
+                href="#/program"
                 className="landing-secondary-button text-base"
               >
                 <BookOpen size={19} aria-hidden="true" />
@@ -111,7 +111,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
                             className="max-h-10 max-w-full object-contain"
                           />
                         ) : (
-                          <span className="text-center text-xs font-black tracking-[0.12em] text-[#0B1026]/48">
+                          <span className="text-center text-xs font-black tracking-[0.12em] text-[#222222]/48">
                             {partner.shortName || 'LOGO'}
                           </span>
                         )}
@@ -125,7 +125,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
 
           <div className="relative mx-auto w-full max-w-2xl lg:mx-0 lg:ml-auto">
             <div className="absolute -inset-2 rounded-[2rem] bg-[radial-gradient(circle_at_24%_20%,rgba(255,209,102,0.5),transparent_28%),radial-gradient(circle_at_80%_18%,rgba(34,184,214,0.18),transparent_26%),linear-gradient(135deg,#FFF1E8,#FFFFFF)] sm:-inset-5 sm:rounded-[3rem]" />
-            <div className="absolute -right-3 top-10 z-10 hidden rounded-full border border-[#FFE0CC] bg-white px-4 py-3 text-sm font-black text-[#0B1026] shadow-[0_18px_46px_rgba(255,106,42,0.16)] sm:flex sm:items-center sm:gap-2">
+            <div className="absolute -right-3 top-10 z-10 hidden rounded-full border border-[#FFE0CC] bg-white px-4 py-3 text-sm font-black text-[#222222] shadow-[0_18px_46px_rgba(255,106,42,0.16)] sm:flex sm:items-center sm:gap-2">
               <Orbit className="text-[#FF6A2A]" size={17} aria-hidden="true" />
               Robotik + roket + kamp
             </div>
@@ -141,7 +141,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
                 />
               </picture>
             </div>
-            <div className="absolute -bottom-4 left-4 rounded-2xl border border-[#FFE0CC] bg-white px-4 py-3 text-[#0B1026] shadow-[0_20px_54px_rgba(11,16,38,0.12)] sm:-bottom-5 sm:left-5 sm:rounded-3xl sm:px-5 sm:py-4">
+            <div className="absolute -bottom-4 left-4 rounded-2xl border border-[#FFE0CC] bg-white px-4 py-3 text-[#222222] shadow-[0_20px_54px_rgba(11,16,38,0.12)] sm:-bottom-5 sm:left-5 sm:rounded-3xl sm:px-5 sm:py-4">
               <p className="text-xs font-black uppercase tracking-[0.18em] text-[#FF6A2A]">Yaş</p>
               <p className="text-2xl font-black sm:text-3xl">7–13</p>
             </div>
@@ -158,8 +158,8 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
                   <Icon size={21} aria-hidden="true" />
                 </span>
                 <span>
-                  <span className="block text-base font-black text-[#0B1026]">{item.title}</span>
-                  <span className="mt-0.5 block text-sm font-semibold text-[#0B1026]/60">
+                  <span className="block text-base font-black text-[#222222]">{item.title}</span>
+                  <span className="mt-0.5 block text-sm font-semibold text-[#222222]/60">
                     {item.text}
                   </span>
                 </span>

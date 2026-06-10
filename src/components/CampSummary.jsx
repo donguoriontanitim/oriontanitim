@@ -1,4 +1,4 @@
-import { Cpu, Dumbbell, GraduationCap, Languages, ShieldCheck, Waves } from 'lucide-react'
+﻿import { Cpu, Dumbbell, GraduationCap, Languages, ShieldCheck, Waves } from 'lucide-react'
 import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
 import SafeHtml from './SafeHtml.jsx'
 
@@ -57,7 +57,7 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {}, backgroundI
   return (
     <section
       id="ozet"
-      className="section-background-frame relative bg-white/72 py-10 text-[#0B1026] sm:py-12 lg:py-14"
+      className="section-background-frame relative bg-white/72 py-10 text-[#222222] sm:py-12 lg:py-14"
       style={backgroundStyle}
     >
       <div className="section-shell">
@@ -66,7 +66,7 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {}, backgroundI
           <h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">
             {content.title}
           </h2>
-          <SafeHtml html={content.html} className="mt-4 text-base leading-8 text-[#0B1026]/66 sm:text-lg" />
+          <SafeHtml html={content.html} className="mt-4 text-base leading-8 text-[#222222]/66 sm:text-lg" />
         </div>
 
         <div className="mx-auto mt-8 grid max-w-5xl gap-4 min-[390px]:grid-cols-2 sm:mt-10 sm:gap-5 lg:grid-cols-3">
@@ -102,10 +102,10 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {}, backgroundI
                   </span>
                 )}
                 <span>
-                  <span className="block text-lg font-black leading-snug text-[#0B1026] sm:text-xl">
+                  <span className="block text-lg font-black leading-snug text-[#222222] sm:text-xl">
                     {card.title}
                   </span>
-                  <span className="mt-2 block text-sm font-bold leading-6 text-[#0B1026]/58 sm:text-base">
+                  <span className="mt-2 block text-sm font-bold leading-6 text-[#222222]/58 sm:text-base">
                     {card.subtitle}
                   </span>
                 </span>

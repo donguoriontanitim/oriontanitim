@@ -17,6 +17,7 @@ create table if not exists public.site_images (
     usage_area in (
       'hero_desktop',
       'hero_mobile',
+      'brand_asset',
       'partner_logo',
       'summary_card',
       'program_card',
@@ -37,6 +38,7 @@ alter table public.site_images add constraint site_images_usage_area_check check
   usage_area in (
     'hero_desktop',
     'hero_mobile',
+    'brand_asset',
     'partner_logo',
     'summary_card',
     'program_card',

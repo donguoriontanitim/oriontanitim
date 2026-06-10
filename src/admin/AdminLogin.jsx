@@ -1,4 +1,4 @@
-import { Loader2, LockKeyhole, Rocket, UserRound } from 'lucide-react'
+﻿import { Loader2, LockKeyhole, Rocket, UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import {
@@ -88,7 +88,7 @@ function AdminLogin() {
   }
 
   return (
-    <main className="admin-page-bg grid min-h-screen place-items-center px-4 py-10 text-[#0B1026]">
+    <main className="admin-page-bg grid min-h-screen place-items-center px-4 py-10 text-[#222222]">
       <div className="admin-card w-full max-w-md p-6 shadow-[0_28px_90px_rgba(255,106,42,0.14)] sm:p-7">
         <div className="mb-8 flex items-center gap-3">
           <span className="orion-gradient grid size-12 place-items-center rounded-2xl text-white shadow-[0_14px_30px_rgba(255,106,42,0.24)]">
@@ -96,7 +96,7 @@ function AdminLogin() {
           </span>
           <div>
             <h1 className="text-2xl font-black">ORION Admin</h1>
-            <p className="text-sm font-semibold text-[#0B1026]/60">Kullanıcı adı ve şifre ile giriş</p>
+            <p className="text-sm font-semibold text-[#222222]/60">Kullanıcı adı ve şifre ile giriş</p>
           </div>
         </div>
 

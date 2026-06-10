@@ -1,5 +1,6 @@
-import {
+﻿import {
   FileText,
+  BarChart3,
   ImagePlus,
   Images,
   Inbox,
@@ -18,6 +19,7 @@ import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 
 const navItems = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, end: true },
+  { label: 'Raporlar', href: '/admin/analytics', icon: BarChart3 },
   { label: 'Site Yazıları', href: '/admin/contents', icon: FileText },
   { label: 'Programlar', href: '/admin/programs', icon: ListChecks },
   { label: 'Galeri', href: '/admin/gallery', icon: Images },
@@ -72,7 +74,7 @@ function AdminLayout() {
 
   if (isChecking) {
     return (
-      <div className="admin-page-bg grid min-h-screen place-items-center px-4 text-[#0B1026]">
+      <div className="admin-page-bg grid min-h-screen place-items-center px-4 text-[#222222]">
         <div className="admin-card px-8 py-6 text-center font-black">
           Admin oturumu kontrol ediliyor...
         </div>
@@ -89,14 +91,14 @@ function AdminLayout() {
   }
 
   return (
-    <div className="admin-page-bg min-h-screen text-[#0B1026]">
+    <div className="admin-page-bg min-h-screen text-[#222222]">
       <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-[#FFE0CC] bg-white/92 p-5 shadow-[0_24px_70px_rgba(255,106,42,0.1)] backdrop-blur lg:block">
         <a href="#/" className="mb-8 flex items-center gap-3">
           <span className="orion-gradient grid size-12 place-items-center rounded-2xl text-white shadow-[0_14px_30px_rgba(255,106,42,0.24)]">
             <Rocket size={22} aria-hidden="true" />
           </span>
           <span>
-            <span className="block text-sm font-black uppercase tracking-[0.18em] text-[#0B1026]">Orion</span>
+            <span className="block text-sm font-black uppercase tracking-[0.18em] text-[#222222]">Orion</span>
             <span className="block text-xs font-black text-[#FF6A2A]">Admin Panel</span>
           </span>
         </a>
@@ -114,7 +116,7 @@ function AdminLayout() {
                   `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition ${
                     isActive
                       ? 'orion-gradient text-white shadow-[0_14px_30px_rgba(255,106,42,0.22)]'
-                      : 'text-[#0B1026]/68 hover:bg-[#FFF1E8] hover:text-[#FF6A2A]'
+                      : 'text-[#222222]/68 hover:bg-[#FFF1E8] hover:text-[#FF6A2A]'
                   }`
                 }
               >
@@ -143,7 +145,7 @@ function AdminLayout() {
                 <Rocket size={19} aria-hidden="true" />
               </span>
               <span className="min-w-0">
-                <span className="block truncate text-sm font-black text-[#0B1026]">ORION KAMP 2026</span>
+                <span className="block truncate text-sm font-black text-[#222222]">ORION KAMP 2026</span>
                 <span className="block truncate text-xs font-black text-[#FF6A2A]">Yönetim paneli</span>
               </span>
             </a>
@@ -174,7 +176,7 @@ function AdminLayout() {
                       `flex min-h-12 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition ${
                         isActive
                           ? 'orion-gradient text-white shadow-[0_12px_26px_rgba(255,106,42,0.22)]'
-                          : 'bg-[#FFFBF5] text-[#0B1026]/72 hover:bg-[#FFF1E8] hover:text-[#FF6A2A]'
+                          : 'bg-[#FFFBF5] text-[#222222]/72 hover:bg-[#FFF1E8] hover:text-[#FF6A2A]'
                       }`
                     }
                   >

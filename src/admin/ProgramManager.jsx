@@ -1,4 +1,4 @@
-import { ImagePlus, Loader2, Plus, Save, Trash2 } from 'lucide-react'
+﻿import { ImagePlus, Loader2, Plus, Save, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { fallbackContent } from '../fallbackContent.js'
 import {
@@ -377,17 +377,17 @@ function ProgramManager() {
                           loading="lazy"
                         />
                       ) : (
-                        <span className="grid h-full w-full place-items-center rounded-xl bg-white text-xs font-black text-[#0B1026]/42">
+                        <span className="grid h-full w-full place-items-center rounded-xl bg-white text-xs font-black text-[#222222]/42">
                           İkon
                         </span>
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-black uppercase tracking-[0.16em] text-[#0B1026]/38">
+                      <p className="text-xs font-black uppercase tracking-[0.16em] text-[#222222]/38">
                         {programImage ? 'Fotoğraflı kart' : program.icon_name || program.icon} · Sıra {program.sort_order || 0}
                       </p>
-                      <h2 className="mt-2 break-words text-xl font-black text-[#0B1026]">{program.title}</h2>
-                      <p className="mt-2 break-words leading-7 text-[#0B1026]/64">{program.description}</p>
+                      <h2 className="mt-2 break-words text-xl font-black text-[#222222]">{program.title}</h2>
+                      <p className="mt-2 break-words leading-7 text-[#222222]/64">{program.description}</p>
                     </div>
                   </div>
                   <div className="flex shrink-0 flex-wrap gap-2 sm:flex-nowrap">
@@ -505,14 +505,14 @@ function ProgramManager() {
                   className="size-16 shrink-0 rounded-xl object-contain"
                   loading="lazy"
                 />
-                <p className="min-w-0 break-words text-sm font-bold text-[#0B1026]/58">
+                <p className="min-w-0 break-words text-sm font-bold text-[#222222]/58">
                   Mevcut fotoğraf: {draftImage.title || draft.title || 'Program kartı'}
                 </p>
               </div>
             )}
 
             {imageFile && (
-              <p className="mt-3 break-words text-sm font-bold text-[#0B1026]/58">
+              <p className="mt-3 break-words text-sm font-bold text-[#222222]/58">
                 Seçilen dosya: {imageFile.name}
               </p>
             )}

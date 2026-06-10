@@ -1,4 +1,4 @@
-import { BadgeCheck, Rocket, ShieldCheck, SmilePlus, Sparkles, UsersRound } from 'lucide-react'
+﻿import { BadgeCheck, Rocket, ShieldCheck, SmilePlus, Sparkles, UsersRound } from 'lucide-react'
 import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
 import SafeHtml from './SafeHtml.jsx'
 
@@ -22,7 +22,7 @@ const cardAccents = [
     mark: 'bg-[#FF6A2A]',
   },
   {
-    icon: 'bg-[#FFD166] text-[#0B1026] shadow-[0_16px_34px_rgba(255,209,102,0.24)]',
+    icon: 'bg-[#FFD166] text-[#222222] shadow-[0_16px_34px_rgba(255,209,102,0.24)]',
     mark: 'bg-[#FFD166]',
   },
   {
@@ -38,7 +38,7 @@ function WhyOrionSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
   return (
     <section
       id="neden-orion"
-      className="section-background-frame relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-12 text-[#0B1026] sm:py-14 lg:py-16"
+      className="section-background-frame relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] py-12 text-[#222222] sm:py-14 lg:py-16"
       style={backgroundStyle}
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[#FFE0CC]" />
@@ -46,7 +46,7 @@ function WhyOrionSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
       <div className="section-shell relative z-10">
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-eyebrow">NEDEN ORION?</p>
-          <h2 className="mt-3 text-2xl font-black leading-tight text-[#0B1026] min-[390px]:text-3xl sm:text-4xl lg:text-5xl">
+          <h2 className="mt-3 text-2xl font-black leading-tight text-[#222222] min-[390px]:text-3xl sm:text-4xl lg:text-5xl">
             Çocukların yaz tatilini üretim, keşif, spor ve eğlenceyle dolu bir deneyime
             dönüştürüyoruz.
           </h2>
@@ -83,17 +83,17 @@ function WhyOrionSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
                   </div>
                 )}
 
-                <h3 className="mt-4 text-lg font-black leading-snug text-[#0B1026] sm:mt-5 sm:text-xl">
+                <h3 className="mt-4 text-lg font-black leading-snug text-[#222222] sm:mt-5 sm:text-xl">
                   {item.title}
                 </h3>
                 {description && (
                   item.html || item.descriptionHtml ? (
                     <SafeHtml
                       html={description}
-                      className="mt-3 text-center text-sm font-semibold leading-7 text-[#0B1026]/64"
+                      className="mt-3 text-center text-sm font-semibold leading-7 text-[#222222]/64"
                     />
                   ) : (
-                    <p className="mt-3 text-center text-sm font-semibold leading-7 text-[#0B1026]/64">
+                    <p className="mt-3 text-center text-sm font-semibold leading-7 text-[#222222]/64">
                       {description}
                     </p>
                   )

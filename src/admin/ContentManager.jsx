@@ -1,4 +1,4 @@
-import { Save } from 'lucide-react'
+﻿import { Save } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import SafeHtml from '../components/SafeHtml.jsx'
 import { fallbackContent } from '../fallbackContent.js'
@@ -129,7 +129,7 @@ function ContentManager() {
                   className={`rounded-2xl px-4 py-3 text-left text-sm font-black ${
                     selectedKey === key
                       ? 'orion-gradient text-white shadow-[0_12px_26px_rgba(255,106,42,0.2)]'
-                      : 'bg-[#FFFBF5] text-[#0B1026]/72 hover:bg-[#FFF1E8] hover:text-[#FF6A2A]'
+                      : 'bg-[#FFFBF5] text-[#222222]/72 hover:bg-[#FFF1E8] hover:text-[#FF6A2A]'
                   }`}
                 >
                   <span className="block">{key}</span>
@@ -231,11 +231,11 @@ function ContentManager() {
           </div>
 
           <div className="admin-panel-soft mt-5 p-4">
-            <p className="mb-2 text-sm font-black text-[#0B1026]/52">Temizlenmiş Önizleme</p>
+            <p className="mb-2 text-sm font-black text-[#222222]/52">Temizlenmiş Önizleme</p>
             {draft.is_html ? (
-              <SafeHtml html={draft.content_value} className="leading-7 text-[#0B1026]/70" />
+              <SafeHtml html={draft.content_value} className="leading-7 text-[#222222]/70" />
             ) : (
-              <p className="leading-7 text-[#0B1026]/70">{draft.content_value}</p>
+              <p className="leading-7 text-[#222222]/70">{draft.content_value}</p>
             )}
           </div>
 

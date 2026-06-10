@@ -1,16 +1,16 @@
-import { AtSign, FileText, LayoutDashboard, Mail, MapPin, Phone, Rocket, ShieldCheck } from 'lucide-react'
+﻿import { AtSign, FileText, LayoutDashboard, Mail, MapPin, Phone, Rocket, ShieldCheck } from 'lucide-react'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
 
 const quickLinks = [
-  { label: 'Ana Sayfa', href: '#/?section=hero' },
-  { label: 'Kamp Özeti', href: '#/?section=ozet' },
-  { label: 'Program', href: '#/?section=program' },
-  { label: 'Neden Orion?', href: '#/?section=neden-orion' },
-  { label: 'Günlük Akış', href: '#/?section=akis' },
-  { label: 'Galeri', href: '#/?section=galeri' },
-  { label: 'SSS', href: '#/?section=sss' },
-  { label: 'İletişim', href: '#/?section=iletisim' },
+  { label: 'Ana Sayfa', href: '#/hero' },
+  { label: 'Kamp Özeti', href: '#/ozet' },
+  { label: 'Program', href: '#/program' },
+  { label: 'Neden Orion?', href: '#/neden-orion' },
+  { label: 'Günlük Akış', href: '#/akis' },
+  { label: 'Galeri', href: '#/galeri' },
+  { label: 'SSS', href: '#/sss' },
+  { label: 'İletişim', href: '#/iletisim' },
 ]
 
 const legalLinks = [
@@ -29,8 +29,9 @@ const fallbackContactInfo = {
 
 const phoneHref = (phone = '') => `tel:${phone.replace(/\D/g, '')}`
 
-function Footer({ contactInfo = fallbackContactInfo, decorationImage, backgroundImage }) {
+function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage, backgroundImage }) {
   const info = { ...fallbackContactInfo, ...contactInfo }
+  const logoUrl = logoImage?.image_url
   const instagramHandle = info.instagram.replace('@', '')
   const instagramUrl = `https://www.instagram.com/${instagramHandle}`
   const whatsappUrl = `https://wa.me/${info.phone1.replace(/\D/g, '')}`
@@ -39,7 +40,7 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, background
 
   return (
     <footer
-      className="section-background-frame relative border-t border-[#FFE0CC] bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] text-[#0B1026]"
+      className="section-background-frame relative border-t border-[#FFE0CC] bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] text-[#222222]"
       style={backgroundStyle}
     >
       <div className="h-1 bg-[linear-gradient(90deg,#FF8A22_0%,#FF6A2A_55%,#EA5438_100%)]" />
@@ -47,9 +48,17 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, background
       <div className="section-shell py-8 sm:py-10">
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr_1.15fr_0.85fr]">
           <div className="min-w-0">
-            <a href="#/?section=hero" className="inline-flex items-center gap-3">
+            <a href="#/hero" className="inline-flex items-center gap-3">
               <span className="orion-gradient grid size-12 shrink-0 place-items-center rounded-2xl text-white shadow-[0_16px_34px_rgba(255,106,42,0.22)]">
-                <Rocket size={24} aria-hidden="true" />
+                {logoUrl ? (
+                  <img
+                    src={logoUrl}
+                    alt={logoImage.alt_text || logoImage.title || 'ORION KAMP logosu'}
+                    className="h-9 w-9 object-contain"
+                  />
+                ) : (
+                  <Rocket size={24} aria-hidden="true" />
+                )}
               </span>
               <span>
                 <span className="block text-xl font-black tracking-[0.08em]">ORION</span>
@@ -57,7 +66,7 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, background
               </span>
             </a>
 
-            <p className="mt-5 max-w-sm text-sm font-semibold leading-7 text-[#0B1026]/64">
+            <p className="mt-5 max-w-sm text-sm font-semibold leading-7 text-[#222222]/64">
               7-13 yaş çocuklar için teknoloji, spor, sanat ve oyunlaştırılmış öğrenme odaklı yaz
               kampı.
             </p>
@@ -67,7 +76,7 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, background
             <h2 className="text-sm font-black uppercase tracking-[0.14em] text-[#FF6A2A]">
               Hızlı Linkler
             </h2>
-            <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-bold text-[#0B1026]/70 lg:grid-cols-1">
+            <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-bold text-[#222222]/70 lg:grid-cols-1">
               {quickLinks.map((link) => (
                 <a
                   key={link.href}
@@ -84,7 +93,7 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, background
             <h2 className="text-sm font-black uppercase tracking-[0.14em] text-[#FF6A2A]">
               İletişim
             </h2>
-            <div className="mt-4 grid gap-3 text-sm font-semibold leading-6 text-[#0B1026]/72">
+            <div className="mt-4 grid gap-3 text-sm font-semibold leading-6 text-[#222222]/72">
               <a className="flex min-w-0 items-center gap-3" href={phoneHref(info.phone1)}>
                 <Phone className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
                 <span className="min-w-0 break-words">{info.phone1}</span>
@@ -156,7 +165,7 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, background
               </div>
             )}
 
-            <div className="mt-6 grid gap-2 text-sm font-bold text-[#0B1026]/64">
+            <div className="mt-6 grid gap-2 text-sm font-bold text-[#222222]/64">
               {legalLinks.map((link) => (
                 <a
                   key={link.label}
@@ -180,7 +189,7 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, background
           </div>
         </div>
 
-        <div className="mt-9 flex flex-col gap-3 border-t border-[#FFE0CC] pt-5 text-xs font-bold text-[#0B1026]/52 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-9 flex flex-col gap-3 border-t border-[#FFE0CC] pt-5 text-xs font-bold text-[#222222]/52 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} ORION KAMP 2026. Tüm hakları saklıdır.</p>
           <p>Turuncu enerjili, çocuk odaklı yaz kampı deneyimi.</p>
         </div>

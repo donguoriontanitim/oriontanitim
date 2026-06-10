@@ -1,4 +1,4 @@
-import { ImagePlus, Save, Trash2 } from 'lucide-react'
+﻿import { ImagePlus, Save, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { fallbackContent } from '../fallbackContent.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
@@ -234,7 +234,7 @@ function GalleryManager() {
           {isUploading ? 'Yükleniyor' : 'Kaydet'}
         </button>
 
-        {file && <p className="text-sm font-bold text-[#0B1026]/52 lg:col-span-3">Seçilen dosya: {file.name}</p>}
+        {file && <p className="text-sm font-bold text-[#222222]/52 lg:col-span-3">Seçilen dosya: {file.name}</p>}
         {message && (
           <div className="admin-message lg:col-span-3">
             {message}
@@ -251,9 +251,9 @@ function GalleryManager() {
               className="aspect-[4/3] w-full object-cover"
             />
             <div className="p-4">
-              <h2 className="break-words font-black text-[#0B1026]">{image.title}</h2>
-              <p className="mt-1 break-words text-sm text-[#0B1026]/50">{image.alt_text}</p>
-              {image.description && <p className="mt-2 break-words text-sm text-[#0B1026]/62">{image.description}</p>}
+              <h2 className="break-words font-black text-[#222222]">{image.title}</h2>
+              <p className="mt-1 break-words text-sm text-[#222222]/50">{image.alt_text}</p>
+              {image.description && <p className="mt-2 break-words text-sm text-[#222222]/62">{image.description}</p>}
               <div className="mt-4 flex flex-wrap gap-2">
                 <button
                   type="button"

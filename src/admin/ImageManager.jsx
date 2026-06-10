@@ -1,4 +1,4 @@
-import {
+﻿import {
   Edit3,
   ImagePlus,
   LayoutGrid,
@@ -41,6 +41,15 @@ const statusClasses = {
 }
 
 const managedPhotoSections = [
+  {
+    usageArea: 'brand_asset',
+    title: 'Logo ve favicon',
+    eyebrow: 'Marka Görselleri',
+    description: 'Site logosu ve tarayıcı favicon görselini buradan yükleyip güncelleyin.',
+    icon: Star,
+    itemLabel: 'görsel',
+    emptyLabel: 'Görsel yok',
+  },
   {
     usageArea: 'section_background',
     title: 'Bölüm arka plan görselleri',
@@ -114,6 +123,10 @@ const getUsageAreaLabel = (usageArea) =>
 const getRelatedKeyLabel = (usageArea) => {
   if (usageArea === 'partner_logo') {
     return 'Logo seçimi'
+  }
+
+  if (usageArea === 'brand_asset') {
+    return 'Marka görseli'
   }
 
   if (usageArea === 'contact_panel_image') {
@@ -653,10 +666,10 @@ function ImageManager() {
                   </span>
                   <div className="min-w-0">
                     <p className="admin-eyebrow">{section.eyebrow}</p>
-                    <h2 className="mt-1 text-xl font-black leading-tight text-[#0B1026]">
+                    <h2 className="mt-1 text-xl font-black leading-tight text-[#222222]">
                       {section.title}
                     </h2>
-                    <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#0B1026]/58">
+                    <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-[#222222]/58">
                       {section.description}
                     </p>
                   </div>
@@ -688,6 +701,7 @@ function ImageManager() {
                               src={currentImage.image_url}
                               alt={currentImage.alt_text || currentImage.title || option.label}
                               className={`h-full w-full ${
+                                section.usageArea === 'brand_asset' ||
                                 section.usageArea === 'section_background' ||
                                 section.usageArea === 'contact_panel_image'
                                   ? 'object-cover'
@@ -700,7 +714,7 @@ function ImageManager() {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <h3 className="break-words text-sm font-black leading-5 text-[#0B1026]">
+                          <h3 className="break-words text-sm font-black leading-5 text-[#222222]">
                             {option.label}
                           </h3>
                           <span
@@ -708,8 +722,8 @@ function ImageManager() {
                               currentImage?.is_active
                                 ? 'bg-[#ECFDF5] text-[#047857]'
                                 : currentImage
-                                  ? 'bg-[#F8FAFC] text-[#0B1026]/54'
-                                  : 'bg-white text-[#0B1026]/48'
+                                  ? 'bg-[#F8FAFC] text-[#222222]/54'
+                                  : 'bg-white text-[#222222]/48'
                             }`}
                           >
                             {currentImage?.is_active
@@ -769,7 +783,7 @@ function ImageManager() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="text-xl font-black">{formTitle}</h2>
-              <p className="mt-1 text-sm font-semibold text-[#0B1026]/54">
+              <p className="mt-1 text-sm font-semibold text-[#222222]/54">
                 {selectedRelatedOption
                   ? `${selectedUsageAreaLabel} içinde ${selectedRelatedOption.label} için fotoğraf seçin.`
                   : editingImage
@@ -918,7 +932,7 @@ function ImageManager() {
 
         <section className="min-w-0">
           {isLoading ? (
-            <div className="admin-card grid min-h-56 place-items-center p-6 text-center font-black text-[#0B1026]/62">
+            <div className="admin-card grid min-h-56 place-items-center p-6 text-center font-black text-[#222222]/62">
               <span className="inline-flex items-center gap-2">
                 <Loader2 className="animate-spin text-[#FF6A2A]" size={19} aria-hidden="true" />
                 Görseller yükleniyor...
@@ -949,21 +963,21 @@ function ImageManager() {
                           {image.is_active ? 'Aktif' : 'Pasif'}
                         </span>
                       </div>
-                      <h2 className="mt-3 break-words text-lg font-black text-[#0B1026]">
+                      <h2 className="mt-3 break-words text-lg font-black text-[#222222]">
                         {image.title || 'Başlıksız görsel'}
                       </h2>
-                      <dl className="mt-2 grid gap-1 text-sm font-semibold text-[#0B1026]/58 sm:grid-cols-2">
+                      <dl className="mt-2 grid gap-1 text-sm font-semibold text-[#222222]/58 sm:grid-cols-2">
                         <div className="min-w-0">
-                          <dt className="font-black text-[#0B1026]/42">Kart / logo seçimi</dt>
+                          <dt className="font-black text-[#222222]/42">Kart / logo seçimi</dt>
                           <dd className="break-words">{image.related_key || '-'}</dd>
                         </div>
                         <div>
-                          <dt className="font-black text-[#0B1026]/42">Sıralama</dt>
+                          <dt className="font-black text-[#222222]/42">Sıralama</dt>
                           <dd>{image.sort_order ?? 0}</dd>
                         </div>
                       </dl>
                       {image.description && (
-                        <p className="mt-2 break-words text-sm font-semibold leading-6 text-[#0B1026]/60">
+                        <p className="mt-2 break-words text-sm font-semibold leading-6 text-[#222222]/60">
                           {image.description}
                         </p>
                       )}
@@ -1010,7 +1024,7 @@ function ImageManager() {
                   <ImagePlus size={25} aria-hidden="true" />
                 </div>
                 <h2 className="mt-4 text-xl font-black">Henüz görsel yok.</h2>
-                <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-[#0B1026]/60">
+                <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-[#222222]/60">
                   İlk görseli yüklediğinizde landing page ilgili alanda otomatik kullanmaya başlar.
                 </p>
               </div>
