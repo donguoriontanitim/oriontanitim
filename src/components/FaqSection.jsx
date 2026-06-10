@@ -42,6 +42,46 @@ function FaqSection({ faqs, backgroundImage }) {
         .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0)),
     [faqs, remoteFaqs],
   )
+  const faqColumns = useMemo(
+    () =>
+      activeFaqs.reduce(
+        (columns, faq, index) => {
+          columns[index % 2].push(faq)
+
+          return columns
+        },
+        [[], []],
+      ),
+    [activeFaqs],
+  )
+
+  const renderFaq = (faq) => {
+    const rendersHtml = faq.is_html !== false
+
+    return (
+      <details
+        key={faq.id || faq.question}
+        className="soft-card-strong group min-w-0 rounded-[1.35rem] border-[#FFE0CC] bg-white sm:rounded-[1.5rem]"
+      >
+        <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 px-4 py-4 text-left text-base font-black leading-snug marker:hidden sm:min-h-18 sm:gap-4 sm:px-6 sm:text-lg">
+          <span className="min-w-0 break-words">{faq.question}</span>
+          <span className="orion-gradient grid size-9 shrink-0 place-items-center rounded-full text-white shadow-[0_12px_28px_rgba(255,106,42,0.2)]">
+            <Plus className="group-open:hidden" size={18} strokeWidth={2.5} aria-hidden="true" />
+            <Minus className="hidden group-open:block" size={18} strokeWidth={2.5} aria-hidden="true" />
+          </span>
+        </summary>
+        <div className="mx-3 mb-3 rounded-[1.15rem] border border-[#FFE0CC]/70 bg-[#FFF8F0] px-4 py-4 sm:mx-5 sm:mb-4 sm:rounded-[1.25rem] sm:px-5">
+          {rendersHtml ? (
+            <SafeHtml html={faq.answer} className="text-sm font-semibold leading-7 text-[#0B1026]/68" />
+          ) : (
+            <p className="text-sm font-semibold leading-7 text-[#0B1026]/68">
+              {faq.answer}
+            </p>
+          )}
+        </div>
+      </details>
+    )
+  }
 
   return (
     <section
@@ -60,34 +100,16 @@ function FaqSection({ faqs, backgroundImage }) {
           </h2>
         </div>
 
-        <div className="mt-8 grid gap-3 sm:mt-10 sm:gap-4 lg:grid-cols-2">
-          {activeFaqs.map((faq) => {
-            const rendersHtml = faq.is_html !== false
+        <div className="mt-8 grid gap-3 sm:mt-10 sm:gap-4 lg:hidden">
+          {activeFaqs.map(renderFaq)}
+        </div>
 
-            return (
-              <details
-                key={faq.id || faq.question}
-                className="soft-card-strong group min-w-0 rounded-[1.35rem] border-[#FFE0CC] bg-white sm:rounded-[1.5rem]"
-              >
-                <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 px-4 py-4 text-left text-base font-black leading-snug marker:hidden sm:min-h-18 sm:gap-4 sm:px-6 sm:text-lg">
-                  <span className="min-w-0 break-words">{faq.question}</span>
-                  <span className="orion-gradient grid size-9 shrink-0 place-items-center rounded-full text-white shadow-[0_12px_28px_rgba(255,106,42,0.2)]">
-                    <Plus className="group-open:hidden" size={18} strokeWidth={2.5} aria-hidden="true" />
-                    <Minus className="hidden group-open:block" size={18} strokeWidth={2.5} aria-hidden="true" />
-                  </span>
-                </summary>
-                <div className="mx-3 mb-3 rounded-[1.15rem] border border-[#FFE0CC]/70 bg-[#FFF8F0] px-4 py-4 sm:mx-5 sm:mb-4 sm:rounded-[1.25rem] sm:px-5">
-                  {rendersHtml ? (
-                    <SafeHtml html={faq.answer} className="text-sm font-semibold leading-7 text-[#0B1026]/68" />
-                  ) : (
-                    <p className="text-sm font-semibold leading-7 text-[#0B1026]/68">
-                      {faq.answer}
-                    </p>
-                  )}
-                </div>
-              </details>
-            )
-          })}
+        <div className="mt-10 hidden gap-4 lg:grid lg:grid-cols-2 lg:items-start">
+          {faqColumns.map((column, index) => (
+            <div key={index} className="grid content-start gap-4">
+              {column.map(renderFaq)}
+            </div>
+          ))}
         </div>
       </div>
     </section>

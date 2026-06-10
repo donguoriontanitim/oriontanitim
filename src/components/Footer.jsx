@@ -90,11 +90,11 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, background
             <div className="mt-4 grid gap-3 text-sm font-semibold leading-6 text-[#0B1026]/72">
               <a className="flex min-w-0 items-center gap-3" href={phoneHref(info.phone1)}>
                 <Phone className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
-                <span className="min-w-0 break-words">Telefon 1: {info.phone1}</span>
+                <span className="min-w-0 break-words">{info.phone1}</span>
               </a>
               <a className="flex min-w-0 items-center gap-3" href={phoneHref(info.phone2)}>
                 <Phone className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
-                <span className="min-w-0 break-words">Telefon 2: {info.phone2}</span>
+                <span className="min-w-0 break-words">{info.phone2}</span>
               </a>
               <a className="flex min-w-0 items-center gap-3" href={`mailto:${info.mail}`}>
                 <Mail className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
