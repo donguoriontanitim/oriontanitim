@@ -57,6 +57,26 @@ const createContactNotificationMessage = ({ parentName, phone, studentAge, inter
     'Kaynak: ORION Kamp 2026 web sitesi',
   ].join('\n')
 
+const sendAutomaticWhatsAppNotification = async (payload) => {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase bağlantısı olmadığı için otomatik WhatsApp bildirimi gönderilemedi.')
+  }
+
+  const { data, error } = await supabase.functions.invoke('contact-whatsapp-notification', {
+    body: payload,
+  })
+
+  if (error) {
+    throw error
+  }
+
+  if (!data?.ok) {
+    throw new Error(data?.error || 'WhatsApp bildirimi gönderilemedi.')
+  }
+
+  return data
+}
+
 function ContactSection({
   programs,
   contactInfo,
@@ -164,12 +184,6 @@ function ContactSection({
         }
       }
 
-      setStatus({
-        type: 'success',
-        message: isSupabaseConfigured
-          ? 'Talebiniz alındı. WhatsApp bildirim mesajı açılıyor.'
-          : 'Demo modunda talep alındı. WhatsApp bildirim mesajı açılıyor.',
-      })
       const notificationMessage = createContactNotificationMessage({
         parentName,
         phone,
@@ -178,11 +192,37 @@ function ContactSection({
         message: form.message.trim(),
       })
       const notificationUrl = getWhatsAppUrl(contactInfo?.phone1 || whatsappNumber, notificationMessage)
+      const notificationPayload = {
+        parentName,
+        phone,
+        studentAge,
+        interests: form.interested_areas,
+        message: form.message.trim(),
+        submittedAt: new Date().toISOString(),
+      }
+      let automaticNotificationSent = false
+
+      try {
+        await sendAutomaticWhatsAppNotification(notificationPayload)
+        automaticNotificationSent = true
+      } catch (notificationError) {
+        console.warn('Otomatik WhatsApp bildirimi gönderilemedi:', notificationError)
+      }
+
+      setStatus({
+        type: 'success',
+        message: automaticNotificationSent
+          ? 'Talebiniz alındı. WhatsApp bildirimi otomatik gönderildi.'
+          : 'Talebiniz alındı. Otomatik WhatsApp bildirimi henüz yapılandırılmadığı için WhatsApp mesaj ekranı açılıyor.',
+      })
 
       setForm(initialForm)
-      window.setTimeout(() => {
-        window.location.href = notificationUrl
-      }, 900)
+
+      if (!automaticNotificationSent) {
+        window.setTimeout(() => {
+          window.location.href = notificationUrl
+        }, 900)
+      }
     } catch (error) {
       setStatus({
         type: 'error',

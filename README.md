@@ -173,6 +173,41 @@ Görsel Yönetimi akışı:
 3. Başarı mesajı gösterilir.
 4. Kullanıcı WhatsApp görüşmesine yönlendirilir.
 
+## Otomatik WhatsApp Bildirimi
+
+Form gonderildikten sonra sistemin WhatsApp mesajini kendisinin gonderebilmesi icin normal `wa.me` linki yeterli degildir. Bunun icin Supabase Edge Function ve WhatsApp Business Cloud API kullanilir.
+
+Repo icinde hazirlanan function:
+
+```bash
+supabase/functions/contact-whatsapp-notification
+```
+
+Gerekli Supabase secrets:
+
+```bash
+WHATSAPP_ACCESS_TOKEN=Meta WhatsApp Cloud API kalici access token
+WHATSAPP_PHONE_NUMBER_ID=Meta WhatsApp API Setup ekranindaki Phone Number ID
+WHATSAPP_NOTIFY_TO=905327236648
+WHATSAPP_GRAPH_VERSION=v22.0
+```
+
+Opsiyonel template kullanimi:
+
+```bash
+WHATSAPP_TEMPLATE_NAME=onayli_template_adi
+WHATSAPP_TEMPLATE_LANGUAGE=tr
+```
+
+Deploy:
+
+```bash
+supabase functions deploy contact-whatsapp-notification --project-ref vigbyqymmxsofjusjlss
+supabase secrets set WHATSAPP_ACCESS_TOKEN=... WHATSAPP_PHONE_NUMBER_ID=... WHATSAPP_NOTIFY_TO=905327236648 --project-ref vigbyqymmxsofjusjlss
+```
+
+Not: WhatsApp Cloud API'de serbest metin mesajlari her senaryoda gonderilemeyebilir. Meta, bazi durumlarda onayli template mesaji ister. Bu durumda `WHATSAPP_TEMPLATE_NAME` ve `WHATSAPP_TEMPLATE_LANGUAGE` secret'lari tanimlanmalidir.
+
 ## Komutlar
 
 ```bash
