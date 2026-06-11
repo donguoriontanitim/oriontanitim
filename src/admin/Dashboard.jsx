@@ -28,17 +28,24 @@ function Dashboard() {
       return
     }
 
-    const tables = [
-      ['contents', 'site_contents'],
-      ['programs', 'program_items'],
-      ['gallery', 'gallery_images'],
-      ['faqs', 'faq_items'],
-      ['contacts', 'contact_requests'],
+    const countQueries = [
+      ['contents', () => supabase.from('site_contents').select('*', { count: 'exact', head: true })],
+      ['programs', () => supabase.from('program_items').select('*', { count: 'exact', head: true })],
+      [
+        'gallery',
+        () =>
+          supabase
+            .from('site_images')
+            .select('*', { count: 'exact', head: true })
+            .eq('usage_area', 'gallery'),
+      ],
+      ['faqs', () => supabase.from('faq_items').select('*', { count: 'exact', head: true })],
+      ['contacts', () => supabase.from('contact_requests').select('*', { count: 'exact', head: true })],
     ]
 
     Promise.all(
-      tables.map(async ([key, table]) => {
-        const { count } = await supabase.from(table).select('*', { count: 'exact', head: true })
+      countQueries.map(async ([key, query]) => {
+        const { count } = await query()
         return [key, count || 0]
       }),
     ).then((entries) => setCounts(Object.fromEntries(entries)))

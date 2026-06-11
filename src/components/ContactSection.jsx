@@ -41,6 +41,22 @@ const trustItems = [
   'Hızlı bilgilendirme ve dönüş',
 ]
 
+const getWhatsAppUrl = (phoneNumber, message) =>
+  `https://wa.me/${String(phoneNumber || whatsappNumber).replace(/\D/g, '') || whatsappNumber}?text=${encodeURIComponent(message)}`
+
+const createContactNotificationMessage = ({ parentName, phone, studentAge, interests, message }) =>
+  [
+    'Yeni iletişim formu dolduruldu.',
+    '',
+    `Veli: ${parentName}`,
+    `Telefon: ${phone}`,
+    `Öğrenci yaşı: ${studentAge}`,
+    `İlgilendiği alanlar: ${interests.length > 0 ? interests.join(', ') : 'Belirtilmedi'}`,
+    `Mesaj: ${message || 'Belirtilmedi'}`,
+    '',
+    'Kaynak: ORION Kamp 2026 web sitesi',
+  ].join('\n')
+
 function ContactSection({
   programs,
   contactInfo,
@@ -77,7 +93,7 @@ function ContactSection({
     [programs],
   )
 
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`
+  const whatsappUrl = getWhatsAppUrl(contactInfo?.phone1 || whatsappNumber, whatsappMessage)
 
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }))
@@ -151,12 +167,21 @@ function ContactSection({
       setStatus({
         type: 'success',
         message: isSupabaseConfigured
-          ? 'Talebiniz alındı. Şimdi WhatsApp görüşmesine yönlendiriliyorsunuz.'
-          : 'Demo modunda talep alındı. Supabase bilgileri eklenince kayıt veritabanına düşer.',
+          ? 'Talebiniz alındı. WhatsApp bildirim mesajı açılıyor.'
+          : 'Demo modunda talep alındı. WhatsApp bildirim mesajı açılıyor.',
       })
+      const notificationMessage = createContactNotificationMessage({
+        parentName,
+        phone,
+        studentAge,
+        interests: form.interested_areas,
+        message: form.message.trim(),
+      })
+      const notificationUrl = getWhatsAppUrl(contactInfo?.phone1 || whatsappNumber, notificationMessage)
+
       setForm(initialForm)
       window.setTimeout(() => {
-        window.location.href = whatsappUrl
+        window.location.href = notificationUrl
       }, 900)
     } catch (error) {
       setStatus({
