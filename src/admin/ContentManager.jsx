@@ -4,6 +4,20 @@ import SafeHtml from '../components/SafeHtml.jsx'
 import { fallbackContent } from '../fallbackContent.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 
+const dailyFlowSeedFields = [
+  ['eyebrow', fallbackContent.dailyFlowContent.eyebrow],
+  ['title', fallbackContent.dailyFlowContent.title],
+  ['description', fallbackContent.dailyFlowContent.description],
+  ['group_a_label', fallbackContent.dailyFlowContent.groupALabel],
+  ['group_a_title', fallbackContent.dailyFlowContent.groupATitle],
+  ['group_b_label', fallbackContent.dailyFlowContent.groupBLabel],
+  ['group_b_title', fallbackContent.dailyFlowContent.groupBTitle],
+  ['morning_title', fallbackContent.dailyFlowContent.morningTitle],
+  ['afternoon_title', fallbackContent.dailyFlowContent.afternoonTitle],
+  ['switch_label', fallbackContent.dailyFlowContent.switchLabel],
+  ['footer_note', fallbackContent.dailyFlowContent.footerNote],
+]
+
 const seedContents = [
   {
     id: 'hero-title',
@@ -35,9 +49,60 @@ const seedContents = [
     is_active: true,
     sort_order: 30,
   },
+  ...dailyFlowSeedFields.map(([contentKey, contentValue], index) => ({
+    id: `daily-flow-${contentKey}`,
+    section_key: 'daily_flow',
+    content_key: contentKey,
+    content_value: contentValue,
+    content_type: 'text',
+    is_html: false,
+    is_active: true,
+    sort_order: 40 + index * 10,
+  })),
 ]
 
 const getContentId = (content) => `${content.section_key}.${content.content_key}`
+
+const contentLabels = {
+  'daily_flow.eyebrow': 'Günlük akış küçük başlığı',
+  'daily_flow.title': 'Günlük akış ana başlığı',
+  'daily_flow.description': 'Günlük akış açıklaması',
+  'daily_flow.group_a_label': 'A grubu üst etiketi',
+  'daily_flow.group_a_title': 'A grubu adı',
+  'daily_flow.group_b_label': 'B grubu üst etiketi',
+  'daily_flow.group_b_title': 'B grubu adı',
+  'daily_flow.morning_title': 'Sabah programı başlığı',
+  'daily_flow.afternoon_title': 'Öğleden sonra programı başlığı',
+  'daily_flow.switch_label': 'Grup değişimi butonu',
+  'daily_flow.footer_note': 'Günlük akış alt notu',
+}
+
+const sortContents = (contentList) =>
+  [...contentList].sort((first, second) => {
+    const sectionSort = first.section_key.localeCompare(second.section_key, 'tr')
+
+    if (sectionSort !== 0) {
+      return sectionSort
+    }
+
+    const orderSort = Number(first.sort_order || 0) - Number(second.sort_order || 0)
+
+    if (orderSort !== 0) {
+      return orderSort
+    }
+
+    return first.content_key.localeCompare(second.content_key, 'tr')
+  })
+
+const mergeSeedContents = (remoteContents = []) => {
+  const merged = new Map(seedContents.map((content) => [getContentId(content), content]))
+
+  remoteContents.forEach((content) => {
+    merged.set(getContentId(content), content)
+  })
+
+  return sortContents([...merged.values()])
+}
 
 function ContentManager() {
   const [contents, setContents] = useState(seedContents)
@@ -58,11 +123,11 @@ function ContentManager() {
       .order('section_key', { ascending: true })
       .order('sort_order', { ascending: true })
       .then(({ data }) => {
-        if (data?.length) {
-          setContents(data)
-          setSelectedKey(getContentId(data[0]))
-          setDraft(data[0])
-        }
+        const nextContents = mergeSeedContents(data || [])
+
+        setContents(nextContents)
+        setSelectedKey(getContentId(nextContents[0]))
+        setDraft(nextContents[0])
       })
   }, [])
 
@@ -100,8 +165,10 @@ function ContentManager() {
     }
 
     setContents((current) =>
-      current.map((content) =>
-        getContentId(content) === selectedKey ? { ...content, ...payload } : content,
+      sortContents(
+        current.map((content) =>
+          getContentId(content) === selectedKey ? { ...content, ...payload } : content,
+        ),
       ),
     )
     setSelectedKey(`${payload.section_key}.${payload.content_key}`)
@@ -132,9 +199,9 @@ function ContentManager() {
                       : 'bg-[#FFFBF5] text-[#222222]/72 hover:bg-[#FFF1E8] hover:text-[#FF6A2A]'
                   }`}
                 >
-                  <span className="block">{key}</span>
+                  <span className="block">{contentLabels[key] || key}</span>
                   <span className="mt-1 block text-xs font-bold opacity-70">
-                    {content.is_html ? 'HTML' : 'Text'}
+                    {key} · {content.is_html ? 'HTML' : 'Text'}
                   </span>
                 </button>
               )

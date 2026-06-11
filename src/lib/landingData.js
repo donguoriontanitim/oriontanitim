@@ -65,6 +65,40 @@ const mapSiteContents = (rows = []) => {
       fallbackContent.summary.html,
   }
 
+  const dailyFlow = {
+    ...fallbackContent.dailyFlowContent,
+    eyebrow:
+      getContentValue(rows, 'daily_flow', 'eyebrow') || fallbackContent.dailyFlowContent.eyebrow,
+    title: getContentValue(rows, 'daily_flow', 'title') || fallbackContent.dailyFlowContent.title,
+    description:
+      getContentValue(rows, 'daily_flow', 'description') ||
+      fallbackContent.dailyFlowContent.description,
+    groupALabel:
+      getContentValue(rows, 'daily_flow', 'group_a_label') ||
+      fallbackContent.dailyFlowContent.groupALabel,
+    groupATitle:
+      getContentValue(rows, 'daily_flow', 'group_a_title') ||
+      fallbackContent.dailyFlowContent.groupATitle,
+    groupBLabel:
+      getContentValue(rows, 'daily_flow', 'group_b_label') ||
+      fallbackContent.dailyFlowContent.groupBLabel,
+    groupBTitle:
+      getContentValue(rows, 'daily_flow', 'group_b_title') ||
+      fallbackContent.dailyFlowContent.groupBTitle,
+    morningTitle:
+      getContentValue(rows, 'daily_flow', 'morning_title') ||
+      fallbackContent.dailyFlowContent.morningTitle,
+    afternoonTitle:
+      getContentValue(rows, 'daily_flow', 'afternoon_title') ||
+      fallbackContent.dailyFlowContent.afternoonTitle,
+    switchLabel:
+      getContentValue(rows, 'daily_flow', 'switch_label') ||
+      fallbackContent.dailyFlowContent.switchLabel,
+    footerNote:
+      getContentValue(rows, 'daily_flow', 'footer_note') ||
+      fallbackContent.dailyFlowContent.footerNote,
+  }
+
   const contact = {
     ...defaultContactContent,
     eyebrow: getContentValue(rows, 'contact', 'eyebrow') || defaultContactContent.eyebrow,
@@ -85,7 +119,7 @@ const mapSiteContents = (rows = []) => {
     address: getContentValue(rows, 'footer', 'address') || fallbackContent.contactInfo.address,
   }
 
-  return { contact, contactInfo, hero, summary }
+  return { contact, contactInfo, dailyFlow, hero, summary }
 }
 
 export const getLandingData = async () => {
@@ -93,6 +127,7 @@ export const getLandingData = async () => {
     return {
       contact: defaultContactContent,
       contactInfo: fallbackContent.contactInfo,
+      dailyFlow: fallbackContent.dailyFlowContent,
       faqs: fallbackContent.faqs,
       hero: fallbackContent.hero,
       programs: fallbackContent.programs,

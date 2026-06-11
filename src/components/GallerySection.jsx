@@ -156,29 +156,31 @@ function GallerySection({ images, siteImages = [], backgroundImage }) {
 
       {selectedImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#222222]/74 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[#222222]/78 p-3 backdrop-blur-sm sm:p-5"
           role="dialog"
           aria-modal="true"
           aria-label={selectedImage.title || 'Galeri görseli'}
           onClick={() => setSelectedImage(null)}
         >
           <div
-            className="relative w-full max-w-5xl overflow-hidden rounded-[1.5rem] border border-[#FFE0CC] bg-white p-2 shadow-[0_30px_90px_rgba(0,0,0,0.28)] sm:rounded-[2rem] sm:p-3"
+            className="relative my-auto w-full max-w-6xl overflow-hidden rounded-[1.5rem] border border-[#FFE0CC] bg-white/96 p-2 shadow-[0_30px_90px_rgba(0,0,0,0.3)] sm:rounded-[2rem] sm:p-3"
             onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => setSelectedImage(null)}
-              className="absolute right-4 top-4 z-10 grid size-11 place-items-center rounded-full bg-white text-[#222222] shadow-[0_12px_32px_rgba(11,16,38,0.18)] transition hover:bg-[#FFF1E8] hover:text-[#FF6A2A]"
+              className="absolute right-4 top-4 z-20 grid size-11 place-items-center rounded-full bg-white text-[#222222] shadow-[0_12px_32px_rgba(11,16,38,0.18)] transition hover:bg-[#FFF1E8] hover:text-[#FF6A2A]"
               aria-label="Galeri görselini kapat"
             >
               <X size={20} aria-hidden="true" />
             </button>
-            <img
-              src={selectedImage.image_url}
-              alt={selectedImage.alt_text || selectedImage.alt || selectedImage.title || 'Orion Kamp galeri görseli'}
-              className="max-h-[78vh] w-full rounded-[1.15rem] bg-[#FFF8F0] object-contain sm:rounded-[1.5rem]"
-            />
+            <div className="grid max-h-[82dvh] place-items-center overflow-hidden rounded-[1.15rem] bg-[#FFF8F0] sm:rounded-[1.5rem]">
+              <img
+                src={selectedImage.image_url}
+                alt={selectedImage.alt_text || selectedImage.alt || selectedImage.title || 'Orion Kamp galeri görseli'}
+                className="max-h-[82dvh] w-auto max-w-full object-contain"
+              />
+            </div>
             {(selectedImage.title || selectedImage.description) && (
               <div className="px-3 pb-3 pt-4 sm:px-4">
                 {selectedImage.title && (

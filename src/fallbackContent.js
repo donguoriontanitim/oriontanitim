@@ -25,6 +25,20 @@ export const fallbackContent = {
     title: 'Kamp Özeti',
     html: '<p>Orion Kamp 2026, çocukların merak duygusunu canlı tutan; robotik kodlama, 3D tasarım, oyun tasarımı, spor ve sanat etkinlikleriyle zenginleşen bütüncül bir yaz programıdır.</p>',
   },
+  dailyFlowContent: {
+    eyebrow: 'Günlük Akış',
+    title: 'Gün Boyunca Dengeli Bir Kamp Deneyimi',
+    description:
+      'Öğrenciler A ve B grubu olarak planlı şekilde ilerler. Sabah ve öğleden sonra gruplar yer değiştirerek hem bilişim hem spor etkinliklerine katılır.',
+    groupALabel: 'Sabah Döngü, öğleden sonra spor',
+    groupATitle: 'A Grubu',
+    groupBLabel: 'Sabah spor, öğleden sonra Döngü',
+    groupBTitle: 'B Grubu',
+    morningTitle: 'Sabah Programı',
+    afternoonTitle: 'Öğleden Sonra Programı',
+    switchLabel: 'Gruplar Yer Değiştirir',
+    footerNote: 'Gün sonunda iki grup da 17:30’da Döngü’den velilerine teslim edilir.',
+  },
   stats: [
     { value: '7-13', label: 'Yaş aralığı' },
     { value: '10+', label: 'Etkinlik alanı' },

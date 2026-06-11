@@ -35,12 +35,18 @@ function Navbar({ contactInfo, logoImage }) {
       <nav className="mx-auto w-full max-w-[1180px] rounded-[1.65rem] border border-[#FFE0CC] bg-white/88 shadow-[0_16px_54px_rgba(255,106,42,0.12)] backdrop-blur-xl sm:rounded-[2rem]">
         <div className="flex min-h-16 items-center justify-between gap-2 px-3 py-2.5 sm:min-h-18 sm:gap-3 sm:px-4 sm:py-3 lg:px-5">
           <a href="#/hero" className="flex min-w-0 items-center gap-3" onClick={closeMenu}>
-            <span className="icon-bubble grid size-10 shrink-0 place-items-center rounded-2xl sm:size-11">
+            <span
+              className={`grid size-10 shrink-0 place-items-center rounded-2xl sm:size-11 ${
+                logoUrl
+                  ? 'overflow-hidden border border-[#FFE0CC] bg-white shadow-[0_10px_22px_rgba(255,106,42,0.12)]'
+                  : 'icon-bubble'
+              }`}
+            >
               {logoUrl ? (
                 <img
                   src={logoUrl}
                   alt={logoImage.alt_text || logoImage.title || 'ORION KAMP logosu'}
-                  className="h-8 w-8 object-contain"
+                  className="h-full w-full object-cover"
                 />
               ) : (
                 <Rocket size={22} aria-hidden="true" />

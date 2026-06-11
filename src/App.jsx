@@ -38,6 +38,7 @@ function LandingPage() {
   const [landingData, setLandingData] = useState(() => ({
     contact: null,
     contactInfo: fallbackContent.contactInfo,
+    dailyFlow: fallbackContent.dailyFlowContent,
     faqs: fallbackContent.faqs,
     hero: fallbackContent.hero,
     programs: fallbackContent.programs,
@@ -153,8 +154,7 @@ function LandingPage() {
           backgroundImage={imageSlots.sectionBackgroundByKey?.['why-orion']}
         />
         <DailyFlowSection
-          items={fallbackContent.dailyFlow}
-          imagesByRelatedKey={imageSlots.dailyFlowByKey}
+          content={landingData.dailyFlow}
           backgroundImage={imageSlots.sectionBackgroundByKey?.['daily-flow']}
         />
         <GallerySection

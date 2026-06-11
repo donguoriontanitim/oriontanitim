@@ -49,12 +49,18 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr_1.15fr_0.85fr]">
           <div className="min-w-0">
             <a href="#/hero" className="inline-flex items-center gap-3">
-              <span className="orion-gradient grid size-12 shrink-0 place-items-center rounded-2xl text-white shadow-[0_16px_34px_rgba(255,106,42,0.22)]">
+              <span
+                className={`grid size-12 shrink-0 place-items-center rounded-2xl ${
+                  logoUrl
+                    ? 'overflow-hidden border border-[#FFE0CC] bg-white shadow-[0_16px_34px_rgba(255,106,42,0.16)]'
+                    : 'orion-gradient text-white shadow-[0_16px_34px_rgba(255,106,42,0.22)]'
+                }`}
+              >
                 {logoUrl ? (
                   <img
                     src={logoUrl}
                     alt={logoImage.alt_text || logoImage.title || 'ORION KAMP logosu'}
-                    className="h-9 w-9 object-contain"
+                    className="h-full w-full object-cover"
                   />
                 ) : (
                   <Rocket size={24} aria-hidden="true" />
