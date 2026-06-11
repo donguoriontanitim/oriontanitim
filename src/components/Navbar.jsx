@@ -36,7 +36,7 @@ function Navbar({ contactInfo, logoImage }) {
         <div className="flex min-h-16 items-center justify-between gap-2 px-3 py-2.5 sm:min-h-18 sm:gap-3 sm:px-4 sm:py-3 lg:px-5">
           <a href="#/hero" className="flex min-w-0 items-center gap-3" onClick={closeMenu}>
             <span
-              className={`grid size-10 shrink-0 place-items-center rounded-2xl sm:size-11 ${
+              className={`grid size-12 shrink-0 place-items-center rounded-2xl sm:size-14 ${
                 logoUrl
                   ? 'overflow-hidden border border-[#FFE0CC] bg-white shadow-[0_10px_22px_rgba(255,106,42,0.12)]'
                   : 'icon-bubble'
@@ -49,7 +49,7 @@ function Navbar({ contactInfo, logoImage }) {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <Rocket size={22} aria-hidden="true" />
+                <Rocket size={26} aria-hidden="true" />
               )}
             </span>
             <span className="min-w-0">

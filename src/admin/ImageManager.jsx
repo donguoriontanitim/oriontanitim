@@ -51,6 +51,15 @@ const managedPhotoSections = [
     emptyLabel: 'Görsel yok',
   },
   {
+    usageArea: 'partner_logo',
+    title: 'Anlaşmalı eğitim kurumu logoları',
+    eyebrow: 'Hero Logoları',
+    description: 'Ana sayfadaki “Anlaşmalı uzman eğitim kurumları” alanında görünecek logoları ayrı ayrı yönetin.',
+    icon: Star,
+    itemLabel: 'logo',
+    emptyLabel: 'Logo yok',
+  },
+  {
     usageArea: 'section_background',
     title: 'Bölüm arka plan görselleri',
     eyebrow: 'Sayfa Bölümleri',
