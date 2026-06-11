@@ -101,14 +101,14 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
                     return (
                       <div
                         key={partner.id || partner.name}
-                        className="flex h-16 items-center justify-center overflow-hidden rounded-2xl border border-[#FFE0CC] bg-white p-2 shadow-sm sm:h-20 sm:p-3"
+                        className="flex h-20 items-center justify-center overflow-hidden rounded-2xl border border-[#FFE0CC] bg-white p-1.5 shadow-sm sm:h-24 sm:p-2"
                         title={partner.name}
                       >
                         {logoUrl ? (
                           <img
                             src={logoUrl}
                             alt={logoAlt}
-                            className="h-full w-full object-contain"
+                            className="h-full w-full scale-125 object-contain sm:scale-[1.35]"
                           />
                         ) : (
                           <span className="text-center text-xs font-black tracking-[0.12em] text-[#222222]/48">

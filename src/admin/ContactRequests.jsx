@@ -1,5 +1,6 @@
-﻿import { MessageCircle, Phone } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Download, MessageCircle, Phone, RefreshCw } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { downloadHtmlFile, escapeHtml } from '../lib/htmlExport.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 
 const statusOptions = [
@@ -24,28 +25,83 @@ const demoRequests = [
   },
 ]
 
+const formatDateTime = (dateValue) =>
+  dateValue
+    ? new Intl.DateTimeFormat('tr-TR', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      }).format(new Date(dateValue))
+    : '-'
+
+const getRequestInterests = (request) => request.interests || request.interested_areas || []
+
+const createContactRequestsHtml = (requests) => {
+  const rows = requests
+    .map((request) => {
+      const interests = getRequestInterests(request)
+
+      return `
+        <tr>
+          <td>${escapeHtml(request.parent_name || '-')}</td>
+          <td>${escapeHtml(request.phone || '-')}</td>
+          <td>${escapeHtml(request.student_age || '-')}</td>
+          <td>${escapeHtml(interests.length > 0 ? interests.join(', ') : '-')}</td>
+          <td>${escapeHtml(request.message || '-')}</td>
+          <td>${escapeHtml(request.status || 'Yeni')}</td>
+          <td>${escapeHtml(formatDateTime(request.created_at))}</td>
+        </tr>
+      `
+    })
+    .join('')
+
+  return `
+    <h1>ORION Kamp İletişim Talepleri</h1>
+    <p class="meta">Oluşturulma tarihi: ${escapeHtml(formatDateTime(new Date().toISOString()))} · Toplam talep: ${requests.length}</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Veli</th>
+          <th>Telefon</th>
+          <th>Yaş</th>
+          <th>İlgilendiği alanlar</th>
+          <th>Mesaj</th>
+          <th>Durum</th>
+          <th>Tarih</th>
+        </tr>
+      </thead>
+      <tbody>${rows || '<tr><td colspan="7">Kayıt yok</td></tr>'}</tbody>
+    </table>
+  `
+}
+
 function ContactRequests() {
   const [requests, setRequests] = useState(demoRequests)
   const [message, setMessage] = useState('')
 
-  useEffect(() => {
+  const fetchRequests = useCallback(async () => {
     if (!isSupabaseConfigured) {
       return
     }
 
-    supabase
+    const { data, error } = await supabase
       .from('contact_requests')
       .select('*')
       .order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (error) {
-          setMessage(error.message)
-          return
-        }
 
-        setRequests(data || [])
-      })
+    if (error) {
+      setMessage(error.message)
+      return
+    }
+
+    setRequests(data || [])
+    setMessage('')
   }, [])
+
+  useEffect(() => {
+    const timerId = window.setTimeout(fetchRequests, 0)
+
+    return () => window.clearTimeout(timerId)
+  }, [fetchRequests])
 
   const updateStatus = async (request, nextStatus) => {
     if (isSupabaseConfigured) {
@@ -65,11 +121,31 @@ function ContactRequests() {
     )
   }
 
+  const downloadRequests = () => {
+    downloadHtmlFile({
+      body: createContactRequestsHtml(requests),
+      filename: `orion-iletisim-talepleri-${new Date().toISOString().slice(0, 10)}.html`,
+      title: 'ORION Kamp İletişim Talepleri',
+    })
+  }
+
   return (
     <div>
-      <div className="mb-6">
-        <p className="admin-eyebrow">İletişim Talepleri</p>
-        <h1 className="admin-title mt-2">Velilerden gelen talepler</h1>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="admin-eyebrow">İletişim Talepleri</p>
+          <h1 className="admin-title mt-2">Velilerden gelen talepler</h1>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={downloadRequests} className="admin-secondary-button">
+            <Download size={17} aria-hidden="true" />
+            HTML İndir
+          </button>
+          <button type="button" onClick={fetchRequests} className="admin-secondary-button">
+            <RefreshCw size={17} aria-hidden="true" />
+            Yenile
+          </button>
+        </div>
       </div>
 
       {message && (
@@ -80,7 +156,7 @@ function ContactRequests() {
 
       <div className="grid gap-4">
         {requests.map((request) => {
-          const interests = request.interests || request.interested_areas || []
+          const interests = getRequestInterests(request)
 
           return (
             <article key={request.id} className="admin-card p-5">
@@ -127,7 +203,7 @@ function ContactRequests() {
                   {request.message && <p className="mt-4 break-words leading-7 text-[#222222]/64">{request.message}</p>}
                   {request.created_at && (
                     <p className="mt-3 text-xs font-bold text-[#222222]/40">
-                      {new Date(request.created_at).toLocaleString('tr-TR')}
+                      {formatDateTime(request.created_at)}
                     </p>
                   )}
                 </div>

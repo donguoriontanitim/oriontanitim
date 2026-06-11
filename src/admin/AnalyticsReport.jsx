@@ -1,6 +1,16 @@
-﻿import { BarChart3, Clock3, Loader2, MonitorSmartphone, RefreshCw, UsersRound } from 'lucide-react'
+import {
+  BarChart3,
+  Clock3,
+  Download,
+  Loader2,
+  MonitorSmartphone,
+  RefreshCw,
+  RotateCcw,
+  UsersRound,
+} from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { sectionLabelById } from '../lib/analytics.js'
+import { downloadHtmlFile, escapeHtml } from '../lib/htmlExport.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 
 const analyticsSelect =
@@ -38,10 +48,74 @@ const getThirtyDaysAgo = () => {
   return date.toISOString()
 }
 
+const createAnalyticsReportHtml = (report) => {
+  const sectionRows = report.sectionStats
+    .map(
+      (section) => `
+        <tr>
+          <td>${escapeHtml(section.label)}</td>
+          <td>${section.views}</td>
+          <td>${escapeHtml(formatDuration(section.totalDuration))}</td>
+          <td>${escapeHtml(formatDuration(section.totalDuration / section.views))}</td>
+        </tr>
+      `,
+    )
+    .join('')
+  const deviceRows = report.deviceStats
+    .map(
+      (device) => `
+        <tr>
+          <td>${escapeHtml(device.label)}</td>
+          <td>${device.count}</td>
+        </tr>
+      `,
+    )
+    .join('')
+  const recentRows = report.recentVisitors
+    .map(
+      (visit) => `
+        <tr>
+          <td>${escapeHtml(visit.path || '#/')}</td>
+          <td>${escapeHtml(deviceLabels[visit.device_type] || visit.device_type || 'Bilinmiyor')}</td>
+          <td>${escapeHtml(`${visit.viewport_width || '-'}x${visit.viewport_height || '-'}`)}</td>
+          <td>${escapeHtml(formatDateTime(visit.created_at))}</td>
+        </tr>
+      `,
+    )
+    .join('')
+
+  return `
+    <h1>ORION Kamp Ziyaretçi Raporu</h1>
+    <p class="meta">Oluşturulma tarihi: ${escapeHtml(formatDateTime(new Date().toISOString()))} · Kapsam: Son 30 gün</p>
+    <div class="cards">
+      <div class="card"><strong>${report.uniqueVisitors}</strong>Tekil oturum</div>
+      <div class="card"><strong>${report.pageViews.length}</strong>Sayfa görüntüleme</div>
+      <div class="card"><strong>${escapeHtml(formatDuration(report.averageSectionDuration))}</strong>Ortalama bölüm süresi</div>
+    </div>
+    <h2>Bölümlerde Geçirilen Süre</h2>
+    <table>
+      <thead><tr><th>Bölüm</th><th>Ölçüm</th><th>Toplam süre</th><th>Ortalama</th></tr></thead>
+      <tbody>${sectionRows || '<tr><td colspan="4">Kayıt yok</td></tr>'}</tbody>
+    </table>
+    <h2>Cihaz Dağılımı</h2>
+    <table>
+      <thead><tr><th>Cihaz</th><th>Görüntüleme</th></tr></thead>
+      <tbody>${deviceRows || '<tr><td colspan="2">Kayıt yok</td></tr>'}</tbody>
+    </table>
+    <h2>Son Ziyaretler</h2>
+    <table>
+      <thead><tr><th>Sayfa</th><th>Cihaz</th><th>Ekran</th><th>Tarih</th></tr></thead>
+      <tbody>${recentRows || '<tr><td colspan="4">Kayıt yok</td></tr>'}</tbody>
+    </table>
+  `
+}
+
 function AnalyticsReport() {
   const [events, setEvents] = useState([])
   const [isLoading, setIsLoading] = useState(isSupabaseConfigured)
+  const [isResetting, setIsResetting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [statusMessage, setStatusMessage] = useState('')
 
   const fetchAnalytics = useCallback(async () => {
     if (!isSupabaseConfigured) {
@@ -52,6 +126,7 @@ function AnalyticsReport() {
 
     setIsLoading(true)
     setErrorMessage('')
+    setStatusMessage('')
 
     const { data, error } = await supabase
       .from('site_analytics')
@@ -140,6 +215,45 @@ function AnalyticsReport() {
     }
   }, [events])
 
+  const downloadReport = () => {
+    downloadHtmlFile({
+      body: createAnalyticsReportHtml(report),
+      filename: `orion-ziyaretci-raporu-${new Date().toISOString().slice(0, 10)}.html`,
+      title: 'ORION Kamp Ziyaretçi Raporu',
+    })
+  }
+
+  const resetAnalytics = async () => {
+    if (!window.confirm('Rapor kayıtları sıfırlansın mı? Bu işlem geri alınamaz.')) {
+      return
+    }
+
+    setErrorMessage('')
+    setStatusMessage('')
+
+    if (!isSupabaseConfigured) {
+      setEvents([])
+      setStatusMessage('Demo rapor verileri sıfırlandı.')
+      return
+    }
+
+    setIsResetting(true)
+
+    const { error } = await supabase
+      .from('site_analytics')
+      .delete()
+      .gte('created_at', '1970-01-01T00:00:00.000Z')
+
+    if (error) {
+      setErrorMessage(`Rapor sıfırlanamadı: ${error.message}`)
+    } else {
+      setEvents([])
+      setStatusMessage('Rapor kayıtları sıfırlandı.')
+    }
+
+    setIsResetting(false)
+  }
+
   return (
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -150,13 +264,33 @@ function AnalyticsReport() {
             Son 30 gün içindeki ziyaret, cihaz ve bölümde geçirilen süre kayıtları.
           </p>
         </div>
-        <button type="button" onClick={fetchAnalytics} className="admin-secondary-button">
-          <RefreshCw size={17} aria-hidden="true" />
-          Yenile
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={downloadReport} className="admin-secondary-button">
+            <Download size={17} aria-hidden="true" />
+            HTML İndir
+          </button>
+          <button
+            type="button"
+            onClick={resetAnalytics}
+            disabled={isResetting}
+            className="admin-danger-button disabled:opacity-60"
+          >
+            {isResetting ? (
+              <Loader2 className="animate-spin" size={17} aria-hidden="true" />
+            ) : (
+              <RotateCcw size={17} aria-hidden="true" />
+            )}
+            Raporu Sıfırla
+          </button>
+          <button type="button" onClick={fetchAnalytics} className="admin-secondary-button">
+            <RefreshCw size={17} aria-hidden="true" />
+            Yenile
+          </button>
+        </div>
       </div>
 
       {errorMessage && <div className="contact-status contact-status-error mb-6">{errorMessage}</div>}
+      {statusMessage && <div className="contact-status contact-status-success mb-6">{statusMessage}</div>}
 
       {isLoading ? (
         <div className="admin-card grid min-h-56 place-items-center p-6 text-center font-black text-[#222222]/62">
