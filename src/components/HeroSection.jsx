@@ -9,6 +9,7 @@
   Sparkles,
   Star,
 } from 'lucide-react'
+import { insertAnalyticsEvent } from '../lib/analytics.js'
 import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
 import SafeHtml from './SafeHtml.jsx'
 
@@ -27,6 +28,22 @@ const partnerLogoImageClasses = [
   'h-full w-full scale-[0.96] object-contain sm:scale-105',
   'h-full w-full scale-[0.96] object-contain sm:scale-105',
 ]
+
+const normalizeInstagramUrl = (value) => {
+  const trimmedValue = String(value || '').trim()
+
+  if (!trimmedValue) {
+    return ''
+  }
+
+  if (/^https?:\/\//i.test(trimmedValue)) {
+    return trimmedValue
+  }
+
+  const username = trimmedValue.replace(/^@/, '').replace(/^instagram\.com\//i, '')
+
+  return username ? `https://www.instagram.com/${username}` : ''
+}
 
 function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {}, backgroundImage }) {
   const title = content?.title || 'ORION KAMP 2026'
@@ -103,24 +120,50 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
                     const partnerLogo = partnerLogosByKey[getRelatedKeyForItem(partner, 'partner_logo')]
                     const logoUrl = partnerLogo?.image_url || partner.logo_url || partner.logo
                     const logoAlt = partnerLogo?.alt_text || partnerLogo?.title || partner.name
+                    const instagramUrl = normalizeInstagramUrl(partner.instagram_url)
+                    const logoContent = logoUrl ? (
+                      <img
+                        src={logoUrl}
+                        alt={logoAlt}
+                        className={partnerLogoImageClasses[index] || 'h-full w-full object-contain'}
+                      />
+                    ) : (
+                      <span className="text-center text-xs font-black tracking-[0.12em] text-[#222222]/48">
+                        {partner.shortName || 'LOGO'}
+                      </span>
+                    )
+                    const logoCardClass =
+                      'flex h-20 items-center justify-center overflow-hidden rounded-2xl border border-[#FFE0CC] bg-white p-1.5 shadow-sm transition sm:h-24 sm:p-2'
+
+                    if (instagramUrl) {
+                      return (
+                        <a
+                          key={partner.id || partner.name}
+                          href={instagramUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={() =>
+                            insertAnalyticsEvent({
+                              event_type: 'partner_click',
+                              section_id: partner.id || `partner-${index + 1}`,
+                            })
+                          }
+                          className={`${logoCardClass} hover:-translate-y-0.5 hover:border-[#FF6A2A]/45 hover:shadow-[0_18px_36px_rgba(255,106,42,0.14)]`}
+                          title={`${partner.name} Instagram`}
+                          aria-label={`${partner.name} Instagram hesabını aç`}
+                        >
+                          {logoContent}
+                        </a>
+                      )
+                    }
 
                     return (
                       <div
                         key={partner.id || partner.name}
-                        className="flex h-20 items-center justify-center overflow-hidden rounded-2xl border border-[#FFE0CC] bg-white p-1.5 shadow-sm sm:h-24 sm:p-2"
+                        className={logoCardClass}
                         title={partner.name}
                       >
-                        {logoUrl ? (
-                          <img
-                            src={logoUrl}
-                            alt={logoAlt}
-                            className={partnerLogoImageClasses[index] || 'h-full w-full object-contain'}
-                          />
-                        ) : (
-                          <span className="text-center text-xs font-black tracking-[0.12em] text-[#222222]/48">
-                            {partner.shortName || 'LOGO'}
-                          </span>
-                        )}
+                        {logoContent}
                       </div>
                     )
                   })}

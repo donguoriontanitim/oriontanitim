@@ -18,6 +18,12 @@ export const sectionLabelById = trackedSections.reduce(
   {},
 )
 
+export const partnerLabelById = {
+  'partner-1': '1. Logo Instagram',
+  'partner-2': '2. Logo Instagram',
+  'partner-3': '3. Logo Instagram',
+}
+
 export const getDeviceType = () => {
   if (typeof window === 'undefined') {
     return 'unknown'

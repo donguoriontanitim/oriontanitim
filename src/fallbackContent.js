@@ -16,9 +16,27 @@ export const fallbackContent = {
     secondaryCtaLabel: 'Programı İncele',
     image: heroImage,
     partners: [
-      { id: 'partner-1', name: 'Anlaşmalı eğitim kurumu logosu 1', shortName: 'LOGO 1', logo_url: '' },
-      { id: 'partner-2', name: 'Anlaşmalı eğitim kurumu logosu 2', shortName: 'LOGO 2', logo_url: '' },
-      { id: 'partner-3', name: 'Anlaşmalı eğitim kurumu logosu 3', shortName: 'LOGO 3', logo_url: '' },
+      {
+        id: 'partner-1',
+        instagram_url: '',
+        logo_url: '',
+        name: 'Anlaşmalı eğitim kurumu logosu 1',
+        shortName: 'LOGO 1',
+      },
+      {
+        id: 'partner-2',
+        instagram_url: '',
+        logo_url: '',
+        name: 'Anlaşmalı eğitim kurumu logosu 2',
+        shortName: 'LOGO 2',
+      },
+      {
+        id: 'partner-3',
+        instagram_url: '',
+        logo_url: '',
+        name: 'Anlaşmalı eğitim kurumu logosu 3',
+        shortName: 'LOGO 3',
+      },
     ],
   },
   summary: {

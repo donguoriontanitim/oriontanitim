@@ -9,7 +9,7 @@ import {
   UsersRound,
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { sectionLabelById } from '../lib/analytics.js'
+import { partnerLabelById, sectionLabelById } from '../lib/analytics.js'
 import { downloadHtmlFile, escapeHtml } from '../lib/htmlExport.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 
@@ -71,6 +71,16 @@ const createAnalyticsReportHtml = (report) => {
       `,
     )
     .join('')
+  const partnerRows = report.partnerClickStats
+    .map(
+      (partner) => `
+        <tr>
+          <td>${escapeHtml(partner.label)}</td>
+          <td>${partner.count}</td>
+        </tr>
+      `,
+    )
+    .join('')
   const recentRows = report.recentVisitors
     .map(
       (visit) => `
@@ -90,6 +100,7 @@ const createAnalyticsReportHtml = (report) => {
     <div class="cards">
       <div class="card"><strong>${report.uniqueVisitors}</strong>Tekil oturum</div>
       <div class="card"><strong>${report.pageViews.length}</strong>Sayfa görüntüleme</div>
+      <div class="card"><strong>${report.partnerClicks.length}</strong>Instagram tıklaması</div>
       <div class="card"><strong>${escapeHtml(formatDuration(report.averageSectionDuration))}</strong>Ortalama bölüm süresi</div>
     </div>
     <h2>Bölümlerde Geçirilen Süre</h2>
@@ -101,6 +112,11 @@ const createAnalyticsReportHtml = (report) => {
     <table>
       <thead><tr><th>Cihaz</th><th>Görüntüleme</th></tr></thead>
       <tbody>${deviceRows || '<tr><td colspan="2">Kayıt yok</td></tr>'}</tbody>
+    </table>
+    <h2>Logo Instagram Tıklamaları</h2>
+    <table>
+      <thead><tr><th>Logo</th><th>Tıklama</th></tr></thead>
+      <tbody>${partnerRows || '<tr><td colspan="2">Kayıt yok</td></tr>'}</tbody>
     </table>
     <h2>Son Ziyaretler</h2>
     <table>
@@ -154,6 +170,7 @@ function AnalyticsReport() {
   const report = useMemo(() => {
     const pageViews = events.filter((event) => event.event_type === 'page_view')
     const sectionViews = events.filter((event) => event.event_type === 'section_view')
+    const partnerClicks = events.filter((event) => event.event_type === 'partner_click')
     const uniqueSessions = new Set(events.map((event) => event.session_id).filter(Boolean))
 
     const sectionStats = Object.values(
@@ -190,6 +207,24 @@ function AnalyticsReport() {
       }, {}),
     ).sort((a, b) => b.count - a.count)
 
+    const partnerClickStats = Object.values(
+      partnerClicks.reduce((stats, event) => {
+        const partnerId = event.section_id || 'unknown'
+
+        if (!stats[partnerId]) {
+          stats[partnerId] = {
+            id: partnerId,
+            label: partnerLabelById[partnerId] || partnerId,
+            count: 0,
+          }
+        }
+
+        stats[partnerId].count += 1
+
+        return stats
+      }, {}),
+    ).sort((a, b) => b.count - a.count)
+
     const recentVisitors = Object.values(
       pageViews.reduce((visitors, event) => {
         if (!event.session_id || visitors[event.session_id]) {
@@ -209,6 +244,8 @@ function AnalyticsReport() {
         sectionViews.length > 0 ? Math.round(totalDuration / sectionViews.length) : 0,
       deviceStats,
       pageViews,
+      partnerClicks,
+      partnerClickStats,
       recentVisitors,
       sectionStats,
       uniqueVisitors: uniqueSessions.size,
@@ -301,7 +338,7 @@ function AnalyticsReport() {
         </div>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div className="admin-card p-5">
               <UsersRound className="text-[#FF6A2A]" size={25} aria-hidden="true" />
               <p className="mt-4 text-3xl font-black text-[#222222]">{report.uniqueVisitors}</p>
@@ -318,6 +355,11 @@ function AnalyticsReport() {
                 {formatDuration(report.averageSectionDuration)}
               </p>
               <p className="mt-1 text-sm font-bold text-[#222222]/58">Ortalama bölüm süresi</p>
+            </div>
+            <div className="admin-card p-5">
+              <BarChart3 className="text-[#FF6A2A]" size={25} aria-hidden="true" />
+              <p className="mt-4 text-3xl font-black text-[#222222]">{report.partnerClicks.length}</p>
+              <p className="mt-1 text-sm font-bold text-[#222222]/58">Logo Instagram tıklaması</p>
             </div>
           </div>
 
@@ -366,6 +408,27 @@ function AnalyticsReport() {
                 ) : (
                   <p className="rounded-2xl bg-[#FFFBF5] p-4 text-sm font-bold text-[#222222]/58">
                     Henüz cihaz verisi yok.
+                  </p>
+                )}
+              </div>
+            </section>
+
+            <section className="admin-card p-5 xl:col-span-2">
+              <h2 className="text-xl font-black text-[#222222]">Logo Instagram tıklamaları</h2>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {report.partnerClickStats.length > 0 ? (
+                  report.partnerClickStats.map((partner) => (
+                    <div
+                      key={partner.id}
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4"
+                    >
+                      <span className="font-black text-[#222222]">{partner.label}</span>
+                      <span className="admin-pill">{partner.count}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="rounded-2xl bg-[#FFFBF5] p-4 text-sm font-bold text-[#222222]/58 sm:col-span-3">
+                    Henüz logo Instagram tıklaması yok.
                   </p>
                 )}
               </div>

@@ -54,6 +54,13 @@ const mapSiteContents = (rows = []) => {
       getContentValue(rows, 'hero', 'secondary_button') ||
       getContentValue(rows, 'hero', 'secondary_cta_label') ||
       fallbackContent.hero.secondaryCtaLabel,
+    partners: fallbackContent.hero.partners.map((partner, index) => ({
+      ...partner,
+      instagram_url:
+        getContentValue(rows, 'partners', `partner_${index + 1}_instagram`) ||
+        partner.instagram_url ||
+        '',
+    })),
   }
 
   const summary = {
