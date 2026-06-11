@@ -14,8 +14,6 @@ type ContactNotificationPayload = {
   submittedAt?: string
 }
 
-const cleanPhone = (value = '') => value.replace(/\D/g, '')
-
 const jsonResponse = (body: Record<string, unknown>, status = 200) =>
   new Response(JSON.stringify(body), {
     headers: corsHeaders,
@@ -31,6 +29,14 @@ const getRequiredEnv = (name: string) => {
 
   return value
 }
+
+const escapeHtml = (value = '') =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
 
 const normalizePayload = (payload: ContactNotificationPayload) => {
   const parentName = String(payload.parentName || '').trim()
@@ -56,7 +62,7 @@ const normalizePayload = (payload: ContactNotificationPayload) => {
   }
 }
 
-const createMessageBody = (payload: ReturnType<typeof normalizePayload>) =>
+const createTextBody = (payload: ReturnType<typeof normalizePayload>) =>
   [
     'Yeni iletişim formu dolduruldu.',
     '',
@@ -70,45 +76,40 @@ const createMessageBody = (payload: ReturnType<typeof normalizePayload>) =>
     'Kaynak: ORION Kamp 2026 web sitesi',
   ].join('\n')
 
-const createTemplatePayload = (
-  payload: ReturnType<typeof normalizePayload>,
-  recipientPhone: string,
-) => ({
-  messaging_product: 'whatsapp',
-  to: recipientPhone,
-  type: 'template',
-  template: {
-    name: getRequiredEnv('WHATSAPP_TEMPLATE_NAME'),
-    language: {
-      code: Deno.env.get('WHATSAPP_TEMPLATE_LANGUAGE')?.trim() || 'tr',
-    },
-    components: [
-      {
-        type: 'body',
-        parameters: [
-          { type: 'text', text: payload.parentName },
-          { type: 'text', text: payload.phone },
-          { type: 'text', text: payload.studentAge },
-          {
-            type: 'text',
-            text: payload.interests.length > 0 ? payload.interests.join(', ') : 'Belirtilmedi',
-          },
-          { type: 'text', text: payload.message || 'Belirtilmedi' },
-        ],
-      },
+const createHtmlBody = (payload: ReturnType<typeof normalizePayload>) => {
+  const rows = [
+    ['Veli', payload.parentName],
+    ['Telefon', payload.phone],
+    ['Öğrenci yaşı', payload.studentAge],
+    ['İlgilendiği alanlar', payload.interests.length > 0 ? payload.interests.join(', ') : 'Belirtilmedi'],
+    ['Mesaj', payload.message || 'Belirtilmedi'],
+    [
+      'Tarih',
+      new Date(payload.submittedAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }),
     ],
-  },
-})
+  ]
 
-const createTextPayload = (messageBody: string, recipientPhone: string) => ({
-  messaging_product: 'whatsapp',
-  to: recipientPhone,
-  type: 'text',
-  text: {
-    body: messageBody,
-    preview_url: false,
-  },
-})
+  return `
+    <div style="font-family:Arial,sans-serif;line-height:1.5;color:#222222">
+      <h2 style="margin:0 0 16px;color:#ff6a2a">Yeni iletişim formu dolduruldu</h2>
+      <table cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;max-width:640px">
+        <tbody>
+          ${rows
+            .map(
+              ([label, value]) => `
+                <tr>
+                  <td style="border:1px solid #ffe0cc;font-weight:700;background:#fff8f0;width:180px">${escapeHtml(label)}</td>
+                  <td style="border:1px solid #ffe0cc">${escapeHtml(value)}</td>
+                </tr>
+              `,
+            )
+            .join('')}
+        </tbody>
+      </table>
+      <p style="margin-top:16px;color:#666666">Kaynak: ORION Kamp 2026 web sitesi</p>
+    </div>
+  `
+}
 
 Deno.serve(async (request) => {
   if (request.method === 'OPTIONS') {
@@ -120,39 +121,39 @@ Deno.serve(async (request) => {
   }
 
   try {
-    const accessToken = getRequiredEnv('WHATSAPP_ACCESS_TOKEN')
-    const phoneNumberId = getRequiredEnv('WHATSAPP_PHONE_NUMBER_ID')
-    const recipientPhone = cleanPhone(getRequiredEnv('WHATSAPP_NOTIFY_TO'))
-    const graphVersion = Deno.env.get('WHATSAPP_GRAPH_VERSION')?.trim() || 'v22.0'
+    const resendApiKey = getRequiredEnv('RESEND_API_KEY')
+    const from = getRequiredEnv('CONTACT_NOTIFICATION_FROM')
+    const to = getRequiredEnv('CONTACT_NOTIFICATION_TO')
+      .split(',')
+      .map((email) => email.trim())
+      .filter(Boolean)
 
-    if (!recipientPhone) {
-      throw new Error('WHATSAPP_NOTIFY_TO geçerli bir telefon numarası değil.')
+    if (to.length === 0) {
+      throw new Error('CONTACT_NOTIFICATION_TO geçerli bir e-posta adresi içermiyor.')
     }
 
     const payload = normalizePayload(await request.json())
-    const messageBody = createMessageBody(payload)
-    const requestBody = Deno.env.get('WHATSAPP_TEMPLATE_NAME')?.trim()
-      ? createTemplatePayload(payload, recipientPhone)
-      : createTextPayload(messageBody, recipientPhone)
-
-    const response = await fetch(
-      `https://graph.facebook.com/${graphVersion}/${phoneNumberId}/messages`,
-      {
-        body: JSON.stringify(requestBody),
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
+    const response = await fetch('https://api.resend.com/emails', {
+      body: JSON.stringify({
+        from,
+        to,
+        subject: `Yeni form: ${payload.parentName}`,
+        text: createTextBody(payload),
+        html: createHtmlBody(payload),
+      }),
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
       },
-    )
+      method: 'POST',
+    })
     const result = await response.json().catch(() => ({}))
 
     if (!response.ok) {
-      console.error('WhatsApp Cloud API hatası:', result)
+      console.error('E-posta bildirim servisi hatası:', result)
       return jsonResponse(
         {
-          error: 'WhatsApp bildirimi gönderilemedi.',
+          error: 'E-posta bildirimi gönderilemedi.',
           providerStatus: response.status,
           result,
         },
@@ -162,14 +163,14 @@ Deno.serve(async (request) => {
 
     return jsonResponse({
       ok: true,
-      provider: 'whatsapp-cloud-api',
+      provider: 'resend',
       result,
     })
   } catch (error) {
-    console.error('WhatsApp bildirim fonksiyonu hatası:', error)
+    console.error('E-posta bildirim fonksiyonu hatası:', error)
     return jsonResponse(
       {
-        error: error instanceof Error ? error.message : 'WhatsApp bildirimi gönderilemedi.',
+        error: error instanceof Error ? error.message : 'E-posta bildirimi gönderilemedi.',
       },
       400,
     )

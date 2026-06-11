@@ -1,4 +1,4 @@
 project_id = "vigbyqymmxsofjusjlss"
 
-[functions.contact-whatsapp-notification]
+[functions.contact-email-notification]
 verify_jwt = false

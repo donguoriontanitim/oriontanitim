@@ -171,42 +171,35 @@ Görsel Yönetimi akışı:
 1. KVKK onayı zorunludur.
 2. Form `contact_requests` tablosuna kayıt atar.
 3. Başarı mesajı gösterilir.
-4. Kullanıcı WhatsApp görüşmesine yönlendirilir.
+4. E-posta bildirimi yapılandırılmışsa ekibe bildirim gönderilir.
+5. Kullanıcı WhatsApp mesaj ekranına yönlendirilmez.
 
-## Otomatik WhatsApp Bildirimi
+## Otomatik E-posta / Telefon Bildirimi
 
-Form gonderildikten sonra sistemin WhatsApp mesajini kendisinin gonderebilmesi icin normal `wa.me` linki yeterli degildir. Bunun icin Supabase Edge Function ve WhatsApp Business Cloud API kullanilir.
+Form gonderildikten sonra telefona bildirim dusmesi icin en pratik yontem e-posta bildirimidir. Supabase Edge Function, Resend API ile belirlenen e-posta adresine form detaylarini yollar. Telefonda Gmail / Outlook bildirimi aciksa bu bildirim telefona aninda duser.
 
 Repo icinde hazirlanan function:
 
 ```bash
-supabase/functions/contact-whatsapp-notification
+supabase/functions/contact-email-notification
 ```
 
 Gerekli Supabase secrets:
 
 ```bash
-WHATSAPP_ACCESS_TOKEN=Meta WhatsApp Cloud API kalici access token
-WHATSAPP_PHONE_NUMBER_ID=Meta WhatsApp API Setup ekranindaki Phone Number ID
-WHATSAPP_NOTIFY_TO=905327236648
-WHATSAPP_GRAPH_VERSION=v22.0
-```
-
-Opsiyonel template kullanimi:
-
-```bash
-WHATSAPP_TEMPLATE_NAME=onayli_template_adi
-WHATSAPP_TEMPLATE_LANGUAGE=tr
+RESEND_API_KEY=Resend API anahtari
+CONTACT_NOTIFICATION_FROM=Orion Kamp <bildirim@alanadiniz.com>
+CONTACT_NOTIFICATION_TO=dongusoft@gmail.com
 ```
 
 Deploy:
 
 ```bash
-supabase functions deploy contact-whatsapp-notification --project-ref vigbyqymmxsofjusjlss
-supabase secrets set WHATSAPP_ACCESS_TOKEN=... WHATSAPP_PHONE_NUMBER_ID=... WHATSAPP_NOTIFY_TO=905327236648 --project-ref vigbyqymmxsofjusjlss
+supabase functions deploy contact-email-notification --project-ref vigbyqymmxsofjusjlss
+supabase secrets set RESEND_API_KEY=... CONTACT_NOTIFICATION_FROM="Orion Kamp <bildirim@alanadiniz.com>" CONTACT_NOTIFICATION_TO=dongusoft@gmail.com --project-ref vigbyqymmxsofjusjlss
 ```
 
-Not: WhatsApp Cloud API'de serbest metin mesajlari her senaryoda gonderilemeyebilir. Meta, bazi durumlarda onayli template mesaji ister. Bu durumda `WHATSAPP_TEMPLATE_NAME` ve `WHATSAPP_TEMPLATE_LANGUAGE` secret'lari tanimlanmalidir.
+Not: `CONTACT_NOTIFICATION_FROM` icin Resend tarafinda dogrulanmis bir domain kullanilmalidir. Domain henuz yoksa Resend test adresi yalnizca kendi dogrulanmis alicilarina gonderim yapabilir.
 
 ## Komutlar
 

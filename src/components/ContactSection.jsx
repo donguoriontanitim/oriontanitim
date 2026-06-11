@@ -1,4 +1,4 @@
-﻿import { Bot, CheckCircle2, Loader2, Mail, Phone, Send, Sparkles } from 'lucide-react'
+import { Bot, CheckCircle2, Loader2, Mail, Phone, Send, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
@@ -44,25 +44,12 @@ const trustItems = [
 const getWhatsAppUrl = (phoneNumber, message) =>
   `https://wa.me/${String(phoneNumber || whatsappNumber).replace(/\D/g, '') || whatsappNumber}?text=${encodeURIComponent(message)}`
 
-const createContactNotificationMessage = ({ parentName, phone, studentAge, interests, message }) =>
-  [
-    'Yeni iletişim formu dolduruldu.',
-    '',
-    `Veli: ${parentName}`,
-    `Telefon: ${phone}`,
-    `Öğrenci yaşı: ${studentAge}`,
-    `İlgilendiği alanlar: ${interests.length > 0 ? interests.join(', ') : 'Belirtilmedi'}`,
-    `Mesaj: ${message || 'Belirtilmedi'}`,
-    '',
-    'Kaynak: ORION Kamp 2026 web sitesi',
-  ].join('\n')
-
-const sendAutomaticWhatsAppNotification = async (payload) => {
+const sendContactEmailNotification = async (payload) => {
   if (!isSupabaseConfigured) {
-    throw new Error('Supabase bağlantısı olmadığı için otomatik WhatsApp bildirimi gönderilemedi.')
+    throw new Error('Supabase bağlantısı olmadığı için e-posta bildirimi gönderilemedi.')
   }
 
-  const { data, error } = await supabase.functions.invoke('contact-whatsapp-notification', {
+  const { data, error } = await supabase.functions.invoke('contact-email-notification', {
     body: payload,
   })
 
@@ -71,7 +58,7 @@ const sendAutomaticWhatsAppNotification = async (payload) => {
   }
 
   if (!data?.ok) {
-    throw new Error(data?.error || 'WhatsApp bildirimi gönderilemedi.')
+    throw new Error(data?.error || 'E-posta bildirimi gönderilemedi.')
   }
 
   return data
@@ -184,14 +171,6 @@ function ContactSection({
         }
       }
 
-      const notificationMessage = createContactNotificationMessage({
-        parentName,
-        phone,
-        studentAge,
-        interests: form.interested_areas,
-        message: form.message.trim(),
-      })
-      const notificationUrl = getWhatsAppUrl(contactInfo?.phone1 || whatsappNumber, notificationMessage)
       const notificationPayload = {
         parentName,
         phone,
@@ -200,29 +179,23 @@ function ContactSection({
         message: form.message.trim(),
         submittedAt: new Date().toISOString(),
       }
-      let automaticNotificationSent = false
+      let emailNotificationSent = false
 
       try {
-        await sendAutomaticWhatsAppNotification(notificationPayload)
-        automaticNotificationSent = true
+        await sendContactEmailNotification(notificationPayload)
+        emailNotificationSent = true
       } catch (notificationError) {
-        console.warn('Otomatik WhatsApp bildirimi gönderilemedi:', notificationError)
+        console.warn('E-posta bildirimi gönderilemedi:', notificationError)
       }
 
       setStatus({
         type: 'success',
-        message: automaticNotificationSent
-          ? 'Talebiniz alındı. WhatsApp bildirimi otomatik gönderildi.'
-          : 'Talebiniz alındı. Otomatik WhatsApp bildirimi henüz yapılandırılmadığı için WhatsApp mesaj ekranı açılıyor.',
+        message: emailNotificationSent
+          ? 'Talebiniz alındı. Ekibe bildirim gönderildi.'
+          : 'Talebiniz alındı. Ekip admin panelinden talebinizi görebilir.',
       })
 
       setForm(initialForm)
-
-      if (!automaticNotificationSent) {
-        window.setTimeout(() => {
-          window.location.href = notificationUrl
-        }, 900)
-      }
     } catch (error) {
       setStatus({
         type: 'error',
