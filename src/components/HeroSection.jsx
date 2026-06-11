@@ -22,6 +22,12 @@ const infoCards = [
   { title: 'Teknoloji + Spor', text: 'Üretim ve hareket dengesi', icon: Cpu },
 ]
 
+const partnerLogoImageClasses = [
+  'h-full w-full scale-[1.38] object-contain sm:scale-[1.5]',
+  'h-full w-full scale-[0.96] object-contain sm:scale-105',
+  'h-full w-full scale-[0.96] object-contain sm:scale-105',
+]
+
 function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {}, backgroundImage }) {
   const title = content?.title || 'ORION KAMP 2026'
   const [titleLead, ...titleRest] = title.split(' ')
@@ -93,7 +99,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
                   Anlaşmalı uzman eğitim kurumları
                 </p>
                 <div className="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
-                  {content.partners.slice(0, 3).map((partner) => {
+                  {content.partners.slice(0, 3).map((partner, index) => {
                     const partnerLogo = partnerLogosByKey[getRelatedKeyForItem(partner, 'partner_logo')]
                     const logoUrl = partnerLogo?.image_url || partner.logo_url || partner.logo
                     const logoAlt = partnerLogo?.alt_text || partnerLogo?.title || partner.name
@@ -108,7 +114,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
                           <img
                             src={logoUrl}
                             alt={logoAlt}
-                            className="h-full w-full scale-125 object-contain sm:scale-[1.35]"
+                            className={partnerLogoImageClasses[index] || 'h-full w-full object-contain'}
                           />
                         ) : (
                           <span className="text-center text-xs font-black tracking-[0.12em] text-[#222222]/48">
