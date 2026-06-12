@@ -49,14 +49,14 @@ const getHeroTitleClass = (titleValue) => {
   const titleLength = String(titleValue || '').length
 
   if (titleLength > 48) {
-    return 'text-[2.05rem] leading-[1.12] min-[390px]:text-[2.25rem] sm:text-[3.05rem] sm:leading-[1.08] lg:text-[3.55rem] lg:leading-[1.06]'
+    return 'text-[1.9rem] leading-[1.14] min-[390px]:text-[2.1rem] sm:text-[2.75rem] sm:leading-[1.1] lg:text-[3.2rem] lg:leading-[1.08]'
   }
 
   if (titleLength > 32) {
-    return 'text-[2.25rem] leading-[1.1] min-[390px]:text-[2.45rem] sm:text-[3.35rem] sm:leading-[1.06] lg:text-[4rem] lg:leading-[1.04]'
+    return 'text-[2.05rem] leading-[1.12] min-[390px]:text-[2.25rem] sm:text-[3rem] sm:leading-[1.08] lg:text-[3.55rem] lg:leading-[1.06]'
   }
 
-  return 'text-[2.65rem] leading-[1.04] sm:text-6xl sm:leading-[1] lg:text-7xl lg:leading-[0.98]'
+  return 'text-[2.35rem] leading-[1.06] sm:text-[3.45rem] sm:leading-[1.02] lg:text-[4.4rem] lg:leading-[1]'
 }
 
 function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {}, backgroundImage }) {
@@ -93,9 +93,9 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
       <div className="section-shell relative z-10">
         <div className="grid min-h-[calc(100svh-7rem)] items-center gap-9 py-8 sm:gap-12 sm:py-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:py-14">
           <div className="min-w-0 max-w-2xl">
-            <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-[#FFE0CC] bg-white/82 px-3.5 py-2 text-sm font-black text-[#222222] shadow-sm backdrop-blur sm:mb-6 sm:px-4">
-              <Rocket className="text-[#FF6A2A]" size={17} aria-hidden="true" />
-              <span className="min-w-0 truncate">{content?.eyebrow || '7–13 yaş çocuklar için yaz kampı'}</span>
+            <div className="mb-5 inline-flex max-w-full items-start gap-2 rounded-full border border-[#FFE0CC] bg-white/82 px-3.5 py-2 text-xs font-black leading-snug text-[#222222] shadow-sm backdrop-blur sm:mb-6 sm:px-4 sm:text-sm">
+              <Rocket className="mt-0.5 shrink-0 text-[#FF6A2A]" size={17} aria-hidden="true" />
+              <span className="min-w-0 break-words">{content?.eyebrow || '7–13 yaş çocuklar için yaz kampı'}</span>
             </div>
 
             <h1
@@ -194,7 +194,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
             <div className="absolute -inset-2 rounded-[2rem] bg-[radial-gradient(circle_at_24%_20%,rgba(255,209,102,0.5),transparent_28%),radial-gradient(circle_at_80%_18%,rgba(34,184,214,0.18),transparent_26%),linear-gradient(135deg,#FFF1E8,#FFFFFF)] sm:-inset-5 sm:rounded-[3rem]" />
             <div className="absolute -right-3 top-10 z-10 hidden rounded-full border border-[#FFE0CC] bg-white px-4 py-3 text-sm font-black text-[#222222] shadow-[0_18px_46px_rgba(255,106,42,0.16)] sm:flex sm:items-center sm:gap-2">
               <Orbit className="text-[#FF6A2A]" size={17} aria-hidden="true" />
-              Robotik + roket + kamp
+              Robotik-Yüzme-Jimlastik
             </div>
             <div className="soft-card-strong relative overflow-hidden p-2 sm:p-3">
               <picture>
