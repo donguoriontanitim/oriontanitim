@@ -170,10 +170,10 @@ function DailyFlowSection({ backgroundImage, content }) {
         <div className="overflow-hidden rounded-[2rem] border border-[#FFE0CC] bg-[radial-gradient(circle_at_10%_20%,rgba(255,106,42,0.08),transparent_18rem),radial-gradient(circle_at_92%_84%,rgba(22,138,203,0.12),transparent_20rem),linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(255,248,240,0.92)_100%)] px-4 py-8 shadow-[0_28px_90px_rgba(255,106,42,0.1)] sm:rounded-[2.35rem] sm:px-6 sm:py-10 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <p className="section-eyebrow">{sectionContent.eyebrow}</p>
-            <h2 className="mx-auto mt-3 max-w-3xl text-3xl font-black leading-[1.08] text-[#222222] min-[390px]:text-4xl sm:text-5xl lg:text-6xl">
+            <h2 className="mx-auto mt-3 max-w-3xl break-words text-3xl font-black leading-[1.1] text-[#222222] [text-wrap:balance] min-[390px]:text-4xl sm:text-5xl sm:leading-[1.08] lg:text-6xl">
               {sectionContent.title}
             </h2>
-            <p className="mx-auto mt-4 max-w-3xl text-sm font-semibold leading-7 text-[#222222]/62 sm:text-base sm:leading-8">
+            <p className="mx-auto mt-4 max-w-3xl break-words text-sm font-semibold leading-7 text-[#222222]/62 sm:text-base sm:leading-8">
               {sectionContent.description}
             </p>
           </div>
@@ -189,7 +189,7 @@ function DailyFlowSection({ backgroundImage, content }) {
           </div>
 
           <div className="mx-auto mt-6 max-w-3xl rounded-2xl border border-[#FFE0CC] bg-white/94 px-5 py-4 text-center shadow-[0_18px_44px_rgba(34,34,34,0.06)]">
-            <p className="text-sm font-black leading-6 text-[#222222] sm:text-base">
+            <p className="break-words text-sm font-black leading-6 text-[#222222] sm:text-base">
               {sectionContent.footerNote}
             </p>
           </div>

@@ -45,9 +45,25 @@ const normalizeInstagramUrl = (value) => {
   return username ? `https://www.instagram.com/${username}` : ''
 }
 
+const getHeroTitleClass = (titleValue) => {
+  const titleLength = String(titleValue || '').length
+
+  if (titleLength > 48) {
+    return 'text-[2.05rem] leading-[1.12] min-[390px]:text-[2.25rem] sm:text-[3.05rem] sm:leading-[1.08] lg:text-[3.55rem] lg:leading-[1.06]'
+  }
+
+  if (titleLength > 32) {
+    return 'text-[2.25rem] leading-[1.1] min-[390px]:text-[2.45rem] sm:text-[3.35rem] sm:leading-[1.06] lg:text-[4rem] lg:leading-[1.04]'
+  }
+
+  return 'text-[2.65rem] leading-[1.04] sm:text-6xl sm:leading-[1] lg:text-7xl lg:leading-[0.98]'
+}
+
 function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {}, backgroundImage }) {
   const title = content?.title || 'ORION KAMP 2026'
   const [titleLead, ...titleRest] = title.split(' ')
+  const titleRestText = titleRest.join(' ')
+  const heroTitleClass = getHeroTitleClass(title)
   const subtitleHtml = content?.subtitleHtml || content?.subtitle || content?.html || defaultSubtitleHtml
   const primaryLabel = content?.primaryCtaLabel || content?.ctaLabel || 'Bilgi Al'
   const secondaryLabel = content?.programCtaLabel || content?.secondaryCtaLabel || 'Programı İncele'
@@ -75,37 +91,39 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
       </div>
 
       <div className="section-shell relative z-10">
-        <div className="grid min-h-[calc(100svh-7rem)] items-center gap-9 py-8 sm:gap-12 sm:py-10 lg:grid-cols-[0.92fr_1.08fr] lg:py-14">
-          <div className="max-w-2xl">
+        <div className="grid min-h-[calc(100svh-7rem)] items-center gap-9 py-8 sm:gap-12 sm:py-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:py-14">
+          <div className="min-w-0 max-w-2xl">
             <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-[#FFE0CC] bg-white/82 px-3.5 py-2 text-sm font-black text-[#222222] shadow-sm backdrop-blur sm:mb-6 sm:px-4">
               <Rocket className="text-[#FF6A2A]" size={17} aria-hidden="true" />
               <span className="min-w-0 truncate">{content?.eyebrow || '7–13 yaş çocuklar için yaz kampı'}</span>
             </div>
 
-            <h1 className="max-w-3xl text-[2.65rem] font-black leading-[0.98] text-[#222222] sm:text-6xl sm:leading-[0.94] lg:text-7xl">
+            <h1
+              className={`max-w-3xl break-words font-black tracking-normal text-[#222222] [text-wrap:balance] ${heroTitleClass}`}
+            >
               <span className="block">{titleLead}</span>
-              <span className="block text-[#FF6A2A]">{titleRest.join(' ')}</span>
+              {titleRestText && <span className="block text-[#FF6A2A]">{titleRestText}</span>}
             </h1>
 
             <SafeHtml
               html={subtitleHtml}
-              className="mt-5 max-w-xl text-base font-semibold leading-7 text-[#222222]/72 sm:mt-6 sm:text-xl sm:leading-8"
+              className="mt-5 max-w-xl break-words text-base font-semibold leading-7 text-[#222222]/72 sm:mt-6 sm:text-xl sm:leading-8"
             />
 
-            <div className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row">
+            <div className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:flex-wrap">
               <a
                 href="#/iletisim"
-                className="orion-gradient orion-gradient-hover cta-orange inline-flex min-h-13 items-center justify-center gap-2 rounded-full px-6 py-4 text-base font-black text-white transition"
+                className="orion-gradient orion-gradient-hover cta-orange inline-flex min-h-13 min-w-0 items-center justify-center gap-2 rounded-full px-6 py-4 text-center text-base font-black leading-snug text-white transition"
               >
-                {primaryLabel}
-                <ArrowRight size={19} aria-hidden="true" />
+                <span className="min-w-0 break-words">{primaryLabel}</span>
+                <ArrowRight className="shrink-0" size={19} aria-hidden="true" />
               </a>
               <a
                 href="#/program"
-                className="landing-secondary-button text-base"
+                className="landing-secondary-button min-w-0 text-center text-base leading-snug"
               >
-                <BookOpen size={19} aria-hidden="true" />
-                {secondaryLabel}
+                <BookOpen className="shrink-0" size={19} aria-hidden="true" />
+                <span className="min-w-0 break-words">{secondaryLabel}</span>
               </a>
             </div>
 
@@ -172,7 +190,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
             )}
           </div>
 
-          <div className="relative mx-auto w-full max-w-2xl lg:mx-0 lg:ml-auto">
+          <div className="relative mx-auto min-w-0 w-full max-w-2xl lg:mx-0 lg:ml-auto">
             <div className="absolute -inset-2 rounded-[2rem] bg-[radial-gradient(circle_at_24%_20%,rgba(255,209,102,0.5),transparent_28%),radial-gradient(circle_at_80%_18%,rgba(34,184,214,0.18),transparent_26%),linear-gradient(135deg,#FFF1E8,#FFFFFF)] sm:-inset-5 sm:rounded-[3rem]" />
             <div className="absolute -right-3 top-10 z-10 hidden rounded-full border border-[#FFE0CC] bg-white px-4 py-3 text-sm font-black text-[#222222] shadow-[0_18px_46px_rgba(255,106,42,0.16)] sm:flex sm:items-center sm:gap-2">
               <Orbit className="text-[#FF6A2A]" size={17} aria-hidden="true" />

@@ -63,10 +63,10 @@ function CampSummary({ content, stats = [], imagesByRelatedKey = {}, backgroundI
       <div className="section-shell">
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-eyebrow">Kamp Özeti</p>
-          <h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl lg:text-5xl">
+          <h2 className="mt-3 break-words text-3xl font-black leading-tight [text-wrap:balance] sm:text-4xl lg:text-5xl">
             {content.title}
           </h2>
-          <SafeHtml html={content.html} className="mt-4 text-base leading-8 text-[#222222]/66 sm:text-lg" />
+          <SafeHtml html={content.html} className="mt-4 break-words text-base leading-8 text-[#222222]/66 sm:text-lg" />
         </div>
 
         <div className="mx-auto mt-8 grid max-w-5xl gap-4 min-[390px]:grid-cols-2 sm:mt-10 sm:gap-5 lg:grid-cols-3">

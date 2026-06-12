@@ -231,10 +231,10 @@ function ContactSection({
 
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-[#FF6A2A]">Hızlı İletişim</p>
-                <h3 className="mt-3 text-[1.7rem] font-black leading-[1.05] text-[#222222] sm:text-3xl">
+                <h3 className="mt-3 break-words text-[1.7rem] font-black leading-[1.1] text-[#222222] [text-wrap:balance] sm:text-3xl sm:leading-[1.08]">
                   {contactContent.quickTitle}
                 </h3>
-                <p className="mt-4 text-base font-extrabold leading-7 text-[#222222]/80">
+                <p className="mt-4 break-words text-base font-extrabold leading-7 text-[#222222]/80">
                   {contactContent.quickDescription}
                 </p>
               </div>
@@ -273,13 +273,13 @@ function ContactSection({
             <div>
               <div className="mb-6">
                 <p className="section-eyebrow">{contactContent.eyebrow}</p>
-                <h2 className="mt-3 text-2xl font-black leading-tight text-[#222222] min-[390px]:text-3xl sm:text-4xl lg:text-5xl">
+                <h2 className="mt-3 break-words text-2xl font-black leading-[1.12] text-[#222222] [text-wrap:balance] min-[390px]:text-3xl sm:text-4xl sm:leading-[1.08] lg:text-5xl">
                   {contactContent.title}
                   {contactContent.highlight && (
                     <span className="block text-[#FF6A2A]">{contactContent.highlight}</span>
                   )}
                 </h2>
-                <p className="mt-4 text-base font-semibold leading-7 text-[#222222]/64">
+                <p className="mt-4 break-words text-base font-semibold leading-7 text-[#222222]/64">
                   {contactContent.description}
                 </p>
               </div>
