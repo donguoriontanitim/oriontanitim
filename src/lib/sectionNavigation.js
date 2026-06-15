@@ -8,6 +8,19 @@ export const getLandingSectionHref = (sectionId = 'hero') => `#/${sectionId}`
 
 export const getLandingSectionPath = (sectionId = 'hero') => `/${sectionId}`
 
+export const getLandingSectionIdFromHref = (href = '') => {
+  const hashStartIndex = String(href).indexOf('#/')
+
+  if (hashStartIndex < 0) {
+    return ''
+  }
+
+  const hashPath = String(href).slice(hashStartIndex + 2)
+  const sectionId = decodeURIComponent(hashPath.split(/[/?#]/)[0] || '')
+
+  return isLandingSectionId(sectionId) ? sectionId : ''
+}
+
 export const scrollToLandingSection = (sectionId = 'hero', options = {}) => {
   if (typeof document === 'undefined' || !isLandingSectionId(sectionId)) {
     return false

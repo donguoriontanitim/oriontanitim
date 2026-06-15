@@ -1,5 +1,5 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import AdminLayout from './admin/AdminLayout.jsx'
 import AdminLogin from './admin/AdminLogin.jsx'
 import AnalyticsReport from './admin/AnalyticsReport.jsx'
@@ -31,7 +31,12 @@ import {
   mapImagesByRelatedKey,
 } from './lib/siteImages.js'
 import { getLandingData } from './lib/landingData.js'
-import { isLandingSectionId, scrollToLandingSection } from './lib/sectionNavigation.js'
+import {
+  getLandingSectionIdFromHref,
+  getLandingSectionPath,
+  isLandingSectionId,
+  scrollToLandingSection,
+} from './lib/sectionNavigation.js'
 
 function LandingPage() {
   useLandingAnalytics()
@@ -46,6 +51,7 @@ function LandingPage() {
     summary: fallbackContent.summary,
   }))
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     let isMounted = true
@@ -81,6 +87,36 @@ function LandingPage() {
 
     return () => window.cancelAnimationFrame(frameId)
   }, [location.pathname, location.search])
+
+  useEffect(() => {
+    const handleLandingSectionClick = (event) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return
+      }
+
+      const link = event.target.closest?.('a[href]')
+      const sectionId = getLandingSectionIdFromHref(link?.getAttribute('href') || '')
+
+      if (!sectionId) {
+        return
+      }
+
+      event.preventDefault()
+      navigate(getLandingSectionPath(sectionId))
+      window.requestAnimationFrame(() => scrollToLandingSection(sectionId))
+    }
+
+    document.addEventListener('click', handleLandingSectionClick)
+
+    return () => document.removeEventListener('click', handleLandingSectionClick)
+  }, [navigate])
 
   const imageSlots = useMemo(() => {
     const brandAssetImages = filterImagesByUsageArea(siteImages, 'brand_asset')
