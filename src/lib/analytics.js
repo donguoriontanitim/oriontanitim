@@ -25,6 +25,29 @@ export const partnerLabelById = {
   'partner-3': '3. Logo Instagram',
 }
 
+const partnerClickSectionPrefix = 'partner_click:'
+
+export const encodePartnerClickSectionId = (partnerId = 'unknown') =>
+  `${partnerClickSectionPrefix}${partnerId || 'unknown'}`
+
+export const decodePartnerClickSectionId = (sectionId = '') => {
+  const normalizedSectionId = String(sectionId || '')
+
+  return normalizedSectionId.startsWith(partnerClickSectionPrefix)
+    ? normalizedSectionId.slice(partnerClickSectionPrefix.length)
+    : ''
+}
+
+export const getPartnerClickId = (event = {}) => {
+  if (event.event_type === 'partner_click') {
+    return event.section_id || 'unknown'
+  }
+
+  return decodePartnerClickSectionId(event.section_id) || ''
+}
+
+export const isPartnerClickEvent = (event = {}) => Boolean(getPartnerClickId(event))
+
 export const getDeviceType = () => {
   if (typeof window === 'undefined') {
     return 'unknown'
@@ -65,18 +88,24 @@ export const getAnalyticsSessionId = () => {
   return nextSessionId
 }
 
-export const createAnalyticsPayload = (event) => ({
-  session_id: getAnalyticsSessionId(),
-  event_type: event.event_type,
-  section_id: event.section_id || null,
-  path: window.location.hash || window.location.pathname,
-  referrer: document.referrer || null,
-  device_type: getDeviceType(),
-  viewport_width: window.innerWidth || null,
-  viewport_height: window.innerHeight || null,
-  duration_ms: Math.max(0, Math.round(event.duration_ms || 0)),
-  user_agent: navigator.userAgent || null,
-})
+export const createAnalyticsPayload = (event) => {
+  const isPartnerClick = event.event_type === 'partner_click'
+
+  return {
+    session_id: getAnalyticsSessionId(),
+    event_type: isPartnerClick ? 'section_view' : event.event_type,
+    section_id: isPartnerClick
+      ? encodePartnerClickSectionId(event.section_id || 'unknown')
+      : event.section_id || null,
+    path: window.location.hash || window.location.pathname,
+    referrer: document.referrer || null,
+    device_type: getDeviceType(),
+    viewport_width: window.innerWidth || null,
+    viewport_height: window.innerHeight || null,
+    duration_ms: Math.max(0, Math.round(event.duration_ms || 0)),
+    user_agent: navigator.userAgent || null,
+  }
+}
 
 export const insertAnalyticsEvent = async (event) => {
   if (!isSupabaseConfigured || typeof window === 'undefined') {

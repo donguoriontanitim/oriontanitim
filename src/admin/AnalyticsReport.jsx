@@ -9,7 +9,12 @@ import {
   UsersRound,
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { partnerLabelById, sectionLabelById } from '../lib/analytics.js'
+import {
+  getPartnerClickId,
+  isPartnerClickEvent,
+  partnerLabelById,
+  sectionLabelById,
+} from '../lib/analytics.js'
 import { downloadHtmlFile, escapeHtml } from '../lib/htmlExport.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 
@@ -50,11 +55,16 @@ const formatDateTime = (dateValue) =>
     timeStyle: 'short',
   }).format(new Date(dateValue))
 
-const getEventTypeLabel = (eventType) => eventTypeLabels[eventType] || eventType || 'Bilinmiyor'
+const getEventTypeLabel = (event) =>
+  isPartnerClickEvent(event)
+    ? eventTypeLabels.partner_click
+    : eventTypeLabels[event.event_type] || event.event_type || 'Bilinmiyor'
 
 const getEventDetailLabel = (event) => {
-  if (event.event_type === 'partner_click') {
-    return partnerLabelById[event.section_id] || event.section_id || '-'
+  const partnerClickId = getPartnerClickId(event)
+
+  if (partnerClickId) {
+    return partnerLabelById[partnerClickId] || partnerClickId
   }
 
   if (event.event_type === 'section_view') {
@@ -102,7 +112,7 @@ const createAnalyticsReportHtml = (report) => {
       (event) => `
         <tr>
           <td>${escapeHtml(formatDateTime(event.created_at))}</td>
-          <td>${escapeHtml(getEventTypeLabel(event.event_type))}</td>
+          <td>${escapeHtml(getEventTypeLabel(event))}</td>
           <td>${escapeHtml(getEventDetailLabel(event))}</td>
           <td>${escapeHtml(event.path || '#/')}</td>
           <td>${escapeHtml(deviceLabels[event.device_type] || event.device_type || 'Bilinmiyor')}</td>
@@ -205,8 +215,10 @@ function AnalyticsReport() {
 
   const report = useMemo(() => {
     const pageViews = events.filter((event) => event.event_type === 'page_view')
-    const sectionViews = events.filter((event) => event.event_type === 'section_view')
-    const partnerClicks = events.filter((event) => event.event_type === 'partner_click')
+    const partnerClicks = events.filter((event) => isPartnerClickEvent(event))
+    const sectionViews = events.filter(
+      (event) => event.event_type === 'section_view' && !isPartnerClickEvent(event),
+    )
     const uniqueSessions = new Set(events.map((event) => event.session_id).filter(Boolean))
 
     const sectionStats = Object.values(
@@ -245,7 +257,7 @@ function AnalyticsReport() {
 
     const partnerClickStats = Object.values(
       partnerClicks.reduce((stats, event) => {
-        const partnerId = event.section_id || 'unknown'
+        const partnerId = getPartnerClickId(event) || 'unknown'
 
         if (!stats[partnerId]) {
           stats[partnerId] = {
@@ -485,7 +497,7 @@ function AnalyticsReport() {
                     className="grid gap-3 rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4 lg:grid-cols-[10rem_minmax(0,1fr)_12rem_auto]"
                   >
                     <div>
-                      <span className="admin-pill">{getEventTypeLabel(visit.event_type)}</span>
+                      <span className="admin-pill">{getEventTypeLabel(visit)}</span>
                       <p className="mt-2 text-xs font-black text-[#FF6A2A]">
                         {formatDateTime(visit.created_at)}
                       </p>
