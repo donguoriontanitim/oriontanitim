@@ -19,6 +19,7 @@ export const sectionLabelById = trackedSections.reduce(
 )
 
 export const partnerLabelById = {
+  'site-logo': 'Site logosu',
   'partner-1': '1. Logo Instagram',
   'partner-2': '2. Logo Instagram',
   'partner-3': '3. Logo Instagram',

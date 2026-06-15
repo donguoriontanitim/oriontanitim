@@ -11,6 +11,7 @@
   X,
 } from 'lucide-react'
 import { useState } from 'react'
+import { insertAnalyticsEvent } from '../lib/analytics.js'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
 
 const navItems = [
@@ -29,12 +30,19 @@ function Navbar({ contactInfo, logoImage }) {
   const logoUrl = logoImage?.image_url
 
   const closeMenu = () => setIsOpen(false)
+  const handleLogoClick = () => {
+    closeMenu()
+    insertAnalyticsEvent({
+      event_type: 'partner_click',
+      section_id: 'site-logo',
+    })
+  }
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4">
       <nav className="mx-auto w-full max-w-[1180px] rounded-[1.65rem] border border-[#FFE0CC] bg-white/88 shadow-[0_16px_54px_rgba(255,106,42,0.12)] backdrop-blur-xl sm:rounded-[2rem]">
         <div className="flex min-h-16 items-center justify-between gap-2 px-3 py-2.5 sm:min-h-18 sm:gap-3 sm:px-4 sm:py-3 lg:px-5">
-          <a href="#/hero" className="flex min-w-0 items-center gap-3" onClick={closeMenu}>
+          <a href="#/hero" className="flex min-w-0 items-center gap-3" onClick={handleLogoClick}>
             <span
               className={`grid size-12 shrink-0 place-items-center sm:size-14 ${
                 logoUrl ? 'bg-transparent' : 'icon-bubble rounded-2xl'

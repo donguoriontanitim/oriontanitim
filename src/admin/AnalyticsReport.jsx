@@ -23,6 +23,15 @@ const deviceLabels = {
   unknown: 'Bilinmiyor',
 }
 
+const eventTypeLabels = {
+  page_view: 'Sayfa görüntüleme',
+  partner_click: 'Logo tıklaması',
+  section_view: 'Bölüm süresi',
+}
+
+const visitorLogsPageSize = 12
+const analyticsFetchPageSize = 1000
+
 const formatDuration = (durationMs = 0) => {
   const totalSeconds = Math.round(durationMs / 1000)
   const minutes = Math.floor(totalSeconds / 60)
@@ -41,11 +50,18 @@ const formatDateTime = (dateValue) =>
     timeStyle: 'short',
   }).format(new Date(dateValue))
 
-const getThirtyDaysAgo = () => {
-  const date = new Date()
-  date.setDate(date.getDate() - 30)
+const getEventTypeLabel = (eventType) => eventTypeLabels[eventType] || eventType || 'Bilinmiyor'
 
-  return date.toISOString()
+const getEventDetailLabel = (event) => {
+  if (event.event_type === 'partner_click') {
+    return partnerLabelById[event.section_id] || event.section_id || '-'
+  }
+
+  if (event.event_type === 'section_view') {
+    return sectionLabelById[event.section_id] || event.section_id || '-'
+  }
+
+  return event.section_id ? sectionLabelById[event.section_id] || event.section_id : '-'
 }
 
 const createAnalyticsReportHtml = (report) => {
@@ -81,14 +97,18 @@ const createAnalyticsReportHtml = (report) => {
       `,
     )
     .join('')
-  const recentRows = report.recentVisitors
+  const visitorLogRows = report.visitorLogs
     .map(
-      (visit) => `
+      (event) => `
         <tr>
-          <td>${escapeHtml(visit.path || '#/')}</td>
-          <td>${escapeHtml(deviceLabels[visit.device_type] || visit.device_type || 'Bilinmiyor')}</td>
-          <td>${escapeHtml(`${visit.viewport_width || '-'}x${visit.viewport_height || '-'}`)}</td>
-          <td>${escapeHtml(formatDateTime(visit.created_at))}</td>
+          <td>${escapeHtml(formatDateTime(event.created_at))}</td>
+          <td>${escapeHtml(getEventTypeLabel(event.event_type))}</td>
+          <td>${escapeHtml(getEventDetailLabel(event))}</td>
+          <td>${escapeHtml(event.path || '#/')}</td>
+          <td>${escapeHtml(deviceLabels[event.device_type] || event.device_type || 'Bilinmiyor')}</td>
+          <td>${escapeHtml(`${event.viewport_width || '-'}x${event.viewport_height || '-'}`)}</td>
+          <td>${escapeHtml(event.duration_ms ? formatDuration(event.duration_ms) : '-')}</td>
+          <td>${escapeHtml(event.session_id || '-')}</td>
         </tr>
       `,
     )
@@ -96,11 +116,11 @@ const createAnalyticsReportHtml = (report) => {
 
   return `
     <h1>ORION Kamp Ziyaretçi Raporu</h1>
-    <p class="meta">Oluşturulma tarihi: ${escapeHtml(formatDateTime(new Date().toISOString()))} · Kapsam: Son 30 gün</p>
+    <p class="meta">Oluşturulma tarihi: ${escapeHtml(formatDateTime(new Date().toISOString()))} · Kapsam: Tüm kayıtlar</p>
     <div class="cards">
       <div class="card"><strong>${report.uniqueVisitors}</strong>Tekil oturum</div>
       <div class="card"><strong>${report.pageViews.length}</strong>Sayfa görüntüleme</div>
-      <div class="card"><strong>${report.partnerClicks.length}</strong>Instagram tıklaması</div>
+      <div class="card"><strong>${report.partnerClicks.length}</strong>Logo tıklaması</div>
       <div class="card"><strong>${escapeHtml(formatDuration(report.averageSectionDuration))}</strong>Ortalama bölüm süresi</div>
     </div>
     <h2>Bölümlerde Geçirilen Süre</h2>
@@ -113,15 +133,15 @@ const createAnalyticsReportHtml = (report) => {
       <thead><tr><th>Cihaz</th><th>Görüntüleme</th></tr></thead>
       <tbody>${deviceRows || '<tr><td colspan="2">Kayıt yok</td></tr>'}</tbody>
     </table>
-    <h2>Logo Instagram Tıklamaları</h2>
+    <h2>Logo Tıklamaları</h2>
     <table>
       <thead><tr><th>Logo</th><th>Tıklama</th></tr></thead>
       <tbody>${partnerRows || '<tr><td colspan="2">Kayıt yok</td></tr>'}</tbody>
     </table>
-    <h2>Son Ziyaretler</h2>
-    <table>
-      <thead><tr><th>Sayfa</th><th>Cihaz</th><th>Ekran</th><th>Tarih</th></tr></thead>
-      <tbody>${recentRows || '<tr><td colspan="4">Kayıt yok</td></tr>'}</tbody>
+    <h2>Tüm Ziyaret Logları</h2>
+    <table class="log-table">
+      <thead><tr><th>Tarih</th><th>Olay</th><th>Detay</th><th>Sayfa</th><th>Cihaz</th><th>Ekran</th><th>Süre</th><th>Oturum</th></tr></thead>
+      <tbody>${visitorLogRows || '<tr><td colspan="8">Kayıt yok</td></tr>'}</tbody>
     </table>
   `
 }
@@ -132,6 +152,7 @@ function AnalyticsReport() {
   const [isResetting, setIsResetting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [statusMessage, setStatusMessage] = useState('')
+  const [visitorPage, setVisitorPage] = useState(1)
 
   const fetchAnalytics = useCallback(async () => {
     if (!isSupabaseConfigured) {
@@ -144,18 +165,33 @@ function AnalyticsReport() {
     setErrorMessage('')
     setStatusMessage('')
 
-    const { data, error } = await supabase
-      .from('site_analytics')
-      .select(analyticsSelect)
-      .gte('created_at', getThirtyDaysAgo())
-      .order('created_at', { ascending: false })
-      .limit(3000)
+    try {
+      const allEvents = []
+      let from = 0
+      let hasMore = true
 
-    if (error) {
+      while (hasMore) {
+        const { data, error } = await supabase
+          .from('site_analytics')
+          .select(analyticsSelect)
+          .order('created_at', { ascending: false })
+          .range(from, from + analyticsFetchPageSize - 1)
+
+        if (error) {
+          throw error
+        }
+
+        allEvents.push(...(data || []))
+        hasMore = (data || []).length === analyticsFetchPageSize
+        from += analyticsFetchPageSize
+      }
+
+      setEvents(allEvents)
+      setVisitorPage(1)
+    } catch (error) {
       setErrorMessage(`Rapor verileri alınamadı: ${error.message}`)
       setEvents([])
-    } else {
-      setEvents(data || [])
+      setVisitorPage(1)
     }
 
     setIsLoading(false)
@@ -225,18 +261,6 @@ function AnalyticsReport() {
       }, {}),
     ).sort((a, b) => b.count - a.count)
 
-    const recentVisitors = Object.values(
-      pageViews.reduce((visitors, event) => {
-        if (!event.session_id || visitors[event.session_id]) {
-          return visitors
-        }
-
-        visitors[event.session_id] = event
-
-        return visitors
-      }, {}),
-    ).slice(0, 8)
-
     const totalDuration = sectionStats.reduce((sum, section) => sum + section.totalDuration, 0)
 
     return {
@@ -246,11 +270,18 @@ function AnalyticsReport() {
       pageViews,
       partnerClicks,
       partnerClickStats,
-      recentVisitors,
       sectionStats,
       uniqueVisitors: uniqueSessions.size,
+      visitorLogs: events,
     }
   }, [events])
+
+  const visitorPageCount = Math.max(1, Math.ceil(report.visitorLogs.length / visitorLogsPageSize))
+  const safeVisitorPage = Math.min(visitorPage, visitorPageCount)
+  const paginatedVisitorLogs = report.visitorLogs.slice(
+    (safeVisitorPage - 1) * visitorLogsPageSize,
+    safeVisitorPage * visitorLogsPageSize,
+  )
 
   const downloadReport = () => {
     downloadHtmlFile({
@@ -270,6 +301,7 @@ function AnalyticsReport() {
 
     if (!isSupabaseConfigured) {
       setEvents([])
+      setVisitorPage(1)
       setStatusMessage('Demo rapor verileri sıfırlandı.')
       return
     }
@@ -285,6 +317,7 @@ function AnalyticsReport() {
       setErrorMessage(`Rapor sıfırlanamadı: ${error.message}`)
     } else {
       setEvents([])
+      setVisitorPage(1)
       setStatusMessage('Rapor kayıtları sıfırlandı.')
     }
 
@@ -298,7 +331,7 @@ function AnalyticsReport() {
           <p className="admin-eyebrow">Raporlar</p>
           <h1 className="admin-title mt-2">Ziyaretçi analitiği</h1>
           <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-[#222222]/60">
-            Son 30 gün içindeki ziyaret, cihaz ve bölümde geçirilen süre kayıtları.
+            Sitedeki tüm ziyaret, cihaz, bölüm süresi ve logo tıklama kayıtları.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -359,7 +392,7 @@ function AnalyticsReport() {
             <div className="admin-card p-5">
               <BarChart3 className="text-[#FF6A2A]" size={25} aria-hidden="true" />
               <p className="mt-4 text-3xl font-black text-[#222222]">{report.partnerClicks.length}</p>
-              <p className="mt-1 text-sm font-bold text-[#222222]/58">Logo Instagram tıklaması</p>
+              <p className="mt-1 text-sm font-bold text-[#222222]/58">Logo tıklaması</p>
             </div>
           </div>
 
@@ -414,7 +447,7 @@ function AnalyticsReport() {
             </section>
 
             <section className="admin-card p-5 xl:col-span-2">
-              <h2 className="text-xl font-black text-[#222222]">Logo Instagram tıklamaları</h2>
+              <h2 className="text-xl font-black text-[#222222]">Logo tıklamaları</h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 {report.partnerClickStats.length > 0 ? (
                   report.partnerClickStats.map((partner) => (
@@ -428,7 +461,7 @@ function AnalyticsReport() {
                   ))
                 ) : (
                   <p className="rounded-2xl bg-[#FFFBF5] p-4 text-sm font-bold text-[#222222]/58 sm:col-span-3">
-                    Henüz logo Instagram tıklaması yok.
+                    Henüz logo tıklaması yok.
                   </p>
                 )}
               </div>
@@ -436,25 +469,46 @@ function AnalyticsReport() {
           </div>
 
           <section className="admin-card mt-6 p-5">
-            <h2 className="text-xl font-black text-[#222222]">Son ziyaretler</h2>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-xl font-black text-[#222222]">Son ziyaretler</h2>
+                <p className="mt-1 text-sm font-bold text-[#222222]/58">
+                  {report.visitorLogs.length} log kaydı · Sayfa {safeVisitorPage}/{visitorPageCount}
+                </p>
+              </div>
+            </div>
             <div className="mt-4 grid gap-3">
-              {report.recentVisitors.length > 0 ? (
-                report.recentVisitors.map((visit) => (
+              {paginatedVisitorLogs.length > 0 ? (
+                paginatedVisitorLogs.map((visit, index) => (
                   <div
-                    key={visit.session_id}
-                    className="grid gap-2 rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4 sm:grid-cols-[1fr_auto]"
+                    key={visit.id || `${visit.session_id}-${visit.created_at}-${index}`}
+                    className="grid gap-3 rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4 lg:grid-cols-[10rem_minmax(0,1fr)_12rem_auto]"
                   >
+                    <div>
+                      <span className="admin-pill">{getEventTypeLabel(visit.event_type)}</span>
+                      <p className="mt-2 text-xs font-black text-[#FF6A2A]">
+                        {formatDateTime(visit.created_at)}
+                      </p>
+                    </div>
                     <div className="min-w-0">
+                      <p className="break-words text-sm font-black text-[#222222]">
+                        {getEventDetailLabel(visit)}
+                      </p>
                       <p className="break-words text-sm font-black text-[#222222]">
                         {visit.path || '#/'}
                       </p>
                       <p className="mt-1 text-xs font-bold text-[#222222]/52">
-                        {deviceLabels[visit.device_type] || visit.device_type || 'Bilinmiyor'} ·{' '}
+                        Oturum: {visit.session_id || '-'}
+                      </p>
+                    </div>
+                    <div className="text-sm font-bold text-[#222222]/62">
+                      <p>{deviceLabels[visit.device_type] || visit.device_type || 'Bilinmiyor'}</p>
+                      <p>
                         {visit.viewport_width || '-'}x{visit.viewport_height || '-'}
                       </p>
                     </div>
                     <span className="text-sm font-black text-[#FF6A2A]">
-                      {formatDateTime(visit.created_at)}
+                      {visit.duration_ms ? formatDuration(visit.duration_ms) : '-'}
                     </span>
                   </div>
                 ))
@@ -464,6 +518,26 @@ function AnalyticsReport() {
                 </p>
               )}
             </div>
+
+            {visitorPageCount > 1 && (
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                {Array.from({ length: visitorPageCount }, (_, index) => index + 1).map((pageNumber) => (
+                  <button
+                    key={pageNumber}
+                    type="button"
+                    onClick={() => setVisitorPage(pageNumber)}
+                    className={`grid size-10 place-items-center rounded-2xl border text-sm font-black transition ${
+                      pageNumber === safeVisitorPage
+                        ? 'border-[#FF6A2A] bg-[#FF6A2A] text-white shadow-[0_12px_28px_rgba(255,106,42,0.22)]'
+                        : 'border-[#FFE0CC] bg-white text-[#FF6A2A] hover:bg-[#FFF1E8]'
+                    }`}
+                    aria-current={pageNumber === safeVisitorPage ? 'page' : undefined}
+                  >
+                    {pageNumber}
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
         </>
       )}

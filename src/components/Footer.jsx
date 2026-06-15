@@ -1,4 +1,5 @@
 ﻿import { AtSign, FileText, LayoutDashboard, Mail, MapPin, Phone, Rocket, ShieldCheck } from 'lucide-react'
+import { insertAnalyticsEvent } from '../lib/analytics.js'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
 
@@ -37,6 +38,12 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
   const whatsappUrl = `https://wa.me/${info.phone1.replace(/\D/g, '')}`
   const year = new Date().getFullYear()
   const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
+  const handleLogoClick = () => {
+    insertAnalyticsEvent({
+      event_type: 'partner_click',
+      section_id: 'site-logo',
+    })
+  }
 
   return (
     <footer
@@ -48,7 +55,7 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
       <div className="section-shell py-8 sm:py-10">
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr_1.15fr_0.85fr]">
           <div className="min-w-0">
-            <a href="#/hero" className="inline-flex items-center gap-3">
+            <a href="#/hero" className="inline-flex items-center gap-3" onClick={handleLogoClick}>
               <span
                 className={`grid size-12 shrink-0 place-items-center rounded-2xl ${
                   logoUrl

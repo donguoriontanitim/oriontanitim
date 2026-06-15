@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://donguoriontanitim.github.io/oriontanitim/sitemap.xml

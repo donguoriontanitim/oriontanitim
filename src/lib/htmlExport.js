@@ -24,6 +24,8 @@ const createHtmlDocument = ({ body, title }) => `<!doctype html>
       th, td { border: 1px solid #ffe0cc; padding: 9px 10px; text-align: left; vertical-align: top; }
       th { background: #fff1e8; }
       tr:nth-child(even) td { background: #fffbf5; }
+      .log-table { font-size: 12px; }
+      .log-table th, .log-table td { white-space: nowrap; }
     </style>
   </head>
   <body>
