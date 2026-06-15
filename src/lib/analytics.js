@@ -1,4 +1,4 @@
-import { isSupabaseConfigured, supabase } from './supabaseClient.js'
+import { isSupabaseConfigured, supabase, supabaseRestConfig } from './supabaseClient.js'
 
 const analyticsSessionKey = 'orion-analytics-session-id'
 
@@ -107,15 +107,54 @@ export const createAnalyticsPayload = (event) => {
   }
 }
 
+const insertAnalyticsPayloadWithFetch = async (payload) => {
+  if (!supabaseRestConfig.url || !supabaseRestConfig.anonKey || typeof fetch === 'undefined') {
+    return false
+  }
+
+  const response = await fetch(`${supabaseRestConfig.url.replace(/\/$/, '')}/rest/v1/site_analytics`, {
+    body: JSON.stringify(payload),
+    headers: {
+      apikey: supabaseRestConfig.anonKey,
+      Authorization: `Bearer ${supabaseRestConfig.anonKey}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=minimal',
+    },
+    keepalive: true,
+    method: 'POST',
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    throw new Error(errorText || response.statusText)
+  }
+
+  return true
+}
+
 export const insertAnalyticsEvent = async (event) => {
   if (!isSupabaseConfigured || typeof window === 'undefined') {
-    return
+    return false
   }
 
   const payload = createAnalyticsPayload(event)
+
+  try {
+    const insertedWithFetch = await insertAnalyticsPayloadWithFetch(payload)
+
+    if (insertedWithFetch) {
+      return true
+    }
+  } catch (error) {
+    console.warn(`Analytics fetch kaydı oluşturulamadı: ${error.message}`)
+  }
+
   const { error } = await supabase.from('site_analytics').insert(payload)
 
   if (error) {
     console.warn(`Analytics kaydı oluşturulamadı: ${error.message}`)
+    return false
   }
+
+  return true
 }

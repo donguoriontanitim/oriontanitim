@@ -74,6 +74,27 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
     desktopImage?.alt_text ||
     'ORION KAMP 2026 teknoloji, robotik ve uzay temalı çocuk yaz kampı'
   const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
+  const handlePartnerLogoClick = async (event, instagramUrl, partnerId) => {
+    event.preventDefault()
+
+    const nextWindow = window.open('about:blank', '_blank')
+
+    if (nextWindow) {
+      nextWindow.opener = null
+    }
+
+    await insertAnalyticsEvent({
+      event_type: 'partner_click',
+      section_id: partnerId,
+    })
+
+    if (nextWindow) {
+      nextWindow.location.href = instagramUrl
+      return
+    }
+
+    window.open(instagramUrl, '_blank', 'noopener,noreferrer')
+  }
 
   return (
     <section
@@ -160,11 +181,12 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
                           href={instagramUrl}
                           target="_blank"
                           rel="noreferrer"
-                          onClick={() =>
-                            insertAnalyticsEvent({
-                              event_type: 'partner_click',
-                              section_id: partner.id || `partner-${index + 1}`,
-                            })
+                          onClick={(event) =>
+                            handlePartnerLogoClick(
+                              event,
+                              instagramUrl,
+                              partner.id || `partner-${index + 1}`,
+                            )
                           }
                           className={`${logoCardClass} hover:-translate-y-0.5 hover:border-[#FF6A2A]/45 hover:shadow-[0_18px_36px_rgba(255,106,42,0.14)]`}
                           title={`${partner.name} Instagram`}

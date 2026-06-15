@@ -33,6 +33,11 @@ export const isSupabaseConfigured = Boolean(
   supabaseUrl && supabaseAnonKey && !usesPlaceholderConfig,
 )
 
+export const supabaseRestConfig = {
+  anonKey: supabaseAnonKey,
+  url: supabaseUrl,
+}
+
 export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null
