@@ -10,16 +10,20 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  getFaqInteraction,
+  isFaqInteractionEvent,
   getPartnerClickId,
   isPartnerClickEvent,
   partnerLabelById,
   sectionLabelById,
 } from '../lib/analytics.js'
+import { fallbackContent } from '../fallbackContent.js'
 import { downloadHtmlFile, escapeHtml } from '../lib/htmlExport.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 
 const analyticsSelect =
   'id,session_id,event_type,section_id,path,referrer,device_type,viewport_width,viewport_height,duration_ms,user_agent,created_at'
+const faqItemsSelect = 'id,question,sort_order,is_active'
 
 const deviceLabels = {
   desktop: 'Masaüstü',
@@ -29,6 +33,8 @@ const deviceLabels = {
 }
 
 const eventTypeLabels = {
+  faq_close: 'SSS kapandı',
+  faq_open: 'SSS açıldı',
   page_view: 'Sayfa görüntüleme',
   partner_click: 'Logo tıklaması',
   section_view: 'Bölüm süresi',
@@ -36,6 +42,26 @@ const eventTypeLabels = {
 
 const visitorLogsPageSize = 12
 const analyticsFetchPageSize = 1000
+
+const removeDuplicateDesktopPageViews = (analyticsEvents = []) => {
+  const seenDesktopSessions = new Set()
+
+  return analyticsEvents.filter((event) => {
+    const isDesktopPageView =
+      event.event_type === 'page_view' && event.device_type === 'desktop' && event.session_id
+
+    if (!isDesktopPageView) {
+      return true
+    }
+
+    if (seenDesktopSessions.has(event.session_id)) {
+      return false
+    }
+
+    seenDesktopSessions.add(event.session_id)
+    return true
+  })
+}
 
 const formatDuration = (durationMs = 0) => {
   const totalSeconds = Math.round(durationMs / 1000)
@@ -56,11 +82,19 @@ const formatDateTime = (dateValue) =>
   }).format(new Date(dateValue))
 
 const getEventTypeLabel = (event) =>
-  isPartnerClickEvent(event)
+  getFaqInteraction(event)
+    ? eventTypeLabels[getFaqInteraction(event).action === 'close' ? 'faq_close' : 'faq_open']
+    : isPartnerClickEvent(event)
     ? eventTypeLabels.partner_click
     : eventTypeLabels[event.event_type] || event.event_type || 'Bilinmiyor'
 
-const getEventDetailLabel = (event) => {
+const getEventDetailLabel = (event, faqLabelById = {}) => {
+  const faqInteraction = getFaqInteraction(event)
+
+  if (faqInteraction) {
+    return faqLabelById[faqInteraction.faqId] || faqInteraction.faqId
+  }
+
   const partnerClickId = getPartnerClickId(event)
 
   if (partnerClickId) {
@@ -107,13 +141,26 @@ const createAnalyticsReportHtml = (report) => {
       `,
     )
     .join('')
+  const faqRows = report.faqStats
+    .map(
+      (faq) => `
+        <tr>
+          <td>${escapeHtml(faq.question)}</td>
+          <td>${faq.opened ? 'Açıldı' : 'Açılmadı'}</td>
+          <td>${faq.openCount}</td>
+          <td>${faq.closeCount}</td>
+          <td>${faq.lastOpenedAt ? escapeHtml(formatDateTime(faq.lastOpenedAt)) : '-'}</td>
+        </tr>
+      `,
+    )
+    .join('')
   const visitorLogRows = report.visitorLogs
     .map(
       (event) => `
         <tr>
           <td>${escapeHtml(formatDateTime(event.created_at))}</td>
           <td>${escapeHtml(getEventTypeLabel(event))}</td>
-          <td>${escapeHtml(getEventDetailLabel(event))}</td>
+          <td>${escapeHtml(getEventDetailLabel(event, report.faqLabelById))}</td>
           <td>${escapeHtml(event.path || '#/')}</td>
           <td>${escapeHtml(deviceLabels[event.device_type] || event.device_type || 'Bilinmiyor')}</td>
           <td>${escapeHtml(`${event.viewport_width || '-'}x${event.viewport_height || '-'}`)}</td>
@@ -131,6 +178,7 @@ const createAnalyticsReportHtml = (report) => {
       <div class="card"><strong>${report.uniqueVisitors}</strong>Tekil oturum</div>
       <div class="card"><strong>${report.pageViews.length}</strong>Sayfa görüntüleme</div>
       <div class="card"><strong>${report.partnerClicks.length}</strong>Logo tıklaması</div>
+      <div class="card"><strong>${report.openedFaqCount}/${report.faqStats.length}</strong>Açılan SSS</div>
       <div class="card"><strong>${escapeHtml(formatDuration(report.averageSectionDuration))}</strong>Ortalama bölüm süresi</div>
     </div>
     <h2>Bölümlerde Geçirilen Süre</h2>
@@ -148,6 +196,11 @@ const createAnalyticsReportHtml = (report) => {
       <thead><tr><th>Logo</th><th>Tıklama</th></tr></thead>
       <tbody>${partnerRows || '<tr><td colspan="2">Kayıt yok</td></tr>'}</tbody>
     </table>
+    <h2>SSS Açılma Raporu</h2>
+    <table>
+      <thead><tr><th>Soru</th><th>Durum</th><th>Açılma</th><th>Kapanma</th><th>Son açılma</th></tr></thead>
+      <tbody>${faqRows || '<tr><td colspan="5">Kayıt yok</td></tr>'}</tbody>
+    </table>
     <h2>Tüm Ziyaret Logları</h2>
     <table class="log-table">
       <thead><tr><th>Tarih</th><th>Olay</th><th>Detay</th><th>Sayfa</th><th>Cihaz</th><th>Ekran</th><th>Süre</th><th>Oturum</th></tr></thead>
@@ -158,6 +211,7 @@ const createAnalyticsReportHtml = (report) => {
 
 function AnalyticsReport() {
   const [events, setEvents] = useState([])
+  const [faqItems, setFaqItems] = useState(fallbackContent.faqs)
   const [isLoading, setIsLoading] = useState(isSupabaseConfigured)
   const [isResetting, setIsResetting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -198,9 +252,18 @@ function AnalyticsReport() {
 
       setEvents(allEvents)
       setVisitorPage(1)
+
+      const { data: faqData, error: faqError } = await supabase
+        .from('faq_items')
+        .select(faqItemsSelect)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
+
+      setFaqItems(faqError || !faqData?.length ? fallbackContent.faqs : faqData)
     } catch (error) {
       setErrorMessage(`Rapor verileri alınamadı: ${error.message}`)
       setEvents([])
+      setFaqItems(fallbackContent.faqs)
       setVisitorPage(1)
     }
 
@@ -214,12 +277,27 @@ function AnalyticsReport() {
   }, [fetchAnalytics])
 
   const report = useMemo(() => {
-    const pageViews = events.filter((event) => event.event_type === 'page_view')
-    const partnerClicks = events.filter((event) => isPartnerClickEvent(event))
-    const sectionViews = events.filter(
-      (event) => event.event_type === 'section_view' && !isPartnerClickEvent(event),
+    const reportEvents = removeDuplicateDesktopPageViews(events)
+    const pageViews = reportEvents.filter((event) => event.event_type === 'page_view')
+    const partnerClicks = reportEvents.filter((event) => isPartnerClickEvent(event))
+    const faqInteractions = reportEvents.filter((event) => isFaqInteractionEvent(event))
+    const sectionViews = reportEvents.filter(
+      (event) =>
+        event.event_type === 'section_view' &&
+        !isPartnerClickEvent(event) &&
+        !isFaqInteractionEvent(event),
     )
-    const uniqueSessions = new Set(events.map((event) => event.session_id).filter(Boolean))
+    const uniqueSessions = new Set(reportEvents.map((event) => event.session_id).filter(Boolean))
+    const activeFaqItems = [...(faqItems || [])]
+      .filter((faq) => faq.is_active !== false)
+      .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0))
+    const faqLabelById = activeFaqItems.reduce(
+      (labels, faq) => ({
+        ...labels,
+        [faq.id || faq.question]: faq.question,
+      }),
+      {},
+    )
 
     const sectionStats = Object.values(
       sectionViews.reduce((stats, event) => {
@@ -241,19 +319,28 @@ function AnalyticsReport() {
       }, {}),
     ).sort((a, b) => b.totalDuration - a.totalDuration)
 
-    const deviceStats = Object.values(
-      pageViews.reduce((stats, event) => {
+    const deviceSessionStats = pageViews.reduce(
+      (state, event) => {
+        const sessionKey = event.session_id || event.id
         const deviceType = event.device_type || 'unknown'
 
-        if (!stats[deviceType]) {
-          stats[deviceType] = { id: deviceType, label: deviceLabels[deviceType] || deviceType, count: 0 }
+        if (state.seenSessions.has(sessionKey)) {
+          return state
         }
 
-        stats[deviceType].count += 1
+        state.seenSessions.add(sessionKey)
 
-        return stats
-      }, {}),
-    ).sort((a, b) => b.count - a.count)
+        if (!state.stats[deviceType]) {
+          state.stats[deviceType] = { id: deviceType, label: deviceLabels[deviceType] || deviceType, count: 0 }
+        }
+
+        state.stats[deviceType].count += 1
+
+        return state
+      },
+      { seenSessions: new Set(), stats: {} },
+    )
+    const deviceStats = Object.values(deviceSessionStats.stats).sort((a, b) => b.count - a.count)
 
     const partnerClickStats = Object.values(
       partnerClicks.reduce((stats, event) => {
@@ -273,20 +360,82 @@ function AnalyticsReport() {
       }, {}),
     ).sort((a, b) => b.count - a.count)
 
+    const faqStatsById = activeFaqItems.reduce((stats, faq) => {
+      const id = faq.id || faq.question
+      stats[id] = {
+        id,
+        closeCount: 0,
+        lastOpenedAt: '',
+        openCount: 0,
+        opened: false,
+        question: faq.question,
+        sortOrder: Number(faq.sort_order || 0),
+      }
+
+      return stats
+    }, {})
+
+    faqInteractions.forEach((event) => {
+      const interaction = getFaqInteraction(event)
+
+      if (!interaction) {
+        return
+      }
+
+      if (!faqStatsById[interaction.faqId]) {
+        faqStatsById[interaction.faqId] = {
+          id: interaction.faqId,
+          closeCount: 0,
+          lastOpenedAt: '',
+          openCount: 0,
+          opened: false,
+          question: faqLabelById[interaction.faqId] || interaction.faqId,
+          sortOrder: 999,
+        }
+      }
+
+      if (interaction.action === 'close') {
+        faqStatsById[interaction.faqId].closeCount += 1
+      } else {
+        const currentLastOpened = Date.parse(faqStatsById[interaction.faqId].lastOpenedAt || '')
+        const eventDate = Date.parse(event.created_at || '')
+
+        faqStatsById[interaction.faqId].openCount += 1
+        faqStatsById[interaction.faqId].opened = true
+
+        if (!faqStatsById[interaction.faqId].lastOpenedAt || eventDate > currentLastOpened) {
+          faqStatsById[interaction.faqId].lastOpenedAt = event.created_at
+        }
+      }
+    })
+
+    const faqStats = Object.values(faqStatsById).sort((a, b) => {
+      if (a.opened !== b.opened) {
+        return Number(b.opened) - Number(a.opened)
+      }
+
+      return a.sortOrder - b.sortOrder
+    })
+
     const totalDuration = sectionStats.reduce((sum, section) => sum + section.totalDuration, 0)
 
     return {
       averageSectionDuration:
         sectionViews.length > 0 ? Math.round(totalDuration / sectionViews.length) : 0,
       deviceStats,
+      faqInteractions,
+      faqLabelById,
+      faqStats,
+      hiddenDesktopDuplicatePageViews: events.length - reportEvents.length,
+      openedFaqCount: faqStats.filter((faq) => faq.opened).length,
       pageViews,
       partnerClicks,
       partnerClickStats,
       sectionStats,
       uniqueVisitors: uniqueSessions.size,
-      visitorLogs: events,
+      visitorLogs: reportEvents,
     }
-  }, [events])
+  }, [events, faqItems])
 
   const visitorPageCount = Math.max(1, Math.ceil(report.visitorLogs.length / visitorLogsPageSize))
   const safeVisitorPage = Math.min(visitorPage, visitorPageCount)
@@ -383,7 +532,7 @@ function AnalyticsReport() {
         </div>
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             <div className="admin-card p-5">
               <UsersRound className="text-[#FF6A2A]" size={25} aria-hidden="true" />
               <p className="mt-4 text-3xl font-black text-[#222222]">{report.uniqueVisitors}</p>
@@ -405,6 +554,13 @@ function AnalyticsReport() {
               <BarChart3 className="text-[#FF6A2A]" size={25} aria-hidden="true" />
               <p className="mt-4 text-3xl font-black text-[#222222]">{report.partnerClicks.length}</p>
               <p className="mt-1 text-sm font-bold text-[#222222]/58">Logo tıklaması</p>
+            </div>
+            <div className="admin-card p-5">
+              <BarChart3 className="text-[#FF6A2A]" size={25} aria-hidden="true" />
+              <p className="mt-4 text-3xl font-black text-[#222222]">
+                {report.openedFaqCount}/{report.faqStats.length}
+              </p>
+              <p className="mt-1 text-sm font-bold text-[#222222]/58">Açılan SSS</p>
             </div>
           </div>
 
@@ -478,6 +634,39 @@ function AnalyticsReport() {
                 )}
               </div>
             </section>
+
+            <section className="admin-card p-5 xl:col-span-2">
+              <h2 className="text-xl font-black text-[#222222]">SSS açılma raporu</h2>
+              <div className="mt-4 grid gap-3">
+                {report.faqStats.length > 0 ? (
+                  report.faqStats.map((faq) => (
+                    <div
+                      key={faq.id}
+                      className="grid gap-3 rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4 lg:grid-cols-[minmax(0,1fr)_auto]"
+                    >
+                      <div className="min-w-0">
+                        <p className="break-words text-sm font-black text-[#222222]">{faq.question}</p>
+                        <p className="mt-1 text-xs font-bold text-[#222222]/52">
+                          Açılma: {faq.openCount} · Kapanma: {faq.closeCount}
+                          {faq.lastOpenedAt ? ` · Son açılma: ${formatDateTime(faq.lastOpenedAt)}` : ''}
+                        </p>
+                      </div>
+                      <span
+                        className={`admin-pill ${
+                          faq.opened ? 'bg-[#ecfdf5] text-[#047857]' : 'bg-[#fff1f2] text-[#be123c]'
+                        }`}
+                      >
+                        {faq.opened ? 'Açıldı' : 'Açılmadı'}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="rounded-2xl bg-[#FFFBF5] p-4 text-sm font-bold text-[#222222]/58">
+                    SSS kaydı bulunamadı.
+                  </p>
+                )}
+              </div>
+            </section>
           </div>
 
           <section className="admin-card mt-6 p-5">
@@ -487,6 +676,11 @@ function AnalyticsReport() {
                 <p className="mt-1 text-sm font-bold text-[#222222]/58">
                   {report.visitorLogs.length} log kaydı · Sayfa {safeVisitorPage}/{visitorPageCount}
                 </p>
+                {report.hiddenDesktopDuplicatePageViews > 0 && (
+                  <p className="mt-1 text-xs font-bold text-[#222222]/45">
+                    {report.hiddenDesktopDuplicatePageViews} masaüstü aynı oturum tekrarı rapordan çıkarıldı.
+                  </p>
+                )}
               </div>
             </div>
             <div className="mt-4 grid gap-3">
@@ -504,7 +698,7 @@ function AnalyticsReport() {
                     </div>
                     <div className="min-w-0">
                       <p className="break-words text-sm font-black text-[#222222]">
-                        {getEventDetailLabel(visit)}
+                        {getEventDetailLabel(visit, report.faqLabelById)}
                       </p>
                       <p className="break-words text-sm font-black text-[#222222]">
                         {visit.path || '#/'}

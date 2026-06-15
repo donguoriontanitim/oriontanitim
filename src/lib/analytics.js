@@ -26,6 +26,8 @@ export const partnerLabelById = {
 }
 
 const partnerClickSectionPrefix = 'partner_click:'
+const faqOpenSectionPrefix = 'faq_open:'
+const faqCloseSectionPrefix = 'faq_close:'
 
 export const encodePartnerClickSectionId = (partnerId = 'unknown') =>
   `${partnerClickSectionPrefix}${partnerId || 'unknown'}`
@@ -47,6 +49,33 @@ export const getPartnerClickId = (event = {}) => {
 }
 
 export const isPartnerClickEvent = (event = {}) => Boolean(getPartnerClickId(event))
+
+export const encodeFaqInteractionSectionId = (action = 'open', faqId = 'unknown') =>
+  `${action === 'close' ? faqCloseSectionPrefix : faqOpenSectionPrefix}${faqId || 'unknown'}`
+
+export const getFaqInteraction = (event = {}) => {
+  const sectionId = String(event.section_id || '')
+
+  if (event.event_type === 'faq_open') {
+    return { action: 'open', faqId: sectionId || 'unknown' }
+  }
+
+  if (event.event_type === 'faq_close') {
+    return { action: 'close', faqId: sectionId || 'unknown' }
+  }
+
+  if (sectionId.startsWith(faqOpenSectionPrefix)) {
+    return { action: 'open', faqId: sectionId.slice(faqOpenSectionPrefix.length) || 'unknown' }
+  }
+
+  if (sectionId.startsWith(faqCloseSectionPrefix)) {
+    return { action: 'close', faqId: sectionId.slice(faqCloseSectionPrefix.length) || 'unknown' }
+  }
+
+  return null
+}
+
+export const isFaqInteractionEvent = (event = {}) => Boolean(getFaqInteraction(event))
 
 export const getDeviceType = () => {
   if (typeof window === 'undefined') {
@@ -90,12 +119,18 @@ export const getAnalyticsSessionId = () => {
 
 export const createAnalyticsPayload = (event) => {
   const isPartnerClick = event.event_type === 'partner_click'
+  const isFaqInteraction = event.event_type === 'faq_open' || event.event_type === 'faq_close'
 
   return {
     session_id: getAnalyticsSessionId(),
-    event_type: isPartnerClick ? 'section_view' : event.event_type,
+    event_type: isPartnerClick || isFaqInteraction ? 'section_view' : event.event_type,
     section_id: isPartnerClick
       ? encodePartnerClickSectionId(event.section_id || 'unknown')
+      : isFaqInteraction
+        ? encodeFaqInteractionSectionId(
+            event.event_type === 'faq_close' ? 'close' : 'open',
+            event.section_id || 'unknown',
+          )
       : event.section_id || null,
     path: window.location.hash || window.location.pathname,
     referrer: document.referrer || null,

@@ -1,5 +1,6 @@
 ﻿import { HelpCircle, Minus, Plus } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { insertAnalyticsEvent } from '../lib/analytics.js'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 import SafeHtml from './SafeHtml.jsx'
@@ -54,10 +55,17 @@ function FaqSection({ faqs, backgroundImage }) {
 
   const renderFaq = (faq) => {
     const rendersHtml = faq.is_html !== false
+    const faqId = faq.id || faq.question
 
     return (
       <details
-        key={faq.id || faq.question}
+        key={faqId}
+        onToggle={(event) =>
+          insertAnalyticsEvent({
+            event_type: event.currentTarget.open ? 'faq_open' : 'faq_close',
+            section_id: faqId,
+          })
+        }
         className="soft-card-strong group min-w-0 rounded-[1.35rem] border-[#FFE0CC] bg-white sm:rounded-[1.5rem]"
       >
         <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 px-4 py-4 text-left text-base font-black leading-snug marker:hidden sm:min-h-18 sm:gap-4 sm:px-6 sm:text-lg">
