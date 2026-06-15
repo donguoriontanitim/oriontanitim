@@ -31,6 +31,7 @@ import {
   mapImagesByRelatedKey,
 } from './lib/siteImages.js'
 import { getLandingData } from './lib/landingData.js'
+import { isLandingSectionId, scrollToLandingSection } from './lib/sectionNavigation.js'
 
 function LandingPage() {
   useLandingAnalytics()
@@ -70,12 +71,12 @@ function LandingPage() {
     const routeSectionId = location.pathname.replace(/^\/+/, '').split('/')[0]
     const sectionId = routeSectionId || new URLSearchParams(location.search).get('section')
 
-    if (!sectionId) {
+    if (!isLandingSectionId(sectionId)) {
       return undefined
     }
 
     const frameId = window.requestAnimationFrame(() => {
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      scrollToLandingSection(sectionId)
     })
 
     return () => window.cancelAnimationFrame(frameId)

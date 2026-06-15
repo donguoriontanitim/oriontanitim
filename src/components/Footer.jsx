@@ -1,17 +1,23 @@
 ﻿import { AtSign, FileText, LayoutDashboard, Mail, MapPin, Phone, Rocket, ShieldCheck } from 'lucide-react'
 import { insertAnalyticsEvent } from '../lib/analytics.js'
+import { useNavigate } from 'react-router-dom'
+import {
+  getLandingSectionHref,
+  getLandingSectionPath,
+  scrollToLandingSection,
+} from '../lib/sectionNavigation.js'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
 
 const quickLinks = [
-  { label: 'Ana Sayfa', href: '#/hero' },
-  { label: 'Kamp Özeti', href: '#/ozet' },
-  { label: 'Program', href: '#/program' },
-  { label: 'Neden Orion?', href: '#/neden-orion' },
-  { label: 'Günlük Akış', href: '#/akis' },
-  { label: 'Galeri', href: '#/galeri' },
-  { label: 'SSS', href: '#/sss' },
-  { label: 'İletişim', href: '#/iletisim' },
+  { label: 'Ana Sayfa', sectionId: 'hero' },
+  { label: 'Kamp Özeti', sectionId: 'ozet' },
+  { label: 'Program', sectionId: 'program' },
+  { label: 'Neden Orion?', sectionId: 'neden-orion' },
+  { label: 'Günlük Akış', sectionId: 'akis' },
+  { label: 'Galeri', sectionId: 'galeri' },
+  { label: 'SSS', sectionId: 'sss' },
+  { label: 'İletişim', sectionId: 'iletisim' },
 ]
 
 const legalLinks = [
@@ -31,6 +37,7 @@ const fallbackContactInfo = {
 const phoneHref = (phone = '') => `tel:${phone.replace(/\D/g, '')}`
 
 function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage, backgroundImage }) {
+  const navigate = useNavigate()
   const info = { ...fallbackContactInfo, ...contactInfo }
   const logoUrl = logoImage?.image_url
   const instagramHandle = info.instagram.replace('@', '')
@@ -38,11 +45,23 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
   const whatsappUrl = `https://wa.me/${info.phone1.replace(/\D/g, '')}`
   const year = new Date().getFullYear()
   const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
-  const handleLogoClick = () => {
+
+  const navigateToSection = (sectionId) => {
+    navigate(getLandingSectionPath(sectionId))
+    window.requestAnimationFrame(() => scrollToLandingSection(sectionId))
+  }
+
+  const handleSectionClick = (sectionId) => (event) => {
+    event.preventDefault()
+    navigateToSection(sectionId)
+  }
+
+  const handleLogoClick = (event) => {
     insertAnalyticsEvent({
       event_type: 'partner_click',
       section_id: 'site-logo',
     })
+    handleSectionClick('hero')(event)
   }
 
   return (
@@ -55,7 +74,11 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
       <div className="section-shell py-8 sm:py-10">
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr_1.15fr_0.85fr]">
           <div className="min-w-0">
-            <a href="#/hero" className="inline-flex items-center gap-3" onClick={handleLogoClick}>
+            <a
+              href={getLandingSectionHref('hero')}
+              className="inline-flex items-center gap-3"
+              onClick={handleLogoClick}
+            >
               <span
                 className={`grid size-12 shrink-0 place-items-center rounded-2xl ${
                   logoUrl
@@ -92,8 +115,9 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
             <div className="mt-4 grid grid-cols-2 gap-2 text-sm font-bold text-[#222222]/70 lg:grid-cols-1">
               {quickLinks.map((link) => (
                 <a
-                  key={link.href}
-                  href={link.href}
+                  key={link.sectionId}
+                  href={getLandingSectionHref(link.sectionId)}
+                  onClick={handleSectionClick(link.sectionId)}
                   className="rounded-xl px-3 py-2 transition hover:bg-[#FFF1E8] hover:text-[#FF6A2A]"
                 >
                   {link.label}

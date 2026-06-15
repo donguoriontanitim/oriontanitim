@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { insertAnalyticsEvent, trackedSections } from '../lib/analytics.js'
+import { replaceLandingSectionUrl } from '../lib/sectionNavigation.js'
 
 function useLandingAnalytics() {
   useEffect(() => {
@@ -41,6 +42,7 @@ function useLandingAnalytics() {
       recordActiveSection()
       activeSectionRef.current = sectionId
       activeStartedAtRef.current = Date.now()
+      replaceLandingSectionUrl(sectionId)
     }
 
     const observer = new IntersectionObserver(
