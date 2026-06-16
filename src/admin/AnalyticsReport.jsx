@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   BarChart3,
+  ChevronDown,
   CheckCircle2,
   Clock3,
   Download,
@@ -709,6 +710,17 @@ const createWarnings = ({ conversionRate, ctaClicks, faqStats, sectionPerformanc
     })
   }
 
+  if (warnings.length === 0) {
+    warnings.push({
+      tone: 'info',
+      title: sessions.length > 0 ? 'Kritik uyarı yok' : 'Veri bekleniyor',
+      text:
+        sessions.length > 0
+          ? 'Ana metriklerde acil müdahale gerektiren bir sinyal görünmüyor; kampanya akışı izlenmeye devam edebilir.'
+          : 'Panel, canlı site trafiği ve takip olayları oluştukça otomatik dolacak.',
+    })
+  }
+
   return warnings
 }
 
@@ -1082,6 +1094,153 @@ const createAnalyticsReportHtml = (report, filters) => {
   `
 }
 
+const getActiveFilterCount = (filters) =>
+  Object.entries(filters).filter(([key, value]) => value && value !== defaultFilters[key]).length
+
+const getKpiToneClassName = (tone = 'orange') => {
+  if (tone === 'green') {
+    return {
+      icon: 'bg-[#ecfdf5] text-[#047857]',
+      ring: 'from-[#ecfdf5] to-white',
+    }
+  }
+
+  if (tone === 'blue') {
+    return {
+      icon: 'bg-[#eff6ff] text-[#1d4ed8]',
+      ring: 'from-[#eff6ff] to-white',
+    }
+  }
+
+  if (tone === 'dark') {
+    return {
+      icon: 'bg-[#f4f4f5] text-[#222222]',
+      ring: 'from-[#f8fafc] to-white',
+    }
+  }
+
+  return {
+    icon: 'bg-[#fff1e8] text-[#FF6A2A]',
+    ring: 'from-[#fff7ed] to-white',
+  }
+}
+
+const getWarningVisual = (tone = 'info') => {
+  if (tone === 'danger' || tone === 'critical') {
+    return {
+      badge: 'Kritik',
+      className: 'border-[#fecdd3] bg-[#fff1f2] text-[#9f1239]',
+      iconClassName: 'bg-white/75 text-[#e11d48]',
+    }
+  }
+
+  if (tone === 'warning') {
+    return {
+      badge: 'Orta',
+      className: 'border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]',
+      iconClassName: 'bg-white/75 text-[#f97316]',
+    }
+  }
+
+  return {
+    badge: 'Bilgi',
+    className: 'border-[#bfdbfe] bg-[#eff6ff] text-[#1d4ed8]',
+    iconClassName: 'bg-white/75 text-[#2563eb]',
+  }
+}
+
+const getProgressToneClassName = (tone = 'orange') => {
+  if (tone === 'green') {
+    return 'bg-[#10b981]'
+  }
+
+  if (tone === 'red') {
+    return 'bg-[#e11d48]'
+  }
+
+  if (tone === 'blue') {
+    return 'bg-[#2563eb]'
+  }
+
+  return 'bg-[#FF6A2A]'
+}
+
+const KpiCard = ({ detail, icon: Icon, label, tone, value }) => {
+  const toneClass = getKpiToneClassName(tone)
+  const valueClassName = String(value).length > 16 ? 'text-xl sm:text-2xl' : 'text-3xl sm:text-4xl'
+
+  return (
+    <article
+      className={`admin-card overflow-hidden p-4 sm:p-5 bg-gradient-to-br ${toneClass.ring}`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className={`${valueClassName} break-words font-black leading-tight text-[#222222]`}>
+            {value}
+          </p>
+          <p className="mt-2 text-xs font-black uppercase tracking-[0.08em] text-[#222222]/46">
+            {label}
+          </p>
+          {detail && <p className="mt-2 text-xs font-bold leading-5 text-[#222222]/52">{detail}</p>}
+        </div>
+        <span
+          className={`grid size-10 shrink-0 place-items-center rounded-2xl ${toneClass.icon}`}
+        >
+          <Icon size={19} aria-hidden="true" />
+        </span>
+      </div>
+    </article>
+  )
+}
+
+const EmptyState = ({ action, text, title }) => (
+  <div className="rounded-[18px] border border-dashed border-[#F2C4AA] bg-[#FFFCF8] p-5">
+    <p className="text-sm font-black text-[#222222]">{title}</p>
+    <p className="mt-1 text-sm font-bold leading-6 text-[#222222]/58">{text}</p>
+    {action && (
+      <p className="mt-3 rounded-2xl bg-white px-3 py-2 text-xs font-black text-[#FF6A2A]">
+        {action}
+      </p>
+    )}
+  </div>
+)
+
+const MetricBar = ({ max = 0, tone, value = 0 }) => {
+  const percent = max > 0 ? (Number(value || 0) / max) * 100 : 0
+
+  return (
+    <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#f2f4f7]">
+      <div
+        className={`h-full rounded-full ${getProgressToneClassName(tone)}`}
+        style={{ width: `${clampPercent(percent)}%` }}
+      />
+    </div>
+  )
+}
+
+const WarningCard = ({ warning }) => {
+  const visual = getWarningVisual(warning.tone)
+
+  return (
+    <article className={`rounded-[18px] border p-4 shadow-sm ${visual.className}`}>
+      <div className="flex items-start gap-3">
+        <span className={`grid size-9 shrink-0 place-items-center rounded-2xl ${visual.iconClassName}`}>
+          <AlertTriangle size={17} aria-hidden="true" />
+        </span>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-white/75 px-2.5 py-1 text-[0.68rem] font-black uppercase tracking-[0.08em]">
+              {visual.badge}
+            </span>
+            <p className="text-sm font-black">{warning.title}</p>
+          </div>
+          <p className="mt-2 text-sm font-bold leading-6 opacity-80">{warning.text}</p>
+        </div>
+      </div>
+    </article>
+  )
+}
+
 function AnalyticsReport() {
   const [events, setEvents] = useState([])
   const [faqItems, setFaqItems] = useState(fallbackContent.faqs)
@@ -1091,6 +1250,7 @@ function AnalyticsReport() {
   const [errorMessage, setErrorMessage] = useState('')
   const [statusMessage, setStatusMessage] = useState('')
   const [journeyPage, setJourneyPage] = useState(1)
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
   const fetchAnalytics = useCallback(async () => {
     if (!isSupabaseConfigured) {
@@ -1301,15 +1461,88 @@ function AnalyticsReport() {
     setIsResetting(false)
   }
 
+  const activeFilterCount = getActiveFilterCount(filters)
+  const maxSectionViews = Math.max(1, ...report.sectionPerformance.map((section) => section.views))
+  const maxAverageDuration = Math.max(
+    1,
+    ...report.sectionPerformance.map((section) => section.averageDuration),
+  )
+  const maxSectionCta = Math.max(1, ...report.sectionPerformance.map((section) => section.ctaClicks))
+  const totalFaqOpenCount = report.faqStats.reduce((sum, faq) => sum + faq.openCount, 0)
+  const hasDeviceData = report.uniqueVisitors > 0
+  const hasSectionData = report.sectionPerformance.some(
+    (section) => section.views > 0 || section.totalDuration > 0 || section.ctaClicks > 0,
+  )
+
+  const kpiCards = [
+    {
+      detail: 'Filtrelere göre tekil ziyaretçi yolculuğu',
+      icon: UsersRound,
+      label: 'Tekil oturum',
+      tone: 'dark',
+      value: report.uniqueVisitors,
+    },
+    {
+      detail: 'Toplam sayfa açılışı ve bölüm girişleri',
+      icon: BarChart3,
+      label: 'Sayfa görüntüleme',
+      tone: 'orange',
+      value: report.pageViews.length,
+    },
+    {
+      detail: 'Bölüm bazlı ölçülen ortalama kalış',
+      icon: Clock3,
+      label: 'Ortalama süre',
+      tone: 'blue',
+      value: formatDuration(report.averageSectionDuration),
+    },
+    {
+      detail: 'Doğrudan kayıt niyeti için en sıcak sinyal',
+      icon: MessageCircle,
+      label: 'WhatsApp tıklaması',
+      tone: 'green',
+      value: report.whatsappClicks.length,
+    },
+    {
+      detail: 'Arama aksiyonları ve hızlı iletişim niyeti',
+      icon: Phone,
+      label: 'Telefon tıklaması',
+      tone: 'orange',
+      value: report.phoneClicks.length,
+    },
+    {
+      detail: 'Dönüşüm yapan oturumların tahmini oranı',
+      icon: TrendingUp,
+      label: 'Dönüşüm oranı',
+      tone: 'green',
+      value: formatPercent(report.conversionRate),
+    },
+    {
+      detail: 'Süre ve CTA ağırlığına göre öne çıkan alan',
+      icon: CheckCircle2,
+      label: 'En çok ilgi gören bölüm',
+      tone: 'dark',
+      value: report.topSection?.label || 'Henüz ölçülmedi',
+    },
+  ]
+
+  const stickyKpis = [
+    ['Oturum', report.uniqueVisitors],
+    ['Görüntüleme', report.pageViews.length],
+    ['WhatsApp', report.whatsappClicks.length],
+    ['Dönüşüm', formatPercent(report.conversionRate)],
+    ['En iyi bölüm', report.topSection?.label || 'Henüz ölçülmedi'],
+  ]
+
   return (
-    <div>
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <div className="pb-10">
+      <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-4xl">
           <p className="admin-eyebrow">Satış Analitiği</p>
           <h1 className="admin-title mt-2">Ziyaretçi ve dönüşüm paneli</h1>
-          <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-[#222222]/60">
-            Orion Kamp reklam, kayıt ve iletişim sürecini okumak için tekil oturum, CTA,
-            SSS, cihaz ve yolculuk metrikleri.
+          <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-[#222222]/56">
+            Orion Kamp reklam, kayıt ve iletişim sürecini daha hızlı okumak için tekil oturum,
+            CTA, SSS, cihaz ve yolculuk metrikleri.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -1337,104 +1570,165 @@ function AnalyticsReport() {
         </div>
       </div>
 
-      {errorMessage && <div className="contact-status contact-status-error mb-6">{errorMessage}</div>}
-      {statusMessage && <div className="contact-status contact-status-success mb-6">{statusMessage}</div>}
+      {errorMessage && <div className="contact-status contact-status-error mb-5">{errorMessage}</div>}
+      {statusMessage && <div className="contact-status contact-status-success mb-5">{statusMessage}</div>}
 
-      <section className="admin-card mb-6 p-5">
-        <div className="flex items-center gap-2">
-          <Filter size={19} className="text-[#FF6A2A]" aria-hidden="true" />
-          <h2 className="text-lg font-black text-[#222222]">Filtreler</h2>
+      <div className="sticky top-3 z-30 mb-6 -mx-2 px-2">
+        <div className="admin-card border-[#FFE0CC]/75 bg-white/95 p-2 shadow-[0_18px_55px_rgba(34,34,34,0.08)] backdrop-blur">
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {stickyKpis.map(([label, value]) => (
+              <div
+                key={label}
+                className="min-w-[7rem] rounded-2xl bg-[#F8FAFC] px-3 py-2 sm:min-w-[8.5rem]"
+              >
+                <p className="truncate text-[0.68rem] font-black uppercase tracking-[0.08em] text-[#222222]/42">
+                  {label}
+                </p>
+                <p className="mt-1 truncate text-sm font-black text-[#222222]">{value}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-6">
-          <label className="admin-label">
-            Başlangıç
-            <input
-              type="date"
-              value={filters.dateFrom}
-              onChange={(event) => updateFilter('dateFrom', event.target.value)}
-              className="admin-input"
+      </div>
+
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-7">
+        {kpiCards.map((card) => (
+          <KpiCard key={card.label} {...card} />
+        ))}
+      </section>
+
+      <section className="mt-6 grid gap-3 lg:grid-cols-3">
+        {report.warnings.map((warning) => (
+          <WarningCard key={`${warning.tone}-${warning.title}`} warning={warning} />
+        ))}
+      </section>
+
+      <section className="admin-card mt-6 overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setIsFiltersOpen((current) => !current)}
+          className="flex w-full items-center justify-between gap-3 p-4 text-left sm:p-5"
+          aria-controls="analytics-filters"
+          aria-expanded={isFiltersOpen}
+        >
+          <span className="flex min-w-0 items-center gap-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[#fff1e8] text-[#FF6A2A]">
+              <Filter size={18} aria-hidden="true" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-base font-black text-[#222222]">Filtreler</span>
+              <span className="mt-0.5 block text-xs font-bold text-[#222222]/52">
+                {activeFilterCount > 0
+                  ? `${activeFilterCount} aktif filtre uygulanıyor`
+                  : 'Tüm kayıtlar gösteriliyor'}
+              </span>
+            </span>
+          </span>
+          <span className="flex shrink-0 items-center gap-2">
+            <span className="admin-pill hidden sm:inline-flex">
+              {isFiltersOpen ? 'Gizle' : 'Göster'}
+            </span>
+            <ChevronDown
+              className={`text-[#FF6A2A] transition ${isFiltersOpen ? 'rotate-180' : ''}`}
+              size={20}
+              aria-hidden="true"
             />
-          </label>
-          <label className="admin-label">
-            Bitiş
-            <input
-              type="date"
-              value={filters.dateTo}
-              onChange={(event) => updateFilter('dateTo', event.target.value)}
-              className="admin-input"
-            />
-          </label>
-          <label className="admin-label">
-            Cihaz
-            <select
-              value={filters.device}
-              onChange={(event) => updateFilter('device', event.target.value)}
-              className="admin-input"
-            >
-              <option value="all">Tüm cihazlar</option>
-              <option value="mobile">Mobil</option>
-              <option value="desktop">Masaüstü</option>
-              <option value="tablet">Tablet</option>
-            </select>
-          </label>
-          <label className="admin-label">
-            Kaynak
-            <select
-              value={filters.source}
-              onChange={(event) => updateFilter('source', event.target.value)}
-              className="admin-input"
-            >
-              <option value="all">Tüm kaynaklar</option>
-              {sourceOptions.map((source) => (
-                <option key={source} value={source}>
-                  {source}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="admin-label">
-            Olay türü
-            <select
-              value={filters.eventType}
-              onChange={(event) => updateFilter('eventType', event.target.value)}
-              className="admin-input"
-            >
-              {eventFilterOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="admin-label">
-            Dönüşüm
-            <select
-              value={filters.conversion}
-              onChange={(event) => updateFilter('conversion', event.target.value)}
-              className="admin-input"
-            >
-              <option value="all">Tümü</option>
-              <option value="converted">Dönüşüm yapanlar</option>
-              <option value="not_converted">Dönüşüm yapmayanlar</option>
-            </select>
-          </label>
-          <label className="admin-label md:col-span-2 xl:col-span-2">
-            Oturum ID ara
-            <input
-              value={filters.sessionSearch}
-              onChange={(event) => updateFilter('sessionSearch', event.target.value)}
-              className="admin-input"
-              placeholder="Oturum ID"
-            />
-          </label>
-          <button type="button" onClick={resetFilters} className="admin-secondary-button self-end">
-            Filtreleri temizle
-          </button>
-        </div>
+          </span>
+        </button>
+        {isFiltersOpen && (
+          <div id="analytics-filters" className="border-t border-[#FFE0CC] bg-[#FFFCF8] p-4 sm:p-5">
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+              <label className="admin-label">
+                Başlangıç
+                <input
+                  type="date"
+                  value={filters.dateFrom}
+                  onChange={(event) => updateFilter('dateFrom', event.target.value)}
+                  className="admin-input bg-white"
+                />
+              </label>
+              <label className="admin-label">
+                Bitiş
+                <input
+                  type="date"
+                  value={filters.dateTo}
+                  onChange={(event) => updateFilter('dateTo', event.target.value)}
+                  className="admin-input bg-white"
+                />
+              </label>
+              <label className="admin-label">
+                Cihaz
+                <select
+                  value={filters.device}
+                  onChange={(event) => updateFilter('device', event.target.value)}
+                  className="admin-input bg-white"
+                >
+                  <option value="all">Tüm cihazlar</option>
+                  <option value="mobile">Mobil</option>
+                  <option value="desktop">Masaüstü</option>
+                  <option value="tablet">Tablet</option>
+                </select>
+              </label>
+              <label className="admin-label">
+                Kaynak
+                <select
+                  value={filters.source}
+                  onChange={(event) => updateFilter('source', event.target.value)}
+                  className="admin-input bg-white"
+                >
+                  <option value="all">Tüm kaynaklar</option>
+                  {sourceOptions.map((source) => (
+                    <option key={source} value={source}>
+                      {source}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="admin-label">
+                Olay türü
+                <select
+                  value={filters.eventType}
+                  onChange={(event) => updateFilter('eventType', event.target.value)}
+                  className="admin-input bg-white"
+                >
+                  {eventFilterOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="admin-label">
+                Dönüşüm
+                <select
+                  value={filters.conversion}
+                  onChange={(event) => updateFilter('conversion', event.target.value)}
+                  className="admin-input bg-white"
+                >
+                  <option value="all">Tümü</option>
+                  <option value="converted">Dönüşüm yapanlar</option>
+                  <option value="not_converted">Dönüşüm yapmayanlar</option>
+                </select>
+              </label>
+              <label className="admin-label md:col-span-2 xl:col-span-2">
+                Oturum ID ara
+                <input
+                  value={filters.sessionSearch}
+                  onChange={(event) => updateFilter('sessionSearch', event.target.value)}
+                  className="admin-input bg-white"
+                  placeholder="Oturum ID"
+                />
+              </label>
+              <button type="button" onClick={resetFilters} className="admin-secondary-button self-end">
+                Filtreleri temizle
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {isLoading ? (
-        <div className="admin-card grid min-h-56 place-items-center p-6 text-center font-black text-[#222222]/62">
+        <div className="admin-card mt-6 grid min-h-56 place-items-center p-6 text-center font-black text-[#222222]/62">
           <span className="inline-flex items-center gap-2">
             <Loader2 className="animate-spin text-[#FF6A2A]" size={19} aria-hidden="true" />
             Satış analitiği yükleniyor...
@@ -1442,121 +1736,102 @@ function AnalyticsReport() {
         </div>
       ) : (
         <>
-          {report.warnings.length > 0 && (
-            <section className="mb-6 grid gap-3 lg:grid-cols-3">
-              {report.warnings.map((warning) => (
-                <article
-                  key={warning.title}
-                  className={`rounded-2xl border p-4 ${
-                    warning.tone === 'danger'
-                      ? 'border-[#fecdd3] bg-[#fff1f2] text-[#9f1239]'
-                      : 'border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]'
-                  }`}
-                >
-                  <p className="flex items-center gap-2 text-sm font-black">
-                    <AlertTriangle size={17} aria-hidden="true" />
-                    {warning.title}
-                  </p>
-                  <p className="mt-1 text-sm font-bold leading-6">{warning.text}</p>
-                </article>
-              ))}
-            </section>
-          )}
-
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-7">
-            <div className="admin-card p-5">
-              <UsersRound className="text-[#FF6A2A]" size={24} aria-hidden="true" />
-              <p className="mt-4 text-3xl font-black text-[#222222]">{report.uniqueVisitors}</p>
-              <p className="mt-1 text-sm font-bold text-[#222222]/58">Tekil oturum</p>
-            </div>
-            <div className="admin-card p-5">
-              <BarChart3 className="text-[#FF6A2A]" size={24} aria-hidden="true" />
-              <p className="mt-4 text-3xl font-black text-[#222222]">{report.pageViews.length}</p>
-              <p className="mt-1 text-sm font-bold text-[#222222]/58">Sayfa görüntüleme</p>
-            </div>
-            <div className="admin-card p-5">
-              <Clock3 className="text-[#FF6A2A]" size={24} aria-hidden="true" />
-              <p className="mt-4 text-2xl font-black text-[#222222]">
-                {formatDuration(report.averageSectionDuration)}
-              </p>
-              <p className="mt-1 text-sm font-bold text-[#222222]/58">Ortalama süre</p>
-            </div>
-            <div className="admin-card p-5">
-              <MessageCircle className="text-[#25D366]" size={24} aria-hidden="true" />
-              <p className="mt-4 text-3xl font-black text-[#222222]">{report.whatsappClicks.length}</p>
-              <p className="mt-1 text-sm font-bold text-[#222222]/58">WhatsApp tıklaması</p>
-            </div>
-            <div className="admin-card p-5">
-              <Phone className="text-[#FF6A2A]" size={24} aria-hidden="true" />
-              <p className="mt-4 text-3xl font-black text-[#222222]">{report.phoneClicks.length}</p>
-              <p className="mt-1 text-sm font-bold text-[#222222]/58">Telefon tıklaması</p>
-            </div>
-            <div className="admin-card p-5">
-              <TrendingUp className="text-[#FF6A2A]" size={24} aria-hidden="true" />
-              <p className="mt-4 text-3xl font-black text-[#222222]">{formatPercent(report.conversionRate)}</p>
-              <p className="mt-1 text-sm font-bold text-[#222222]/58">Dönüşüm oranı</p>
-            </div>
-            <div className="admin-card p-5">
-              <CheckCircle2 className="text-[#FF6A2A]" size={24} aria-hidden="true" />
-              <p className="mt-4 break-words text-lg font-black text-[#222222]">
-                {report.topSection?.label || 'Henüz ölçülmedi'}
-              </p>
-              <p className="mt-1 text-sm font-bold text-[#222222]/58">En çok ilgi gören bölüm</p>
-            </div>
-          </div>
-
           <div className="mt-6 grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
             <section className="admin-card p-5">
-              <h2 className="flex items-center gap-2 text-xl font-black text-[#222222]">
-                <MonitorSmartphone size={22} className="text-[#FF6A2A]" aria-hidden="true" />
-                Cihaz dağılımı
-              </h2>
-              <div className="mt-4 grid gap-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="flex items-center gap-2 text-xl font-black text-[#222222]">
+                    <MonitorSmartphone size={22} className="text-[#FF6A2A]" aria-hidden="true" />
+                    Cihaz dağılımı
+                  </h2>
+                  <p className="mt-1 text-sm font-bold text-[#222222]/52">
+                    Oturumların cihaz kırılımı ve yüzdesi.
+                  </p>
+                </div>
+                <span className="admin-pill">{report.uniqueVisitors} oturum</span>
+              </div>
+              <div className="mt-5 grid gap-3">
                 {report.deviceStats.map((device) => (
-                  <div key={device.id} className="rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4">
+                  <div key={device.id} className="rounded-[18px] border border-[#E8ECF2] bg-[#F8FAFC] p-4">
                     <div className="flex items-center justify-between gap-3">
                       <span className="font-black text-[#222222]">{device.label}</span>
-                      <span className="admin-pill">{formatCountPercent(device.count, report.uniqueVisitors)}</span>
+                      <span className="admin-pill bg-white text-[#222222]/72">
+                        {formatCountPercent(device.count, report.uniqueVisitors)}
+                      </span>
                     </div>
-                    <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white">
-                      <div
-                        className="h-full rounded-full bg-[#FF6A2A]"
-                        style={{ width: `${clampPercent(device.percent)}%` }}
-                      />
-                    </div>
+                    <MetricBar value={device.percent} max={100} />
                   </div>
                 ))}
+                {!hasDeviceData && (
+                  <EmptyState
+                    title="Cihaz verisi henüz yok"
+                    text="Tekil oturum oluşmadığı için mobil, masaüstü ve tablet oranları hesaplanamıyor."
+                    action="Canlı site ziyaretleri başladığında bu alan otomatik dolacak."
+                  />
+                )}
               </div>
             </section>
 
             <section className="admin-card p-5">
-              <h2 className="text-xl font-black text-[#222222]">CTA ve dönüşüm sinyalleri</h2>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-black text-[#222222]">CTA ve dönüşüm sinyalleri</h2>
+                  <p className="mt-1 text-sm font-bold text-[#222222]/52">
+                    WhatsApp, telefon ve kayıt niyeti taşıyan aksiyonlar.
+                  </p>
+                </div>
+                <span className="admin-pill">{report.ctaClicks.length} tıklama</span>
+              </div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {report.ctaStats.length > 0 ? (
                   report.ctaStats.map((cta) => (
                     <div
                       key={cta.id}
-                      className="flex items-center justify-between gap-3 rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4"
+                      className="rounded-[18px] border border-[#E8ECF2] bg-[#F8FAFC] p-4"
                     >
-                      <span className="font-black text-[#222222]">{cta.label}</span>
-                      <span className="admin-pill">{cta.count}</span>
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-black text-[#222222]">{cta.label}</span>
+                        <span className="admin-pill bg-white text-[#222222]">{cta.count}</span>
+                      </div>
+                      <MetricBar value={cta.count} max={Math.max(1, report.ctaClicks.length)} tone="green" />
                     </div>
                   ))
                 ) : (
-                  <p className="rounded-2xl bg-[#FFFBF5] p-4 text-sm font-bold text-[#222222]/58 sm:col-span-2">
-                    Henüz CTA tıklaması ölçülmedi.
-                  </p>
+                  <div className="sm:col-span-2">
+                    <EmptyState
+                      title="CTA tıklaması ölçülmedi"
+                      text="WhatsApp, telefon veya form aksiyonu henüz veri üretmedi. Buton takip kodları ve canlı CTA görünürlüğü kontrol edilmeli."
+                      action="İlk tıklama geldiğinde bu alan tıklama türüne göre ayrışacak."
+                    />
+                  </div>
                 )}
               </div>
             </section>
           </div>
 
-          <section className="admin-card mt-6 p-5">
-            <h2 className="text-xl font-black text-[#222222]">Bölüm performansı</h2>
+          <section className="admin-card mt-6 p-4 sm:p-5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-xl font-black text-[#222222]">Bölüm performansı</h2>
+                <p className="mt-1 text-sm font-bold text-[#222222]/52">
+                  Her bölümün görüntülenme, süre, CTA ve çıkış davranışı.
+                </p>
+              </div>
+              <span className="admin-pill">{report.sectionPerformance.length} bölüm</span>
+            </div>
+            {!hasSectionData && (
+              <div className="mt-4">
+                <EmptyState
+                  title="Bölüm performansı için veri bekleniyor"
+                  text="Henüz bölüm süresi veya CTA sinyali yok. Kullanıcılar sayfada gezindikçe ilgi düzeyleri hesaplanacak."
+                  action="Bu alan takip kodu çalıştığında otomatik olarak renkli etiketlerle dolacak."
+                />
+              </div>
+            )}
             <div className="mt-4 overflow-x-auto">
-              <table className="min-w-[860px] w-full border-separate border-spacing-y-2 text-left text-sm">
+              <table className="w-full min-w-[980px] border-separate border-spacing-y-2 text-left text-sm">
                 <thead>
-                  <tr className="text-xs font-black uppercase tracking-[0.08em] text-[#222222]/48">
+                  <tr className="text-xs font-black uppercase tracking-[0.08em] text-[#222222]/46">
                     <th className="px-3 py-2">Bölüm</th>
                     <th className="px-3 py-2">Görüntülenme</th>
                     <th className="px-3 py-2">Ortalama süre</th>
@@ -1568,14 +1843,35 @@ function AnalyticsReport() {
                 </thead>
                 <tbody>
                   {report.sectionPerformance.map((section) => (
-                    <tr key={section.id} className="rounded-2xl bg-[#FFFBF5] font-bold text-[#222222]/72">
-                      <td className="rounded-l-2xl px-3 py-3 font-black text-[#222222]">{section.label}</td>
-                      <td className="px-3 py-3">{section.views}</td>
-                      <td className="px-3 py-3">{formatDuration(section.averageDuration)}</td>
+                    <tr key={section.id} className="bg-[#F8FAFC] font-bold text-[#222222]/72">
+                      <td className="rounded-l-[18px] px-3 py-3">
+                        <p className="font-black text-[#222222]">{section.label}</p>
+                        <span className="admin-pill mt-2 inline-flex bg-white text-[#222222]/58">
+                          {section.sessionCount} oturum
+                        </span>
+                      </td>
+                      <td className="px-3 py-3">
+                        <span className="font-black text-[#222222]">{section.views}</span>
+                        <MetricBar value={section.views} max={maxSectionViews} />
+                      </td>
+                      <td className="px-3 py-3">
+                        <span>{formatDuration(section.averageDuration)}</span>
+                        <MetricBar value={section.averageDuration} max={maxAverageDuration} tone="blue" />
+                      </td>
                       <td className="px-3 py-3">{formatDuration(section.totalDuration)}</td>
-                      <td className="px-3 py-3">{section.ctaClicks}</td>
-                      <td className="px-3 py-3">{formatPercent(section.exitRate)}</td>
-                      <td className="rounded-r-2xl px-3 py-3">
+                      <td className="px-3 py-3">
+                        <span className="font-black text-[#222222]">{section.ctaClicks}</span>
+                        <MetricBar value={section.ctaClicks} max={maxSectionCta} tone="green" />
+                      </td>
+                      <td className="px-3 py-3">
+                        <span>{formatPercent(section.exitRate)}</span>
+                        <MetricBar
+                          value={section.exitRate}
+                          max={100}
+                          tone={section.exitRate >= 65 ? 'red' : 'orange'}
+                        />
+                      </td>
+                      <td className="rounded-r-[18px] px-3 py-3">
                         <span className={`admin-pill ${getInterestClassName(section.interestLabel)}`}>
                           {section.interestLabel}
                         </span>
@@ -1589,12 +1885,29 @@ function AnalyticsReport() {
 
           <div className="mt-6 grid gap-6 xl:grid-cols-2">
             <section className="admin-card p-5">
-              <h2 className="text-xl font-black text-[#222222]">SSS raporu</h2>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-black text-[#222222]">SSS raporu</h2>
+                  <p className="mt-1 text-sm font-bold text-[#222222]/52">
+                    Hangi soru açıldı, kapandı ve sonrasında WhatsApp geldi mi?
+                  </p>
+                </div>
+                <span className="admin-pill">{totalFaqOpenCount} açılma</span>
+              </div>
+              {totalFaqOpenCount === 0 && (
+                <div className="mt-4">
+                  <EmptyState
+                    title="SSS açılımı yok"
+                    text="SSS alanı henüz kullanılmamış görünüyor. Alan görünür değil, ilgi çekmiyor veya takip kodu yeni devreye alınmış olabilir."
+                    action="SSS bloğu mobilde daha yukarı taşınabilir ya da başlıklar güçlendirilebilir."
+                  />
+                </div>
+              )}
               <div className="mt-4 grid gap-3">
                 {report.faqStats.map((faq) => (
                   <div
                     key={faq.id}
-                    className="grid gap-3 rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4 lg:grid-cols-[minmax(0,1fr)_auto]"
+                    className="grid gap-3 rounded-[18px] border border-[#E8ECF2] bg-[#F8FAFC] p-4 lg:grid-cols-[minmax(0,1fr)_auto]"
                   >
                     <div className="min-w-0">
                       <p className="break-words text-sm font-black text-[#222222]">{faq.question}</p>
@@ -1605,7 +1918,7 @@ function AnalyticsReport() {
                     </div>
                     <span
                       className={`admin-pill ${
-                        faq.afterWhatsappCount > 0 ? 'bg-[#ecfdf5] text-[#047857]' : 'bg-[#fff7ed] text-[#c2410c]'
+                        faq.afterWhatsappCount > 0 ? 'bg-[#ecfdf5] text-[#047857]' : 'bg-white text-[#222222]/58'
                       }`}
                     >
                       WhatsApp sonrası: {faq.afterWhatsappCount > 0 ? `Var (${faq.afterWhatsappCount})` : 'Yok'}
@@ -1616,35 +1929,45 @@ function AnalyticsReport() {
             </section>
 
             <section className="admin-card p-5">
-              <h2 className="text-xl font-black text-[#222222]">Logo / Instagram performansı</h2>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-black text-[#222222]">Logo / Instagram performansı</h2>
+                  <p className="mt-1 text-sm font-bold text-[#222222]/52">
+                    Logo ve anlaşmalı kurum tıklamalarının satış yorumu.
+                  </p>
+                </div>
+                <span className="admin-pill">{report.partnerClicks.length} tıklama</span>
+              </div>
               <div className="mt-4 grid gap-3">
                 {report.partnerClickStats.length > 0 ? (
                   report.partnerClickStats.map((partner) => (
                     <div
                       key={partner.id}
-                      className="rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4"
+                      className="rounded-[18px] border border-[#E8ECF2] bg-[#F8FAFC] p-4"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <span className="font-black text-[#222222]">{partner.label}</span>
-                        <span className="admin-pill">{partner.count}</span>
+                        <span className="admin-pill bg-white text-[#222222]">{partner.count}</span>
                       </div>
-                      <p className="mt-1 text-xs font-bold text-[#222222]/52">{partner.priority}</p>
+                      <p className="mt-2 text-xs font-bold leading-5 text-[#222222]/52">{partner.priority}</p>
                     </div>
                   ))
                 ) : (
-                  <p className="rounded-2xl bg-[#FFFBF5] p-4 text-sm font-bold text-[#222222]/58">
-                    Henüz logo/Instagram tıklaması yok.
-                  </p>
+                  <EmptyState
+                    title="Logo/Instagram tıklaması yok"
+                    text="Bu alan sosyal medya yönelimi için veri üretmedi. Instagram’a giden logolara tıklanınca burada görünmeli."
+                    action="Canlı sitede logo tıklaması yaptıktan sonra raporu yenileyerek kontrol edebilirsin."
+                  />
                 )}
               </div>
             </section>
           </div>
 
-          <section className="admin-card mt-6 p-5">
+          <section className="admin-card mt-6 p-4 sm:p-5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-xl font-black text-[#222222]">Ziyaretçi yolculuğu</h2>
-                <p className="mt-1 text-sm font-bold text-[#222222]/58">
+                <p className="mt-1 text-sm font-bold text-[#222222]/52">
                   {report.sessions.length} oturum · Sayfa {safeJourneyPage}/{journeyPageCount}
                 </p>
                 {report.hiddenDesktopDuplicatePageViews > 0 && (
@@ -1654,43 +1977,60 @@ function AnalyticsReport() {
                 )}
               </div>
             </div>
-            <div className="mt-4 grid gap-3">
+            <div className="mt-4 grid gap-3 xl:grid-cols-2">
               {paginatedJourneys.length > 0 ? (
                 paginatedJourneys.map((session) => (
                   <article
                     key={session.sessionId}
-                    className="rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4"
+                    className="rounded-[18px] border border-[#E8ECF2] bg-[#F8FAFC] p-4"
                   >
-                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                      <div className="min-w-0">
-                        <p className="break-all text-xs font-black uppercase tracking-[0.08em] text-[#FF6A2A]">
-                          {session.source} → {deviceLabels[session.device] || session.device}
-                        </p>
-                        <p className="mt-2 break-words text-sm font-black leading-6 text-[#222222]">
-                          {session.sectionLabels.join(' → ') || 'Gezilen bölüm bulunamadı'}
-                        </p>
-                        <p className="mt-1 text-xs font-bold text-[#222222]/52">
-                          Oturum: {session.sessionId} · Ekran: {session.screen}
-                        </p>
-                      </div>
-                      <div className="grid gap-2 text-sm font-black text-[#222222]/72 sm:grid-cols-3 lg:min-w-[24rem]">
-                        <span className="admin-pill">{formatDuration(session.totalDuration)}</span>
-                        <span className="admin-pill">{session.lastAction}</span>
-                        <span
-                          className={`admin-pill ${
-                            session.converted ? 'bg-[#ecfdf5] text-[#047857]' : 'bg-[#fff7ed] text-[#c2410c]'
-                          }`}
-                        >
-                          Dönüşüm: {session.converted ? 'Var' : 'Yok'}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="admin-pill bg-white text-[#222222]">{session.source}</span>
+                      <span className="admin-pill bg-white text-[#222222]/72">
+                        {deviceLabels[session.device] || session.device}
+                      </span>
+                      <span className="admin-pill bg-white text-[#222222]/72">{formatDuration(session.totalDuration)}</span>
+                      <span
+                        className={`admin-pill ${
+                          session.converted ? 'bg-[#ecfdf5] text-[#047857]' : 'bg-white text-[#222222]/52'
+                        }`}
+                      >
+                        Dönüşüm: {session.converted ? 'Var' : 'Yok'}
+                      </span>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {session.sectionLabels.length > 0 ? (
+                        session.sectionLabels.slice(0, 7).map((sectionLabel, index) => (
+                          <span
+                            key={`${session.sessionId}-${sectionLabel}-${index}`}
+                            className="rounded-full border border-[#FFE0CC] bg-white px-2.5 py-1 text-xs font-black text-[#222222]/70"
+                          >
+                            {sectionLabel}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="rounded-full border border-[#FFE0CC] bg-white px-2.5 py-1 text-xs font-black text-[#222222]/52">
+                          Gezilen bölüm bulunamadı
                         </span>
-                      </div>
+                      )}
+                    </div>
+                    <div className="mt-3 grid gap-1 text-xs font-bold leading-5 text-[#222222]/52">
+                      <span className="break-all">Oturum: {session.sessionId}</span>
+                      <span>
+                        Ekran: {session.screen} · Son işlem: {session.lastAction}
+                      </span>
+                      <span className="break-words">Detay: {session.lastDetail}</span>
                     </div>
                   </article>
                 ))
               ) : (
-                <p className="rounded-2xl bg-[#FFFBF5] p-4 text-sm font-bold text-[#222222]/58">
-                  Filtreye uygun oturum yok.
-                </p>
+                <div className="xl:col-span-2">
+                  <EmptyState
+                    title="Filtreye uygun oturum yok"
+                    text="Seçili filtreler hiçbir ziyaretçi yolculuğu döndürmedi. Tarih, cihaz veya olay türü filtreleri dar kalmış olabilir."
+                    action="Filtreleri temizleyerek tüm oturumları tekrar görebilirsin."
+                  />
+                </div>
               )}
             </div>
             {journeyPageCount > 1 && (
@@ -1715,12 +2055,17 @@ function AnalyticsReport() {
           </section>
 
           <section className="admin-card mt-6 p-5">
-            <h2 className="text-xl font-black text-[#222222]">Pazarlama yorumu</h2>
+            <div className="flex flex-col gap-1">
+              <h2 className="text-xl font-black text-[#222222]">Pazarlama yorumu</h2>
+              <p className="text-sm font-bold text-[#222222]/52">
+                Mevcut verilere göre yöneticinin hızlı aksiyon alması için öneriler.
+              </p>
+            </div>
             <div className="mt-4 grid gap-3 lg:grid-cols-2">
               {report.recommendations.map((recommendation) => (
                 <p
                   key={recommendation}
-                  className="rounded-2xl border border-[#FFE0CC] bg-[#FFFBF5] p-4 text-sm font-bold leading-6 text-[#222222]/72"
+                  className="rounded-[18px] border border-[#E8ECF2] bg-[#F8FAFC] p-4 text-sm font-bold leading-6 text-[#222222]/72"
                 >
                   {recommendation}
                 </p>

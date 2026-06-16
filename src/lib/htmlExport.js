@@ -160,6 +160,7 @@ const createHtmlDocument = ({ body, title }) => `<!doctype html>
       .notice span { font-size: 13px; font-weight: 700; }
       .notice-warning { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; }
       .notice-danger { background: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; }
+      .notice-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; }
       .empty-slots {
         display: grid;
         gap: 10px;
