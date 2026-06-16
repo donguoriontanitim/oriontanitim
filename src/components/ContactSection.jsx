@@ -1,6 +1,7 @@
 import { Bot, CheckCircle2, Loader2, Mail, Phone, Send, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
+import { insertAnalyticsEvent } from '../lib/analytics.js'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 import { whatsappMessage, whatsappNumber } from '../fallbackContent.js'
@@ -101,6 +102,13 @@ function ContactSection({
   )
 
   const whatsappUrl = getWhatsAppUrl(contactInfo?.phone1 || whatsappNumber, whatsappMessage)
+  const trackContactCta = (ctaType, target = '') =>
+    insertAnalyticsEvent({
+      event_type: 'cta_click',
+      cta_type: ctaType,
+      source_section: 'iletisim',
+      target,
+    })
 
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }))
@@ -195,6 +203,7 @@ function ContactSection({
           : 'Talebiniz alındı. Ekip admin panelinden talebinizi görebilir.',
       })
 
+      trackContactCta('form_submit', 'contact_form')
       setForm(initialForm)
     } catch (error) {
       setStatus({
@@ -223,6 +232,7 @@ function ContactSection({
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
+                onClick={() => trackContactCta('whatsapp', 'quick_panel')}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-4 text-base font-black text-white shadow-[0_16px_36px_rgba(37,211,102,0.3)] transition hover:bg-[#1ebe5d]"
               >
                 <WhatsAppIcon size={20} />
@@ -243,6 +253,7 @@ function ContactSection({
                 <a
                   className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
                   href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}
+                  onClick={() => trackContactCta('phone', 'phone1')}
                 >
                   <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
@@ -252,6 +263,7 @@ function ContactSection({
                 <a
                   className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
                   href={`tel:${contactInfo.phone2.replace(/\D/g, '')}`}
+                  onClick={() => trackContactCta('phone', 'phone2')}
                 >
                   <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
@@ -261,6 +273,7 @@ function ContactSection({
                 <a
                   className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
                   href={`mailto:${contactInfo.mail}`}
+                  onClick={() => trackContactCta('email', 'mail')}
                 >
                   <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Mail size={17} aria-hidden="true" />

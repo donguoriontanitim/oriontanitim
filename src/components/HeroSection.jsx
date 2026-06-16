@@ -74,6 +74,14 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
     desktopImage?.alt_text ||
     'ORION KAMP 2026 teknoloji, robotik ve uzay temalı çocuk yaz kampı'
   const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
+  const trackHeroCta = (ctaType, target = '') =>
+    insertAnalyticsEvent({
+      event_type: 'cta_click',
+      cta_type: ctaType,
+      source_section: 'hero',
+      target,
+    })
+
   const handlePartnerLogoClick = async (event, instagramUrl, partnerId) => {
     event.preventDefault()
 
@@ -134,6 +142,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
             <div className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:flex-wrap">
               <a
                 href="#/iletisim"
+                onClick={() => trackHeroCta('contact', 'iletisim')}
                 className="orion-gradient orion-gradient-hover cta-orange inline-flex min-h-13 min-w-0 items-center justify-center gap-2 rounded-full px-6 py-4 text-center text-base font-black leading-snug text-white transition"
               >
                 <span className="min-w-0 break-words">{primaryLabel}</span>
@@ -141,6 +150,7 @@ function HeroSection({ content, desktopImage, mobileImage, partnerLogosByKey = {
               </a>
               <a
                 href="#/program"
+                onClick={() => trackHeroCta('program', 'program')}
                 className="landing-secondary-button min-w-0 text-center text-base leading-snug"
               >
                 <BookOpen className="shrink-0" size={19} aria-hidden="true" />

@@ -57,6 +57,14 @@ function Navbar({ contactInfo, logoImage }) {
     handleSectionClick('hero')(event)
   }
 
+  const trackNavbarCta = () =>
+    insertAnalyticsEvent({
+      event_type: 'cta_click',
+      cta_type: 'contact',
+      source_section: 'navbar',
+      target: 'iletisim',
+    })
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4">
       <nav className="mx-auto w-full max-w-[1180px] rounded-[1.65rem] border border-[#FFE0CC] bg-white/88 shadow-[0_16px_54px_rgba(255,106,42,0.12)] backdrop-blur-xl sm:rounded-[2rem]">
@@ -107,7 +115,10 @@ function Navbar({ contactInfo, logoImage }) {
           <div className="flex items-center gap-2">
             <a
               href={getLandingSectionHref('iletisim')}
-              onClick={handleSectionClick('iletisim')}
+              onClick={(event) => {
+                trackNavbarCta()
+                handleSectionClick('iletisim')(event)
+              }}
               title={ctaTitle}
               className="orion-gradient orion-gradient-hover cta-orange inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-3.5 py-2.5 text-sm font-black text-white transition sm:px-5"
             >
@@ -153,7 +164,10 @@ function Navbar({ contactInfo, logoImage }) {
 
               <a
                 href={getLandingSectionHref('iletisim')}
-                onClick={handleSectionClick('iletisim')}
+                onClick={(event) => {
+                  trackNavbarCta()
+                  handleSectionClick('iletisim')(event)
+                }}
                 title={ctaTitle}
                 className="orion-gradient cta-orange mt-2 inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-black text-white transition"
               >

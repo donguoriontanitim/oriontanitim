@@ -26,6 +26,7 @@ export const partnerLabelById = {
 }
 
 const partnerClickSectionPrefix = 'partner_click:'
+const ctaClickSectionPrefix = 'cta_click:'
 const faqOpenSectionPrefix = 'faq_open:'
 const faqCloseSectionPrefix = 'faq_close:'
 
@@ -49,6 +50,54 @@ export const getPartnerClickId = (event = {}) => {
 }
 
 export const isPartnerClickEvent = (event = {}) => Boolean(getPartnerClickId(event))
+
+export const ctaLabelByType = {
+  contact: 'İletişim CTA',
+  email: 'E-posta tıklaması',
+  form_submit: 'Form gönderimi',
+  phone: 'Telefon tıklaması',
+  program: 'Program CTA',
+  whatsapp: 'WhatsApp tıklaması',
+}
+
+export const conversionCtaTypes = ['form_submit', 'phone', 'whatsapp']
+
+export const encodeCtaClickSectionId = (type = 'unknown', sourceSection = 'unknown', target = '') =>
+  `${ctaClickSectionPrefix}${type || 'unknown'}:${sourceSection || 'unknown'}:${target || ''}`
+
+export const getCtaClick = (event = {}) => {
+  const sectionId = String(event.section_id || '')
+
+  if (event.event_type === 'cta_click') {
+    return {
+      sourceSection: event.source_section || 'unknown',
+      target: event.target || '',
+      type: event.cta_type || 'unknown',
+    }
+  }
+
+  if (!sectionId.startsWith(ctaClickSectionPrefix)) {
+    return null
+  }
+
+  const [type = 'unknown', sourceSection = 'unknown', ...targetParts] = sectionId
+    .slice(ctaClickSectionPrefix.length)
+    .split(':')
+
+  return {
+    sourceSection: sourceSection || 'unknown',
+    target: targetParts.join(':') || '',
+    type: type || 'unknown',
+  }
+}
+
+export const isCtaClickEvent = (event = {}) => Boolean(getCtaClick(event))
+
+export const isConversionEvent = (event = {}) => {
+  const ctaClick = getCtaClick(event)
+
+  return ctaClick ? conversionCtaTypes.includes(ctaClick.type) : false
+}
 
 export const encodeFaqInteractionSectionId = (action = 'open', faqId = 'unknown') =>
   `${action === 'close' ? faqCloseSectionPrefix : faqOpenSectionPrefix}${faqId || 'unknown'}`
@@ -119,13 +168,20 @@ export const getAnalyticsSessionId = () => {
 
 export const createAnalyticsPayload = (event) => {
   const isPartnerClick = event.event_type === 'partner_click'
+  const isCtaClick = event.event_type === 'cta_click'
   const isFaqInteraction = event.event_type === 'faq_open' || event.event_type === 'faq_close'
 
   return {
     session_id: getAnalyticsSessionId(),
-    event_type: isPartnerClick || isFaqInteraction ? 'section_view' : event.event_type,
+    event_type: isPartnerClick || isCtaClick || isFaqInteraction ? 'section_view' : event.event_type,
     section_id: isPartnerClick
       ? encodePartnerClickSectionId(event.section_id || 'unknown')
+      : isCtaClick
+        ? encodeCtaClickSectionId(
+            event.cta_type || event.section_id || 'unknown',
+            event.source_section || 'unknown',
+            event.target || '',
+          )
       : isFaqInteraction
         ? encodeFaqInteractionSectionId(
             event.event_type === 'faq_close' ? 'close' : 'open',

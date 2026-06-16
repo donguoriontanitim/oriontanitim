@@ -64,6 +64,14 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
     handleSectionClick('hero')(event)
   }
 
+  const trackFooterCta = (ctaType, target = '') =>
+    insertAnalyticsEvent({
+      event_type: 'cta_click',
+      cta_type: ctaType,
+      source_section: 'footer',
+      target,
+    })
+
   return (
     <footer
       className="section-background-frame relative border-t border-[#FFE0CC] bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFBF5_100%)] text-[#222222]"
@@ -131,15 +139,27 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
               İletişim
             </h2>
             <div className="mt-4 grid gap-3 text-sm font-semibold leading-6 text-[#222222]/72">
-              <a className="flex min-w-0 items-center gap-3" href={phoneHref(info.phone1)}>
+              <a
+                className="flex min-w-0 items-center gap-3"
+                href={phoneHref(info.phone1)}
+                onClick={() => trackFooterCta('phone', 'phone1')}
+              >
                 <Phone className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
                 <span className="min-w-0 break-words">{info.phone1}</span>
               </a>
-              <a className="flex min-w-0 items-center gap-3" href={phoneHref(info.phone2)}>
+              <a
+                className="flex min-w-0 items-center gap-3"
+                href={phoneHref(info.phone2)}
+                onClick={() => trackFooterCta('phone', 'phone2')}
+              >
                 <Phone className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
                 <span className="min-w-0 break-words">{info.phone2}</span>
               </a>
-              <a className="flex min-w-0 items-center gap-3" href={`mailto:${info.mail}`}>
+              <a
+                className="flex min-w-0 items-center gap-3"
+                href={`mailto:${info.mail}`}
+                onClick={() => trackFooterCta('email', 'mail')}
+              >
                 <Mail className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
                 <span className="min-w-0 break-words">{info.mail}</span>
               </a>
@@ -178,6 +198,7 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
                 target="_blank"
                 rel="noreferrer"
                 aria-label="WhatsApp ile iletişime geç"
+                onClick={() => trackFooterCta('whatsapp', 'social_button')}
                 className="grid size-11 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_14px_30px_rgba(37,211,102,0.22)] transition hover:-translate-y-0.5"
               >
                 <WhatsAppIcon size={20} />
@@ -185,6 +206,7 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
               <a
                 href={`mailto:${info.mail}`}
                 aria-label="E-posta gönder"
+                onClick={() => trackFooterCta('email', 'social_button')}
                 className="grid size-11 place-items-center rounded-full border border-[#FFE0CC] bg-white text-[#FF6A2A] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#FFF1E8]"
               >
                 <Mail size={20} aria-hidden="true" />
