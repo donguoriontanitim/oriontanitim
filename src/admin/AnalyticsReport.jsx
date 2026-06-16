@@ -2017,6 +2017,9 @@ function AnalyticsReport() {
                     <div className="mt-3 grid gap-1 text-xs font-bold leading-5 text-[#222222]/52">
                       <span className="break-all">Oturum: {session.sessionId}</span>
                       <span>
+                        Giriş: {formatDateTime(session.firstAt)} · Son kayıt: {formatDateTime(session.lastAt)}
+                      </span>
+                      <span>
                         Ekran: {session.screen} · Son işlem: {session.lastAction}
                       </span>
                       <span className="break-words">Detay: {session.lastDetail}</span>
