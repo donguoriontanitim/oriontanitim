@@ -1,10 +1,9 @@
-import { Bot, CheckCircle2, Loader2, Mail, Phone, Send, Sparkles } from 'lucide-react'
+import { Bot, CheckCircle2, Loader2, Mail, MapPin, Phone, Send, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import WhatsAppIcon from './WhatsAppIcon.jsx'
-import { insertAnalyticsEvent } from '../lib/analytics.js'
+import { getPhoneHref, getWhatsAppUrl, trackCtaClick } from '../lib/contactLinks.js'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
-import { whatsappMessage, whatsappNumber } from '../fallbackContent.js'
 import contactVisual from '../assets/orion-hero.png'
 
 const initialForm = {
@@ -20,12 +19,13 @@ const inputClass = 'contact-input'
 const labelClass = 'contact-label'
 const fallbackContactContent = {
   eyebrow: 'İletişim',
-  title: 'SİZİ ARAYALIM,',
-  highlight: 'DETAYLARI BİRLİKTE PLANLAYALIM',
-  description: 'Formu doldurun, en kısa sürede size ulaşalım.',
-  quickTitle: 'WhatsApp ile hemen yazın.',
+  title: 'Kayıt ve Kontenjan Bilgisi İçin',
+  highlight: 'Bize Ulaşın',
+  description:
+    'Çocuğunuz için en uygun grup ve kontenjan durumunu öğrenmek için bizimle iletişime geçebilirsiniz.',
+  quickTitle: 'WhatsApp’tan hızlı bilgi alın.',
   quickDescription:
-    'Formu beklemeden sorularınızı iletebilir, kamp detayları için hızlı dönüş alabilirsiniz.',
+    'Size en uygun grup, erken kayıt fırsatı ve kontenjan detayları için hızlıca yazabilirsiniz.',
 }
 
 const contactSummaryItems = [
@@ -36,14 +36,14 @@ const contactSummaryItems = [
 ]
 
 const trustItems = [
-  'Uzman eğitmen kadrosu',
-  'Güvenli kamp ortamı',
-  'Yaşa uygun etkinlik akışı',
-  'Hızlı bilgilendirme ve dönüş',
+  'Alanında uzman eğitmenler',
+  'Akademiler arası transfer kurum tarafından sağlanır',
+  'Öğle yemeği imkanı vardır',
+  'Program tek kamp paketi olarak sunulur',
+  'Kontenjan sınırlıdır',
+  'Kardeş ve arkadaşını getir indirimleri mevcuttur',
+  'Erken kayıt fırsatı 25 Haziran’a kadar geçerlidir',
 ]
-
-const getWhatsAppUrl = (phoneNumber, message) =>
-  `https://wa.me/${String(phoneNumber || whatsappNumber).replace(/\D/g, '') || whatsappNumber}?text=${encodeURIComponent(message)}`
 
 const sendContactEmailNotification = async (payload) => {
   if (!isSupabaseConfigured) {
@@ -77,7 +77,7 @@ function ContactSection({
   const [form, setForm] = useState(initialForm)
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const contactContent = { ...fallbackContactContent, ...content }
+  const contactContent = { ...content, ...fallbackContactContent }
   const contactQuickImageUrl = contactQuickImage?.image_url
   const contactImageUrl = contactSideImage?.image_url || contactImage?.image_url || contactVisual
   const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
@@ -101,12 +101,14 @@ function ContactSection({
     [programs],
   )
 
-  const whatsappUrl = getWhatsAppUrl(contactInfo?.phone1 || whatsappNumber, whatsappMessage)
-  const trackContactCta = (ctaType, target = '') =>
-    insertAnalyticsEvent({
-      event_type: 'cta_click',
-      cta_type: ctaType,
-      source_section: 'iletisim',
+  const whatsappUrl = getWhatsAppUrl(contactInfo?.phone1)
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contactInfo?.address || '')}`
+  const trackContactCta = ({ buttonLabel, ctaType, eventName = 'contact_cta_click', target = '' }) =>
+    trackCtaClick({
+      buttonLabel,
+      ctaType,
+      eventName,
+      sectionName: 'iletisim',
       target,
     })
 
@@ -203,7 +205,11 @@ function ContactSection({
           : 'Talebiniz alındı. Ekip admin panelinden talebinizi görebilir.',
       })
 
-      trackContactCta('form_submit', 'contact_form')
+      trackContactCta({
+        buttonLabel: 'Kayıt Bilgisi Al',
+        ctaType: 'cta_form_click',
+        target: 'contact_form',
+      })
       setForm(initialForm)
     } catch (error) {
       setStatus({
@@ -232,11 +238,17 @@ function ContactSection({
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                onClick={() => trackContactCta('whatsapp', 'quick_panel')}
+                onClick={() =>
+                  trackContactCta({
+                    buttonLabel: 'WhatsApp’tan Bilgi Al',
+                    ctaType: 'cta_whatsapp_click',
+                    target: 'quick_panel',
+                  })
+                }
                 className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 py-4 text-base font-black text-white shadow-[0_16px_36px_rgba(37,211,102,0.3)] transition hover:bg-[#1ebe5d]"
               >
                 <WhatsAppIcon size={20} />
-                WhatsApp ile yazın
+                WhatsApp’tan Bilgi Al
               </a>
 
               <div>
@@ -252,8 +264,14 @@ function ContactSection({
               <div className="mt-auto grid min-w-0 gap-3 rounded-[1.35rem] border border-white/80 bg-white/92 p-3 text-base font-black leading-tight text-[#222222] shadow-[0_18px_42px_rgba(11,16,38,0.16)] backdrop-blur-md sm:p-4 sm:text-[1.05rem]">
                 <a
                   className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
-                  href={`tel:${contactInfo.phone1.replace(/\D/g, '')}`}
-                  onClick={() => trackContactCta('phone', 'phone1')}
+                  href={getPhoneHref(contactInfo.phone1)}
+                  onClick={() =>
+                    trackContactCta({
+                      buttonLabel: 'Telefonla Ara',
+                      ctaType: 'cta_phone_click',
+                      target: 'phone1',
+                    })
+                  }
                 >
                   <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
@@ -262,8 +280,14 @@ function ContactSection({
                 </a>
                 <a
                   className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
-                  href={`tel:${contactInfo.phone2.replace(/\D/g, '')}`}
-                  onClick={() => trackContactCta('phone', 'phone2')}
+                  href={getPhoneHref(contactInfo.phone2)}
+                  onClick={() =>
+                    trackContactCta({
+                      buttonLabel: 'Telefonla Ara',
+                      ctaType: 'cta_phone_click',
+                      target: 'phone2',
+                    })
+                  }
                 >
                   <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Phone size={17} aria-hidden="true" />
@@ -273,7 +297,13 @@ function ContactSection({
                 <a
                   className="flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl bg-[#FFFBF5]/96 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
                   href={`mailto:${contactInfo.mail}`}
-                  onClick={() => trackContactCta('email', 'mail')}
+                  onClick={() =>
+                    trackContactCta({
+                      buttonLabel: 'E-posta Gönder',
+                      ctaType: 'email',
+                      target: 'mail',
+                    })
+                  }
                 >
                   <span className="grid size-11 shrink-0 place-items-center rounded-full bg-white text-[#FF6A2A] shadow-sm">
                     <Mail size={17} aria-hidden="true" />
@@ -295,6 +325,54 @@ function ContactSection({
                 <p className="mt-4 break-words text-base font-semibold leading-7 text-[#222222]/64">
                   {contactContent.description}
                 </p>
+                <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() =>
+                      trackContactCta({
+                        buttonLabel: 'WhatsApp’tan Bilgi Al',
+                        ctaType: 'cta_whatsapp_click',
+                        target: 'header_whatsapp',
+                      })
+                    }
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-4 py-3 text-sm font-black text-white shadow-[0_12px_26px_rgba(37,211,102,0.22)]"
+                  >
+                    <WhatsAppIcon size={18} />
+                    WhatsApp’tan Bilgi Al
+                  </a>
+                  <a
+                    href={getPhoneHref(contactInfo.phone1)}
+                    onClick={() =>
+                      trackContactCta({
+                        buttonLabel: 'Hemen Ara',
+                        ctaType: 'cta_phone_click',
+                        target: 'header_phone',
+                      })
+                    }
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-[#FFE0CC] bg-[#FFF8F0] px-4 py-3 text-sm font-black text-[#FF6A2A]"
+                  >
+                    <Phone size={18} aria-hidden="true" />
+                    Hemen Ara
+                  </a>
+                  <a
+                    href={mapUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() =>
+                      trackContactCta({
+                        buttonLabel: 'Konum Al',
+                        ctaType: 'contact_cta_click',
+                        target: 'map',
+                      })
+                    }
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-[#FFE0CC] bg-white px-4 py-3 text-sm font-black text-[#222222]"
+                  >
+                    <MapPin size={18} className="text-[#FF6A2A]" aria-hidden="true" />
+                    Konum Al
+                  </a>
+                </div>
               </div>
 
               <form onSubmit={handleSubmit} noValidate className="text-[#222222]">
@@ -406,7 +484,7 @@ function ContactSection({
                   ) : (
                     <Send size={19} aria-hidden="true" />
                   )}
-                  Gönder
+                  Kayıt Bilgisi Al
                 </button>
               </form>
             </div>

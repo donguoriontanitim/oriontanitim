@@ -1,45 +1,79 @@
 ﻿import { HelpCircle, Minus, Plus } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { insertAnalyticsEvent } from '../lib/analytics.js'
+import { getWhatsAppUrl, trackCtaClick } from '../lib/contactLinks.js'
 import { createSectionBackgroundStyle } from '../lib/siteImages.js'
-import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
 import SafeHtml from './SafeHtml.jsx'
+import WhatsAppIcon from './WhatsAppIcon.jsx'
 
-function FaqSection({ faqs, backgroundImage }) {
-  const [remoteFaqs, setRemoteFaqs] = useState(null)
+const salesFaqs = [
+  {
+    id: 'age',
+    question: 'Kamp hangi yaş grubuna uygun?',
+    answer: 'ORION Kamp, 7–13 yaş aralığındaki çocuklar için planlanmıştır. Gruplar yaş ve gelişim düzeyine göre dengeli şekilde yönlendirilir.',
+    sort_order: 1,
+  },
+  {
+    id: 'hours',
+    question: 'Kamp saatleri nedir?',
+    answer: 'Program hafta içi 5 gün, 09:00–17:00 saatleri arasında tam gün olarak uygulanır.',
+    sort_order: 2,
+  },
+  {
+    id: 'duration',
+    question: 'Kamp kaç hafta sürüyor?',
+    answer: 'ORION Kamp 4 haftalık tam gün yaz kampı olarak planlanmıştır. Kontenjan ve dönem bilgisi için hızlıca iletişime geçebilirsiniz.',
+    sort_order: 3,
+  },
+  {
+    id: 'swimming',
+    question: 'Programda yüzme var mı?',
+    answer: 'Evet. Programda haftada 2 gün yüzme etkinliği bulunur. Çocukların yaz enerjisini güvenli ve keyifli şekilde destekler.',
+    sort_order: 4,
+  },
+  {
+    id: 'coding-level',
+    question: 'Çocuğum kodlama bilmiyorsa katılabilir mi?',
+    answer: 'Evet. Atölyeler başlangıç seviyesine uygun ilerler. Çocuklar robotik, oyun tasarımı, 3D tasarım ve programlama temellerini adım adım deneyimler.',
+    sort_order: 5,
+  },
+  {
+    id: 'food',
+    question: 'Yemek var mı?',
+    answer: 'Öğle yemeği imkanı vardır. Detaylar ve günlük akış bilgisi kayıt görüşmesinde net şekilde paylaşılır.',
+    sort_order: 6,
+  },
+  {
+    id: 'transfer',
+    question: 'Akademiler arası ulaşım nasıl sağlanıyor?',
+    answer: 'Akademiler arası transfer kurum tarafından sağlanır. Çocuklar program akışına göre güvenli şekilde yönlendirilir.',
+    sort_order: 7,
+  },
+  {
+    id: 'registration',
+    question: 'Kayıt için ne yapmam gerekiyor?',
+    answer: 'WhatsApp, telefon veya iletişim formu üzerinden bize ulaşmanız yeterli. Size en uygun grup ve kayıt detayları için hızlıca dönüş yapılır.',
+    sort_order: 8,
+  },
+  {
+    id: 'quota',
+    question: 'Kontenjan sınırlı mı?',
+    answer: 'Evet, kontenjan sınırlıdır. Yaş grubu ve dönem uygunluğu için erken bilgi almanızı öneririz.',
+    sort_order: 9,
+  },
+  {
+    id: 'early-registration',
+    question: 'Erken kayıt ne zamana kadar?',
+    answer: 'Erken kayıt fırsatı 25 Haziran’a kadar geçerlidir. Güncel kontenjan ve fırsat bilgisi için WhatsApp’tan sorabilirsiniz.',
+    sort_order: 10,
+  },
+]
+
+function FaqSection({ contactInfo, backgroundImage }) {
   const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
+  const whatsappUrl = getWhatsAppUrl(contactInfo?.phone1)
 
-  useEffect(() => {
-    if (!isSupabaseConfigured) {
-      return undefined
-    }
-
-    let isMounted = true
-
-    supabase
-      .from('faq_items')
-      .select('id,question,answer,is_html,sort_order,is_active')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true })
-      .then(({ data }) => {
-        if (isMounted && data?.length) {
-          setRemoteFaqs(data)
-        }
-      })
-      .catch(() => undefined)
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
-
-  const activeFaqs = useMemo(
-    () =>
-      [...(remoteFaqs || faqs)]
-        .filter((faq) => faq.is_active !== false)
-        .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0)),
-    [faqs, remoteFaqs],
-  )
+  const activeFaqs = salesFaqs
   const faqColumns = useMemo(
     () =>
       activeFaqs.reduce(
@@ -83,6 +117,29 @@ function FaqSection({ faqs, backgroundImage }) {
               {faq.answer}
             </p>
           )}
+          <div className="mt-4 rounded-2xl border border-[#FFE0CC] bg-white p-3">
+            <p className="text-sm font-black text-[#222222]">
+              Bu konu hakkında detaylı bilgi almak ister misiniz?
+            </p>
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() =>
+                trackCtaClick({
+                  buttonLabel: 'WhatsApp’tan Sor',
+                  ctaType: 'faq_whatsapp_click',
+                  eventName: 'faq_whatsapp_click',
+                  sectionName: 'sss',
+                  target: faqId,
+                })
+              }
+              className="mt-3 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-black text-white shadow-[0_12px_26px_rgba(37,211,102,0.22)]"
+            >
+              <WhatsAppIcon size={18} />
+              WhatsApp’tan Sor
+            </a>
+          </div>
         </div>
       </details>
     )

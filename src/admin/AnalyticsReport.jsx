@@ -214,8 +214,9 @@ const getEventDetailLabel = (event, faqLabelById = {}) => {
   if (ctaClick) {
     const sourceLabel = sectionLabelById[ctaClick.sourceSection] || ctaClick.sourceSection || 'Bilinmiyor'
     const targetLabel = ctaClick.target ? ` → ${ctaClick.target}` : ''
+    const eventLabel = ctaClick.eventName ? ` · ${ctaClick.eventName}` : ''
 
-    return `${ctaLabelByType[ctaClick.type] || ctaClick.type}${targetLabel} (${sourceLabel})`
+    return `${ctaClick.buttonLabel || ctaLabelByType[ctaClick.type] || ctaClick.type}${targetLabel} (${sourceLabel})${eventLabel}`
   }
 
   const faqInteraction = getFaqInteraction(event)
@@ -242,6 +243,9 @@ const sortByCreatedAtAsc = (first, second) =>
 
 const sortByCreatedAtDesc = (first, second) =>
   getDateTimeValue(second.created_at) - getDateTimeValue(first.created_at)
+
+const whatsappCtaTypes = ['whatsapp', 'cta_whatsapp_click', 'faq_whatsapp_click']
+const phoneCtaTypes = ['phone', 'cta_phone_click']
 
 const addSectionToSequence = (sequence, sectionId) => {
   if (!sectionId || !sectionLabelById[sectionId]) {
@@ -640,7 +644,7 @@ const createFaqStats = ({ activeFaqItems, faqInteractions, sessions }) => {
 
       const hasWhatsappAfterOpen = session.events
         .slice(index + 1)
-        .some((nextEvent) => getCtaClick(nextEvent)?.type === 'whatsapp')
+        .some((nextEvent) => whatsappCtaTypes.includes(getCtaClick(nextEvent)?.type))
 
       if (hasWhatsappAfterOpen && faqStatsById[interaction.faqId]) {
         faqStatsById[interaction.faqId].afterWhatsappSessionIds.add(session.sessionId)
@@ -1360,8 +1364,12 @@ function AnalyticsReport() {
 
       return firstScore - secondScore
     })[0]
-    const whatsappClicks = ctaClicks.filter((event) => getCtaClick(event)?.type === 'whatsapp')
-    const phoneClicks = ctaClicks.filter((event) => getCtaClick(event)?.type === 'phone')
+    const whatsappClicks = ctaClicks.filter((event) =>
+      whatsappCtaTypes.includes(getCtaClick(event)?.type),
+    )
+    const phoneClicks = ctaClicks.filter((event) =>
+      phoneCtaTypes.includes(getCtaClick(event)?.type),
+    )
     const reportData = {
       allSessions,
       averageSectionDuration:

@@ -18,6 +18,7 @@ import Footer from './components/Footer.jsx'
 import GallerySection from './components/GallerySection.jsx'
 import HeroSection from './components/HeroSection.jsx'
 import LegalPage from './components/LegalPage.jsx'
+import MobileStickyCta from './components/MobileStickyCta.jsx'
 import Navbar from './components/Navbar.jsx'
 import ProgramSection from './components/ProgramSection.jsx'
 import WhyOrionSection from './components/WhyOrionSection.jsx'
@@ -164,11 +165,12 @@ function LandingPage() {
   }, [imageSlots.brandAssetByKey])
 
   return (
-    <div className="orion-page-bg text-[#222222]">
+    <div className="orion-page-bg pb-[calc(5.75rem+env(safe-area-inset-bottom))] text-[#222222] md:pb-0">
       <Navbar contactInfo={landingData.contactInfo} logoImage={imageSlots.brandAssetByKey?.['site-logo']} />
       <main>
         <HeroSection
           content={landingData.hero}
+          contactInfo={landingData.contactInfo}
           desktopImage={imageSlots.heroDesktop}
           mobileImage={imageSlots.heroMobile}
           partnerLogosByKey={imageSlots.partnerLogosByKey}
@@ -182,6 +184,7 @@ function LandingPage() {
         />
         <ProgramSection
           programs={landingData.programs}
+          contactInfo={landingData.contactInfo}
           imagesByRelatedKey={imageSlots.programByKey}
           backgroundImage={imageSlots.sectionBackgroundByKey?.program}
         />
@@ -199,7 +202,11 @@ function LandingPage() {
           siteImages={imageSlots.gallery}
           backgroundImage={imageSlots.sectionBackgroundByKey?.gallery}
         />
-        <FaqSection faqs={landingData.faqs} backgroundImage={imageSlots.sectionBackgroundByKey?.faq} />
+        <FaqSection
+          faqs={landingData.faqs}
+          contactInfo={landingData.contactInfo}
+          backgroundImage={imageSlots.sectionBackgroundByKey?.faq}
+        />
         <ContactSection
           programs={landingData.programs}
           contactInfo={landingData.contactInfo}
@@ -216,6 +223,7 @@ function LandingPage() {
         logoImage={imageSlots.brandAssetByKey?.['site-logo']}
         backgroundImage={imageSlots.sectionBackgroundByKey?.footer}
       />
+      <MobileStickyCta contactInfo={landingData.contactInfo} />
     </div>
   )
 }

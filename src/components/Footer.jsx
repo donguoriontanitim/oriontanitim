@@ -1,5 +1,6 @@
 ﻿import { AtSign, FileText, LayoutDashboard, Mail, MapPin, Phone, Rocket, ShieldCheck } from 'lucide-react'
 import { insertAnalyticsEvent } from '../lib/analytics.js'
+import { trackCtaClick } from '../lib/contactLinks.js'
 import { useNavigate } from 'react-router-dom'
 import {
   getLandingSectionHref,
@@ -64,11 +65,12 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
     handleSectionClick('hero')(event)
   }
 
-  const trackFooterCta = (ctaType, target = '') =>
-    insertAnalyticsEvent({
-      event_type: 'cta_click',
-      cta_type: ctaType,
-      source_section: 'footer',
+  const trackFooterCta = ({ buttonLabel, ctaType, eventName = 'contact_cta_click', target = '' }) =>
+    trackCtaClick({
+      buttonLabel,
+      ctaType,
+      eventName,
+      sectionName: 'footer',
       target,
     })
 
@@ -142,7 +144,13 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
               <a
                 className="flex min-w-0 items-center gap-3"
                 href={phoneHref(info.phone1)}
-                onClick={() => trackFooterCta('phone', 'phone1')}
+                onClick={() =>
+                  trackFooterCta({
+                    buttonLabel: 'Telefonla Ara',
+                    ctaType: 'cta_phone_click',
+                    target: 'phone1',
+                  })
+                }
               >
                 <Phone className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
                 <span className="min-w-0 break-words">{info.phone1}</span>
@@ -150,7 +158,13 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
               <a
                 className="flex min-w-0 items-center gap-3"
                 href={phoneHref(info.phone2)}
-                onClick={() => trackFooterCta('phone', 'phone2')}
+                onClick={() =>
+                  trackFooterCta({
+                    buttonLabel: 'Telefonla Ara',
+                    ctaType: 'cta_phone_click',
+                    target: 'phone2',
+                  })
+                }
               >
                 <Phone className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
                 <span className="min-w-0 break-words">{info.phone2}</span>
@@ -158,7 +172,13 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
               <a
                 className="flex min-w-0 items-center gap-3"
                 href={`mailto:${info.mail}`}
-                onClick={() => trackFooterCta('email', 'mail')}
+                onClick={() =>
+                  trackFooterCta({
+                    buttonLabel: 'E-posta Gönder',
+                    ctaType: 'email',
+                    target: 'mail',
+                  })
+                }
               >
                 <Mail className="shrink-0 text-[#FF6A2A]" size={18} aria-hidden="true" />
                 <span className="min-w-0 break-words">{info.mail}</span>
@@ -198,7 +218,13 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
                 target="_blank"
                 rel="noreferrer"
                 aria-label="WhatsApp ile iletişime geç"
-                onClick={() => trackFooterCta('whatsapp', 'social_button')}
+                onClick={() =>
+                  trackFooterCta({
+                    buttonLabel: 'WhatsApp’tan Hemen Bilgi Al',
+                    ctaType: 'cta_whatsapp_click',
+                    target: 'social_button',
+                  })
+                }
                 className="grid size-11 place-items-center rounded-full bg-[#25D366] text-white shadow-[0_14px_30px_rgba(37,211,102,0.22)] transition hover:-translate-y-0.5"
               >
                 <WhatsAppIcon size={20} />
@@ -206,7 +232,13 @@ function Footer({ contactInfo = fallbackContactInfo, decorationImage, logoImage,
               <a
                 href={`mailto:${info.mail}`}
                 aria-label="E-posta gönder"
-                onClick={() => trackFooterCta('email', 'social_button')}
+                onClick={() =>
+                  trackFooterCta({
+                    buttonLabel: 'E-posta Gönder',
+                    ctaType: 'email',
+                    target: 'social_button',
+                  })
+                }
                 className="grid size-11 place-items-center rounded-full border border-[#FFE0CC] bg-white text-[#FF6A2A] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#FFF1E8]"
               >
                 <Mail size={20} aria-hidden="true" />

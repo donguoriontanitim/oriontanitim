@@ -1,8 +1,40 @@
 ﻿import { BadgeCheck, Rocket, ShieldCheck, SmilePlus, Sparkles, UsersRound } from 'lucide-react'
 import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
-import SafeHtml from './SafeHtml.jsx'
 
 const icons = [Rocket, UsersRound, ShieldCheck, SmilePlus, Sparkles, BadgeCheck]
+
+const benefitItems = [
+  {
+    id: 'ureten-cocuk',
+    title: 'Üreten çocuk',
+    text: 'Robotik, tasarım ve programlama etkinliklerinde fikirlerini ürüne dönüştürmeyi dener.',
+  },
+  {
+    id: 'hareket-eden-cocuk',
+    title: 'Hareket eden çocuk',
+    text: 'Yüzme, jimnastik ve futbol ile gün içinde enerjisini dengeli şekilde kullanır.',
+  },
+  {
+    id: 'sosyallesen-cocuk',
+    title: 'Sosyalleşen çocuk',
+    text: 'Takım etkinlikleri ve oyunlarla yeni arkadaşlıklar kurar, iletişim becerisi gelişir.',
+  },
+  {
+    id: 'ozguven-kazanan-cocuk',
+    title: 'Özgüven kazanan çocuk',
+    text: 'Yeni şeyler denedikçe, öğrendikçe ve başardıkça kendini daha güçlü hisseder.',
+  },
+  {
+    id: 'teknolojiyi-dogru-kullanan-cocuk',
+    title: 'Teknolojiyi doğru kullanan çocuk',
+    text: 'Teknolojiyi sadece tüketmek yerine üretim, problem çözme ve keşif için kullanır.',
+  },
+  {
+    id: 'ilgi-alanlarini-kesfeden-cocuk',
+    title: 'Yeni ilgi alanları keşfeden çocuk',
+    text: 'Spor, sanat, İngilizce ve bilişim atölyeleriyle kendine uygun alanları tanır.',
+  },
+]
 
 const cardAccents = [
   {
@@ -31,8 +63,7 @@ const cardAccents = [
   },
 ]
 
-function WhyOrionSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
-  const activeItems = items.filter((item) => item.is_active !== false)
+function WhyOrionSection({ imagesByRelatedKey = {}, backgroundImage }) {
   const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
 
   return (
@@ -47,16 +78,18 @@ function WhyOrionSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-eyebrow">NEDEN ORION?</p>
           <h2 className="mt-3 text-2xl font-black leading-tight text-[#222222] min-[390px]:text-3xl sm:text-4xl lg:text-5xl">
-            Çocukların yaz tatilini üretim, keşif, spor ve eğlenceyle dolu bir deneyime
-            dönüştürüyoruz.
+            ORION Kamp Sadece Bir Yaz Kampı Değil
           </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base font-semibold leading-7 text-[#222222]/64 sm:text-lg sm:leading-8">
+            Çocuğunuz yaz tatilini sadece vakit geçirerek değil; üreterek, hareket ederek,
+            sosyalleşerek ve yeni beceriler kazanarak değerlendirir.
+          </p>
         </div>
 
         <div className="mt-8 grid gap-4 sm:mt-10 sm:grid-cols-2 lg:grid-cols-3">
-          {activeItems.map((item, index) => {
+          {benefitItems.map((item, index) => {
             const Icon = icons[index % icons.length]
             const accent = cardAccents[index % cardAccents.length]
-            const description = item.html || item.descriptionHtml || item.text || item.description
             const relatedKey = getRelatedKeyForItem(item, 'why_orion_card')
             const cardImage = imagesByRelatedKey[relatedKey]
 
@@ -86,18 +119,9 @@ function WhyOrionSection({ items, imagesByRelatedKey = {}, backgroundImage }) {
                 <h3 className="mt-4 text-lg font-black leading-snug text-[#222222] sm:mt-5 sm:text-xl">
                   {item.title}
                 </h3>
-                {description && (
-                  item.html || item.descriptionHtml ? (
-                    <SafeHtml
-                      html={description}
-                      className="mt-3 text-center text-sm font-semibold leading-7 text-[#222222]/64"
-                    />
-                  ) : (
-                    <p className="mt-3 text-center text-sm font-semibold leading-7 text-[#222222]/64">
-                      {description}
-                    </p>
-                  )
-                )}
+                <p className="mt-3 text-center text-sm font-semibold leading-7 text-[#222222]/64">
+                  {item.text}
+                </p>
               </article>
             )
           })}

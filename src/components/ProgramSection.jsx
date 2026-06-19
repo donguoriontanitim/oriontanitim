@@ -10,7 +10,9 @@
   Sigma,
   Waves,
 } from 'lucide-react'
+import { getWhatsAppUrl, trackCtaClick } from '../lib/contactLinks.js'
 import { createSectionBackgroundStyle, getRelatedKeyForItem } from '../lib/siteImages.js'
+import WhatsAppIcon from './WhatsAppIcon.jsx'
 
 const iconMap = {
   Activity,
@@ -43,9 +45,64 @@ const cardTones = [
   },
 ]
 
-function ProgramSection({ programs, imagesByRelatedKey = {}, backgroundImage }) {
+const techProgramIds = ['game-design', 'arduino', '3d-design', 'block-coding']
+
+const salesProgramDescriptions = {
+  swimming:
+    'Haftada 2 gün yüzme etkinliğiyle çocuklar hem serinler hem fiziksel gelişimlerini destekler.',
+  gymnastics:
+    'Haftada 2 gün jimnastik ve spor etkinlikleriyle denge, koordinasyon ve hareket becerileri gelişir.',
+  football:
+    'Haftada 1 gün futbol etkinliğiyle takım ruhu, iletişim ve özgüven desteklenir.',
+  english:
+    'Oyun temelli İngilizce etkinlikleriyle çocuklar dili daha doğal ve keyifli şekilde deneyimler.',
+  math:
+    'Matematik, sıkıcı defter çalışmaları yerine oyunlar ve etkinliklerle daha anlaşılır hale gelir.',
+  painting:
+    'Resim ve yaratıcı atölyelerle çocukların hayal gücü ve ifade becerileri desteklenir.',
+}
+
+const getProgramSalesDescription = (program) => {
+  const title = String(program.title || '').toLocaleLowerCase('tr-TR')
+
+  if (
+    techProgramIds.includes(program.id) ||
+    /bilişim|robotik|arduino|kodlama|tasarım|oyun/.test(title)
+  ) {
+    return 'Robotik, oyun tasarımı, 3D tasarım ve programlama temelleriyle çocuklar teknolojiyi sadece tüketen değil, üreten bireyler olmayı deneyimler.'
+  }
+
+  if (/yüzme/.test(title)) {
+    return salesProgramDescriptions.swimming
+  }
+
+  if (/jimnastik|spor/.test(title)) {
+    return salesProgramDescriptions.gymnastics
+  }
+
+  if (/futbol/.test(title)) {
+    return salesProgramDescriptions.football
+  }
+
+  if (/ingilizce/.test(title)) {
+    return salesProgramDescriptions.english
+  }
+
+  if (/matematik/.test(title)) {
+    return salesProgramDescriptions.math
+  }
+
+  if (/sanat|resim/.test(title)) {
+    return salesProgramDescriptions.painting
+  }
+
+  return salesProgramDescriptions[program.id] || program.description
+}
+
+function ProgramSection({ programs, contactInfo, imagesByRelatedKey = {}, backgroundImage }) {
   const activePrograms = programs.filter((program) => program.is_active !== false)
   const backgroundStyle = createSectionBackgroundStyle(backgroundImage)
+  const whatsappUrl = getWhatsAppUrl(contactInfo?.phone1)
 
   return (
     <section
@@ -60,7 +117,8 @@ function ProgramSection({ programs, imagesByRelatedKey = {}, backgroundImage }) 
             PROGRAM
           </h2>
           <p className="mt-4 text-base font-semibold leading-7 text-[#222222]/66 sm:text-lg sm:leading-8">
-            Teknoloji, spor ve sanat dolu atölyelerle geleceği keşfet!
+            Çocuğunuz teknoloji üretimini, hareketi, İngilizceyi, matematiği ve sanatı aynı
+            kamp paketinde deneyimler.
           </p>
         </div>
 
@@ -98,12 +156,39 @@ function ProgramSection({ programs, imagesByRelatedKey = {}, backgroundImage }) 
                 <h3 className="text-center text-base font-black leading-snug text-[#222222] sm:text-lg">
                   {program.title}
                 </h3>
-                <p className="mx-auto mt-3 line-clamp-4 max-w-[13rem] text-center text-sm font-semibold leading-6 text-[#222222]/60">
-                  {program.description}
+                <p className="mx-auto mt-3 line-clamp-5 max-w-[14rem] text-center text-sm font-semibold leading-6 text-[#222222]/62">
+                  {getProgramSalesDescription(program)}
                 </p>
               </article>
             )
           })}
+        </div>
+
+        <div className="mx-auto mt-8 flex max-w-3xl flex-col items-center gap-3 rounded-[1.5rem] border border-[#FFE0CC] bg-[#FFFBF5] p-5 text-center sm:mt-10 sm:flex-row sm:justify-between sm:text-left">
+          <div>
+            <h3 className="text-lg font-black text-[#222222]">Hangi grup size daha uygun?</h3>
+            <p className="mt-1 text-sm font-semibold leading-6 text-[#222222]/62">
+              Yaş ve kontenjan durumuna göre en doğru grubu birlikte netleştirebiliriz.
+            </p>
+          </div>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() =>
+              trackCtaClick({
+                buttonLabel: 'Kontenjan Durumunu Sor',
+                ctaType: 'cta_whatsapp_click',
+                eventName: 'program_cta_click',
+                sectionName: 'program',
+                target: 'program_section',
+              })
+            }
+            className="orion-gradient cta-orange inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-black text-white"
+          >
+            <WhatsAppIcon size={18} />
+            Kontenjan Durumunu Sor
+          </a>
         </div>
       </div>
     </section>

@@ -5,7 +5,7 @@ export const whatsappNumber =
   '905327236648'
 
 export const whatsappMessage =
-  'Merhaba, Orion Kamp 2026 hakkında detaylı bilgi almak istiyorum.'
+  'Merhaba, ORION Kamp için kayıt ve kontenjan bilgisi almak istiyorum.'
 
 export const fallbackContent = {
   hero: {

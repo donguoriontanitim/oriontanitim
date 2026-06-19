@@ -52,27 +52,62 @@ export const getPartnerClickId = (event = {}) => {
 export const isPartnerClickEvent = (event = {}) => Boolean(getPartnerClickId(event))
 
 export const ctaLabelByType = {
+  cta_form_click: 'Form CTA',
+  cta_phone_click: 'Telefon tıklaması',
+  cta_whatsapp_click: 'WhatsApp tıklaması',
+  contact_cta_click: 'İletişim CTA',
   contact: 'İletişim CTA',
   email: 'E-posta tıklaması',
   form_submit: 'Form gönderimi',
+  faq_whatsapp_click: 'SSS WhatsApp',
+  hero_cta_click: 'Hero CTA',
   phone: 'Telefon tıklaması',
   program: 'Program CTA',
+  program_cta_click: 'Program CTA',
+  sticky_mobile_cta_click: 'Mobil sabit CTA',
   whatsapp: 'WhatsApp tıklaması',
 }
 
-export const conversionCtaTypes = ['form_submit', 'phone', 'whatsapp']
+export const conversionCtaTypes = [
+  'cta_phone_click',
+  'cta_whatsapp_click',
+  'cta_form_click',
+  'faq_whatsapp_click',
+  'form_submit',
+  'phone',
+  'whatsapp',
+]
 
-export const encodeCtaClickSectionId = (type = 'unknown', sourceSection = 'unknown', target = '') =>
-  `${ctaClickSectionPrefix}${type || 'unknown'}:${sourceSection || 'unknown'}:${target || ''}`
+const encodeCtaField = (value = '') => encodeURIComponent(String(value || ''))
+const decodeCtaField = (value = '') => decodeURIComponent(String(value || ''))
+
+export const encodeCtaClickSectionId = (
+  type = 'unknown',
+  sourceSection = 'unknown',
+  target = '',
+  eventName = '',
+  buttonLabel = '',
+) =>
+  `${ctaClickSectionPrefix}${[
+    type || 'unknown',
+    sourceSection || 'unknown',
+    target || '',
+    eventName || '',
+    buttonLabel || '',
+  ]
+    .map(encodeCtaField)
+    .join(':')}`
 
 export const getCtaClick = (event = {}) => {
   const sectionId = String(event.section_id || '')
 
   if (event.event_type === 'cta_click') {
     return {
+      buttonLabel: event.button_label || '',
+      eventName: event.event_name || '',
       sourceSection: event.source_section || 'unknown',
       target: event.target || '',
-      type: event.cta_type || 'unknown',
+      type: event.cta_type || event.event_name || 'unknown',
     }
   }
 
@@ -80,13 +115,26 @@ export const getCtaClick = (event = {}) => {
     return null
   }
 
-  const [type = 'unknown', sourceSection = 'unknown', ...targetParts] = sectionId
+  const parts = sectionId
     .slice(ctaClickSectionPrefix.length)
     .split(':')
+  const [type = 'unknown', sourceSection = 'unknown', target = '', eventName = '', buttonLabel = ''] = parts
+
+  if (parts.length >= 5) {
+    return {
+      buttonLabel: decodeCtaField(buttonLabel),
+      eventName: decodeCtaField(eventName),
+      sourceSection: decodeCtaField(sourceSection) || 'unknown',
+      target: decodeCtaField(target) || '',
+      type: decodeCtaField(type) || 'unknown',
+    }
+  }
 
   return {
+    buttonLabel: '',
+    eventName: '',
     sourceSection: sourceSection || 'unknown',
-    target: targetParts.join(':') || '',
+    target: parts.slice(2).join(':') || '',
     type: type || 'unknown',
   }
 }
@@ -178,9 +226,11 @@ export const createAnalyticsPayload = (event) => {
       ? encodePartnerClickSectionId(event.section_id || 'unknown')
       : isCtaClick
         ? encodeCtaClickSectionId(
-            event.cta_type || event.section_id || 'unknown',
+            event.cta_type || event.event_name || event.section_id || 'unknown',
             event.source_section || 'unknown',
             event.target || '',
+            event.event_name || '',
+            event.button_label || '',
           )
       : isFaqInteraction
         ? encodeFaqInteractionSectionId(
